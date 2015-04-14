@@ -154,4 +154,5 @@ statuslinediv <= reset_and_backtrack_div
 if not 'GOAL_TEST' in globals():
   def GOAL_TEST(s): return False # Default goal-testing function-can be overridden.
 
+  
 initialize()
