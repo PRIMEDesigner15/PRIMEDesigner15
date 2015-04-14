@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 """
 PRIMEDesigner15.py
 A SOLUZION problem formulation
@@ -37,24 +36,6 @@ def describe_state(state):
 	""" Produces a textual description of a state.
     Might not be needed in normal operation with GUIs."""	
 	
-class Game
-	"""A game that represents the 9 rooms, all the doors, and various
-     particular form of graphic art."""
-	"""It is important for the myjson.py module that the constructor
-     have arguments for each instance component, because it will
-     use this __init__ method to reconstruct arbitrary instances
-     for the class from json representations in a database.
-     Except for the self argument and any keyword arguments,
-     there must be a 1-to-1 correspondence between parameters
-     in the __init__ method and the actual instance items."""
-	 
-	 
-	 
-#<INITIAL_STATE>
-INITIAL_STATE =\
-	{
-	}
-
 #Template JSON Stuff	
 #try:
 #  from browser import window, alert
@@ -69,10 +50,9 @@ INITIAL_STATE =\
 #</INITIAL_STATE>
 
 print("Hello from Mondrian.py (after INITIAL_STATE)")
-=======
-	""" A note on the coordinate system used; 
-	Each room is of size 1.
-	The game is thus of width 3 and height 3"""
+
+""" A note on the coordinate system used: 
+	Each room is of size 1. The game is thus of width 3 and height 3"""
 
 ROOM_SIZE = 1
 	
@@ -125,5 +105,4 @@ for i in range(3):
 	for j in range(3):
 		INITIAL_STATE.append( Room(i,i,j,j) )
 
-		
->>>>>>> origin/master
+
