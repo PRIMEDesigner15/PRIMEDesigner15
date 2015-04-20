@@ -73,7 +73,7 @@ class Room:
 		self.walls = [];
 		
 		# Horizontal walls.
-		self.walls.append(Wall(x1 ,y1 ,x2 ,y1, x1))
+		self.walls.append(Wall(x1 ,y1 ,x2 ,y2 )) 
 		self.walls.append(Wall(x1 ,y2 ,x2 ,y2 ))
 		
 		# Vertical walls.
@@ -86,7 +86,7 @@ class Room:
 """ A wall could contain a door or a wallpaper """	
 class Wall:
 
-	def __init__(self, x1, y1, x2, y2, x3, y3, x4, y4):
+	def __init__(self, x1, y1, x2, y2): 
 		self.x1 = x1
 		self.y1 = y1
 		self.x2 = x2
@@ -113,8 +113,10 @@ class WallPaper
 INITIAL_STATE = []
 
 # Create 9 rooms, add them to the list.
-for i in range(3):
-	for j in range(3):
-		INITIAL_STATE.append( Room(i,i,j,j) )
-
-
+for j in range(3):
+	for i in range(3):
+		INITIAL_STATE.append( Room(i, j, i + 1, j + 1) )
+# rooms: 
+# (0,0),(1,1);(1,0),(2,1);(2,0),(3,1);
+# (0,1),(1,2);(1,1),(2,2);(2,1),(3,2);
+# (0,2),(1,3);(1,2),(2,3);(2,2),(3,3);
