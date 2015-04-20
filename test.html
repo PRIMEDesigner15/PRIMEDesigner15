@@ -6,12 +6,24 @@
 	<head>
 		<meta charset="utf-8">
 		<script type="text/javascript" src="brython.js"></script>
+		<script type="text/python">
+			BRYTHON = True
+		</script>
+		<script type="text/python" src="Mondrian.py"></script>
+		<script type="text/python" src="BrythonSOLUZIONClient.py"></script>
 	</head>
 	
 	<body onload="brython(1)">
-		<script type="text/python" src="BrythonSOLUZIONClient.py"></script>
-		<script type="text/python" src="Mondrian.py"></script>
-		<script type="text/python" src="MondrianVisForBrython"></script>
+	
+		<div style="background-color:#CCCCFF;">
+			<h1 id="pagetitle">a title goes here</h1>
+		</div>
+
+		<div id="solving_gui">
+		</div>
+
+
 	</body>
+	
 	
 </html>

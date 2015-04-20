@@ -69,35 +69,47 @@ class Room:
 		self.x2 = x2
 		self.y2 = y2
 		
-		# 4 walls
+		# 4 walls. Walls are in the shape of trapezoids to create a fake perception of depth.
 		self.walls = [];
 		
-		# Horizontal walls
-		self.walls.append(Wall(x1 ,y1 ,x2 , y1))
+		# Horizontal walls.
+		self.walls.append(Wall(x1 ,y1 ,x2 ,y1, x1))
 		self.walls.append(Wall(x1 ,y2 ,x2 ,y2 ))
 		
-		# Vertical walls
+		# Vertical walls.
 		self.walls.append(Wall(x1 ,y1 ,x1 ,y2 ))
 		self.walls.append(Wall(x2 ,y1 ,x2 ,y2 ))
-		
-		# Possible puzzle
-		self.puzzle = null
 	
-		# Possible ambient soundtrack
+		# Possible ambient soundtrack.
 		self.music = null
 		
 """ A wall could contain a door or a wallpaper """	
 class Wall:
 
-	def __init__(self, x1, y1, x2, y2):
+	def __init__(self, x1, y1, x2, y2, x3, y3, x4, y4):
 		self.x1 = x1
 		self.y1 = y1
 		self.x2 = x2
 		self.y2 = y2
 		self.door = null
+		
+		# Possible puzzle
+		self.puzzle = null
+		
+		# Possible wallpaper.
 		self.wallpaper = null
 		
-#<INITIAL_STATE> The game is a list of 9 rooms stored a list
+class WallPaper
+	
+	def __init__(self, x1, y1, x2, y2):
+		self.x1 = x1
+		self.y1 = y1
+		self.x2 = x2
+		self.y2 = y2
+		self.url = null
+
+		
+#<INITIAL_STATE> The game is a list of 9 rooms stored a list.
 INITIAL_STATE = []
 
 # Create 9 rooms, add them to the list.
