@@ -25,79 +25,84 @@ def set_up_gui(opselectdiv, statuslinediv):
 
 def render_state_svg_graphics(state):
 	for room in state:
-		draw(room)
+		drawRoom(room)
 		
 # draws a room.		
-def draw(room):
+def drawRoom(room):
 	# thickness of a rooms walls.
-	def THICKNESS = .2
+	THICKNESS = .2
 	
 	# draws top horizontal wall
-	def wall = room.walls[0]
-	def x3 = wall.x1 + THICKNESS/math.sqrt(2)
-	def y3 = wall.y1 + THICKNESS/math.sqrt(2)
-	def x4 = wall.x2 - THICKNESS/math.sqrt(2)
-	def y4 = wall.y3
-	draw(wall,x3,y3,x4,y4)
+	wall = room.walls[0]
+	x3 = wall.x1 + THICKNESS/pow(2,1/2)
+	y3 = wall.y1 + THICKNESS/pow(2,1/2)
+	x4 = wall.x2 - THICKNESS/pow(2,1/2)
+	y4 = y3
+	drawWall(wall,x3,y3,x4,y4)
 	
 	# draws bottom horizontal wall
 	wall = room.walls[1]
-	def x3 = wallpaper.x1 + THICKNESS/math.sqrt(2)
-	def y3 = wallpaper.y1 - THICKNESS/math.sqrt(2)
-	def x4 = wall.x2 - THICKNESS/math.sqrt(2)
-	def y4 = wall.y3
-	draw(wall,x3,y3,x4,y4)
+	x3 = wall.x1 + THICKNESS/pow(2,1/2)
+	y3 = wall.y1 - THICKNESS/pow(2,1/2)
+	x4 = wall.x2 - THICKNESS/pow(2,1/2)
+	y4 = y3
+	drawWall(wall,x3,y3,x4,y4)
 	
 	# draws left vertical wall
 	wall = room.walls[2]
-	def x3 = wallpaper.x1 + THICKNESS/math.sqrt(2)
-	def y3 = wallpaper.y1 + THICKNESS/math.sqrt(2)
-	def x4 = wall.x3
-	def y3 = wallpaper.y1 - THICKNESS/math.sqrt(2)
-	draw(wall,x3,y3,x4,y4)
+	x3 = wall.x1 + THICKNESS/pow(2,1/2)
+	y3 = wall.y1 + THICKNESS/pow(2,1/2)
+	x4 = x3
+	y3 = wall.y1 - THICKNESS/pow(2,1/2)
+	drawWall(wall,x3,y3,x4,y4)
 	
 	# draws right vertical wall
 	wall = room.walls[3]
-	def x3 = wallpaper.x1 - THICKNESS/math.sqrt(2)
-	def y3 = wallpaper.y1 + THICKNESS/math.sqrt(2)
-	def x4 = wall.x3
-	def y3 = wallpaper.y1 - THICKNESS/math.sqrt(2)
-	draw(wall,x3,y3,x4,y4)
+	x3 = wall.x1 - THICKNESS/pow(2,1/2)
+	y3 = wall.y1 + THICKNESS/pow(2,1/2)
+	x4 = x3
+	y3 = wall.y1 - THICKNESS/pow(2,1/2)
+	drawWall(wall,x3,y3,x4,y4)
 		
 # draws a wall, requires 2 more points to form trapezoidal 3d shape.
-def draw(wall,x3,y3,x4,y4):
-	draw(wall.wallpaper,x3,y3,x4,y4)
+def drawWall(wall,x3,y3,x4,y4):
+	drawWallpaper(wall.wallpaper,x3,y3,x4,y4)
 
+	
 # draws a wallpaper, requires 2 more points to form trapezoidal 3d shape.	
-def draw(wallpaper,x3,y3,x4,y4):
+def drawWallpaper(wallpaper,x3,y3,x4,y4):
 	global LINE_WIDTH, gui
 	# Maps points to Div
-	(X1,Y1) = mapCoordsToDiv(wallpaper.x1,wallpaper.y1)
-	(X2,Y2) = mapCoordsToDiv(wallpaper.x2,wallpaper.y2)
-	(X3,Y3) = mapCoordsToDiv(x3,y3)
-	(X4,Y4) = mapCoordsToDiv(x4,y4)
+	(X1,Y1) = mapCoordsToDIV(wallpaper.x1,wallpaper.y1)
+	(X2,Y2) = mapCoordsToDIV(wallpaper.x2,wallpaper.y2)
+	(X3,Y3) = mapCoordsToDIV(x3,y3)
+	(X4,Y4) = mapCoordsToDIV(x4,y4)
 	
 	# Create string of points for svg_polygon
-	Points =\ 
-			X1 + "," + Y1 + " " + X2 + "," + Y2 + " " +
-			X3 + "," + Y3 + " " + X4 + "," + Y4
+	Points = str(X1) + "," + str(Y1) + " " + str(X2) + "," + str(Y2) + " " + str(X3) + "," + str(Y3) + " " + str(X4) + "," + str(Y4)
 	
 	# Create div
-	wallPaperDiv = svg_polygon(fill="black",stroke="red",stroke_width=LINE_WIDTH,
-					points=Points)
+	#WallpaperDiv = svg_polygon(fill="black",stroke="red",stroke_width=LINE_WIDTH,
+	#				points=Points)
+	star = svg.polygon(fill="red", stroke="blue", stroke_width="10",
+                   points=""" 75,38  90,80  135,80  98,107
+                             111,150 75,125  38,150 51,107
+                              15,80  60,80""")
+				
+	
 					
 	# Append div to gui
-	gui <= wallPaperDiv
+	gui <= star
 	
-
 def mapCoordsToDIV(x, y):
 	'''Convert x coordinate from the range [0.0, 1.0] to
-     the range [MARGIN, PAINTING_WIDTH - MARGIN], and
-     the y coordinate to the range [MARGIN, PAINTING_HEIGHT - MARGIN].'''
-  global GAME_WIDTH, GAME_HEIGHT
-  newX = int( (x * GAME_WIDTH)/3) )
-  newY = int( (y * GAME_HEIGHT/3) )
-  return (newX, newY)
+    the range [MARGIN, PAINTING_WIDTH - MARGIN], and
+    the y coordinate to the range [MARGIN, PAINTING_HEIGHT - MARGIN].'''
+	global GAME_WIDTH, GAME_HEIGHT
+	newX = int( (x * GAME_WIDTH)/3) 
+	newY = int( (y * GAME_HEIGHT)/3) 
+	return (newX, newY)
+
 	
 	
 	
