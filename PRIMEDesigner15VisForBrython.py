@@ -6,9 +6,10 @@ the PRIMEDesigner template in the Brython environment.
 
 from browser import doc, html, alert, svg
 
+gui = None
 ROOM_SIZE = 100
-GAME_SIZE = ROOM_SIZE * 9
-MARGIN = 20
+GAME_WIDTH = ROOM_SIZE * 9
+GAME_HEIGHT = ROOM_SIZE * 9
 
 print("Hello from PRIMEDesignerVisForBrython!  Starting to process it.")
 
@@ -17,13 +18,12 @@ def set_up_gui(opselectdiv, statuslinediv):
 	print("Entering set_up_gui in PRIMEDesignerVisForBrython.")
 	global gui
 	gui = html.DIV(Id="thegui")
-	#setupboard
 	gui <= opselectdiv
 	gui <= statuslinediv
 	doc <= gui
 	print("Leaving set_up_gui in PRIMEDesignerVisForBrython.")
 
-def draw(state):
+def render_state_svg_graphics(state):
 	for room in state:
 		draw(room)
 		
@@ -70,8 +70,34 @@ def draw(wall,x3,y3,x4,y4):
 
 # draws a wallpaper, requires 2 more points to form trapezoidal 3d shape.	
 def draw(wallpaper,x3,y3,x4,y4):
-	# Create 2 more points to form a trapezoidal false 3d shape.
+	global LINE_WIDTH, gui
+	# Maps points to Div
+	(X1,Y1) = mapCoordsToDiv(wallpaper.x1,wallpaper.y1)
+	(X2,Y2) = mapCoordsToDiv(wallpaper.x2,wallpaper.y2)
+	(X3,Y3) = mapCoordsToDiv(x3,y3)
+	(X4,Y4) = mapCoordsToDiv(x4,y4)
 	
+	# Create string of points for svg_polygon
+	Points =\ 
+			X1 + "," + Y1 + " " + X2 + "," + Y2 + " " +
+			X3 + "," + Y3 + " " + X4 + "," + Y4
+	
+	# Create div
+	wallPaperDiv = svg_polygon(fill="black",stroke="red",stroke_width=LINE_WIDTH,
+					points=Points)
+					
+	# Append div to gui
+	gui <= wallPaperDiv
+	
+
+def mapCoordsToDIV(x, y):
+	'''Convert x coordinate from the range [0.0, 1.0] to
+     the range [MARGIN, PAINTING_WIDTH - MARGIN], and
+     the y coordinate to the range [MARGIN, PAINTING_HEIGHT - MARGIN].'''
+  global GAME_WIDTH, GAME_HEIGHT
+  newX = int( (x * GAME_WIDTH)/3) )
+  newY = int( (y * GAME_HEIGHT/3) )
+  return (newX, newY)
 	
 	
 	

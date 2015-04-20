@@ -28,7 +28,7 @@ print("Hello from PRIMEDesigner15.py (after METADATA)")
 
 #<COMMON_CODE>
 
-def copy_state(s):
+#def copy_state(s):
 	# Performs an appropriately deep copy of a state,
 	# for use by operators in creating new states.
 
@@ -99,7 +99,7 @@ class Wall:
 		# Possible wallpaper.
 		self.wallpaper = null
 		
-class WallPaper
+class WallPaper:
 	
 	def __init__(self, x1, y1, x2, y2):
 		self.x1 = x1
@@ -116,5 +116,26 @@ INITIAL_STATE = []
 for i in range(3):
 	for j in range(3):
 		INITIAL_STATE.append( Room(i,i,j,j) )
+#</INITIAL_STATE>
 
+#<OPERATORS>
+class Operator:
+  def __init__(self, name, precond, state_transf):
+    self.name = name
+    self.precond = precond
+    self.state_transf = state_transf
+
+  def is_applicable(self, s):
+    return self.precond(s)
+
+  def apply(self, s):
+    return self.state_transf(s)
+	
+# Operators is temporarily an empty list.
+OPERATORS = []
+#</OPERATORS>
+
+if "BRYTHON" in globals():
+ from PRIMEDesigner15VisForBrython import set_up_gui as set_up_user_interface
+ from PRIMEDesigner15VisForBrython import render_state_svg_graphics as render_state
 
