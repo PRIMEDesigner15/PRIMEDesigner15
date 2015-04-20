@@ -69,7 +69,7 @@ class Room:
 		self.x2 = x2
 		self.y2 = y2
 		
-		# 4 walls. Walls are in the shape of trapezoids to create a fake perception of depth.
+		# 4 walls. 
 		self.walls = [];
 		
 		# Horizontal walls.
