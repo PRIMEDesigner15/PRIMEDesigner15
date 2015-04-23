@@ -7,9 +7,16 @@ the PRIMEDesigner template in the Brython environment.
 from browser import doc, html, alert, svg
 
 gui = None
+#is this saying that all of these are now 'None'?
+board=statusline=opselect=None
+APANEL = None
+MARGIN = 20
 ROOM_SIZE = 100
-GAME_WIDTH = ROOM_SIZE * 9
-GAME_HEIGHT = ROOM_SIZE * 9
+GAME_WIDTH = ROOM_SIZE * 3
+GAME_HEIGHT = ROOM_SIZE * 3
+
+LAST_STATE = None # cache of current state for use in 
+				#refresh of display after selection hiding button click.
 
 print("Hello from PRIMEDesignerVisForBrython!  Starting to process it.")
 
@@ -17,47 +24,79 @@ LINE_WIDTH = 10
 def set_up_gui(opselectdiv, statuslinediv):
 	print("Entering set_up_gui in PRIMEDesignerVisForBrython.")
 	global gui
-	gui = html.DIV(Id="thegui")
+	gui = html.DIV(Id = "thegui")
+	set_up_board_svg_graphics()
+	alert("SVG stuff should now be set up.")
 	gui <= opselectdiv
 	gui <= statuslinediv
 	doc <= gui
 	print("Leaving set_up_gui in PRIMEDesignerVisForBrython.")
 
+def set_up_board_svg_graphics():
+	#SHOW_SELECTION_Button isn't initialized before this call.
+	#Does this mean that with the global keyword, you can either 
+	#refer to a global variable or initialize a new one?
+	global APANEL, SHOW_SELECTION_Button, board
+	boarddiv = html.DIV(Id = "boarddivid", style = {"backgroundColor":"#CCFFCC"})
+	boarddiv <= html.I("Puzzle state:")
+	#what is APANEL intended to be
+	APANEL = svg.g(Id = "panel")
+	board = svg.svg(Id = "svgboard", 
+					style = {"width":GAME_WIDTH, "height":GAME_HEIGHT,
+							"backgroundColor":"#AAAABB"})
+	board <= APANEL		
+	boarddiv <= board
+	# Put in a button for controlling whether or not the currently selected box is highlighted.
+	SHOW_SELECTION_Button = html.BUTTON("Hide/Show selected box", Id="HideOrShowSelected")
+	SHOW_SELECTION_Button.bind('click', hideOrShowSelection)
+	boarddiv <= SHOW_SELECTION_Button
+	gui <= boarddiv
+
+SHOWING_SELECTION = True
+def hideOrShowSelection(event):
+  global SHOWING_SELECTION, SHOW_SELECTION_Button
+  SHOWING_SELECTION = not SHOWING_SELECTION
+  if SHOWING_SELECTION:
+    SHOW_SELECTION_Button.text = "Turn off highlighting of the selected box."    
+  else:
+    SHOW_SELECTION_Button.text = "Enable highlighting of the selected box."    
+  render_state_svg_graphics(LAST_STATE)
+		
 def render_state_svg_graphics(state):
-	for room in state:
+	for room in state.ROOMS:
 		drawRoom(room)
 		
 # draws a room.		
 def drawRoom(room):
-	# thickness of a rooms walls.
+	# thickness of a room's walls.
 	THICKNESS = .2
 	
-	# draws top horizontal wall
-	wall = room.walls[0]
+	# draws north wall
+	wall = room.walls['N']
 	x3 = wall.x1 + THICKNESS/pow(2,1/2)
 	y3 = wall.y1 + THICKNESS/pow(2,1/2)
 	x4 = wall.x2 - THICKNESS/pow(2,1/2)
 	y4 = y3
 	drawWall(wall,x3,y3,x4,y4)
 	
-	# draws bottom horizontal wall
-	wall = room.walls[1]
+	# draws south wall
+	wall = room.walls['S']
 	x3 = wall.x1 + THICKNESS/pow(2,1/2)
 	y3 = wall.y1 - THICKNESS/pow(2,1/2)
 	x4 = wall.x2 - THICKNESS/pow(2,1/2)
 	y4 = y3
 	drawWall(wall,x3,y3,x4,y4)
 	
-	# draws left vertical wall
-	wall = room.walls[2]
+	# draws west wall
+	wall = room.walls['W']
 	x3 = wall.x1 + THICKNESS/pow(2,1/2)
 	y3 = wall.y1 + THICKNESS/pow(2,1/2)
 	x4 = x3
 	y3 = wall.y1 - THICKNESS/pow(2,1/2)
 	drawWall(wall,x3,y3,x4,y4)
 	
-	# draws right vertical wall
-	wall = room.walls[3]
+	# draws east wall
+	wall = room.walls['E']
 	x3 = wall.x1 - THICKNESS/pow(2,1/2)
 	y3 = wall.y1 + THICKNESS/pow(2,1/2)
 	x4 = x3
