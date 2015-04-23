@@ -47,8 +47,6 @@ def describe_state(state):
 #  print("There was an exception when trying to communicate back from Python to Javascript.")
 #  print(e)
 
-#</INITIAL_STATE>
-
 print("Hello from Mondrian.py (after INITIAL_STATE)")
 
 """ A note on the coordinate system used: 
@@ -70,15 +68,14 @@ class Room:
 		self.y2 = y2
 		
 		# 4 walls. 
-		self.walls = [];
-		
+		self.walls = {};
 		# Horizontal walls.
-		self.walls.append(Wall(x1 ,y1 ,x2 ,y2 )) 
-		self.walls.append(Wall(x1 ,y2 ,x2 ,y2 ))
-		
-		# Vertical walls.
-		self.walls.append(Wall(x1 ,y1 ,x1 ,y2 ))
-		self.walls.append(Wall(x2 ,y1 ,x2 ,y2 ))
+			self.walls['N'] = (Wall(x1 ,y1 ,x2 ,y1, 'N')) #top 
+			self.walls['S'] = (Wall(x1 ,y2 ,x2 ,y2, 'S')) #bottom
+			
+			# Vertical walls.
+			self.walls['W'] = (Wall(x1 ,y1 ,x1 ,y2, 'W')) #left
+			self.walls['E'] = (Wall(x2 ,y1 ,x2 ,y2, 'E')) #right
 	
 		# Possible ambient soundtrack.
 		self.music = null
@@ -86,39 +83,33 @@ class Room:
 """ A wall could contain a door or a wallpaper """	
 class Wall:
 
-	def __init__(self, x1, y1, x2, y2): 
+	def __init__(self, x1, y1, x2, y2, loc): 
 		self.x1 = x1
 		self.y1 = y1
 		self.x2 = x2
 		self.y2 = y2
+		self.loc = loc
 		self.door = null
 		
 		# Possible puzzle
 		self.puzzle = null
 		
 		# Possible wallpaper.
-		self.wallpaper = Wallpaper(x1,y1,x2,y2)
+		self.wallpaper = null
 		
 class Wallpaper:
 	
-	def __init__(self, x1, y1, x2, y2):
-		self.x1 = x1
-		self.y1 = y1
-		self.x2 = x2
-		self.y2 = y2
-		self.url = null
+	def __init__(self, url):
+		self.url = url
+	
 
+class Door:
+	
+	def __init__(self, pair_num):
+		self.pair_num = pair_num
 		
-#<INITIAL_STATE> The game is a list of 9 rooms stored a list.
-INITIAL_STATE = []
-
-# Create 9 rooms, add them to the list.
-for i in range(3):
-	for j in range(3):
-		INITIAL_STATE.append( Room(i,i,j,j) )
-#</INITIAL_STATE>
-
-#<OPERATORS>
+		
+#ask steve about what the Operator class in 05 does
 class Operator:
   def __init__(self, name, precond, state_transf):
     self.name = name
@@ -130,6 +121,53 @@ class Operator:
 
   def apply(self, s):
     return self.state_transf(s)
+
+# takes a room num from 0 to 8 and a side for the door to be on, [N, S, E, W]
+def add_door_to_room(room_num, side):
+	ROOMS[room_num].walls[side].door = Door(next_door_pair)
+	if side == 'N':
+		ROOMS[room_num - 3].walls['S'].door = Door(next_door_pair)
+		next_door_pair += 1
+	if side == 'S':
+		ROOMS[room_num + 3].walls['N'].door = Door(next_door_pair)
+		next_door_pair += 1
+	if side == 'E':
+		ROOMS[room_num + 1].walls['W'].door = Door(next_door_pair)
+		next_door_pair += 1
+	if side == 'W':
+		ROOMS[room_num - 1].walls['E'].door = Door(next_door_pair)
+		next_door_pair += 1
+
+# takes a room num from 0 to 8 and a url for a wallpaper
+def add_wallpaper_to_room(room_num, url):
+	picked = ROOMS[room_num]
+	for loc in picked.walls:
+		picked.walls[loc].wallpaper = Wallpaper(url)
+
+
+		
+#</COMMON_CODE>		
+	
+print("Hello from PRIMEDesigner15.py (after COMMON_CODE)")
+
+	
+#<INITIAL_STATE> The game is a list of 9 rooms stored a list.
+INITIAL_STATE = []
+ROOMS = []
+next_door_pair = 0
+# Create 9 rooms, add them to the list.
+for j in range(3):
+	for i in range(3):
+		ROOMS.append( Room(i, j, i + 1, j + 1) )
+INITIAL_STATE.append(ROOMS)		
+#</INITIAL_STATE>
+
+#It seems to me like the way this worked before is that in COMMON_CODE were all
+#the functions for operators, and then in OPERATORS it is determined which are
+#valid to use in the current state. We should double check with Steve but
+#I'll be running with this interpretation. 
+#<OPERATORS>
+
 	
 # Operators is temporarily an empty list.
 OPERATORS = []
@@ -139,12 +177,4 @@ if "BRYTHON" in globals():
  from PRIMEDesigner15VisForBrython import set_up_gui as set_up_user_interface
  from PRIMEDesigner15VisForBrython import render_state_svg_graphics as render_state
 
-
-for j in range(3):
-	for i in range(3):
-		INITIAL_STATE.append( Room(i, j, i + 1, j + 1) )
-# rooms: 
-# (0,0),(1,1);(1,0),(2,1);(2,0),(3,1);
-# (0,1),(1,2);(1,1),(2,2);(2,1),(3,2);
-# (0,2),(1,3);(1,2),(2,3);(2,2),(3,3);
 
