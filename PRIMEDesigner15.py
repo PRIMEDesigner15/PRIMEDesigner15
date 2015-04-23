@@ -68,14 +68,14 @@ class Room:
 		self.y2 = y2
 		
 		# 4 walls. 
-		self.walls = {};
+		self.walls = {}
 		# Horizontal walls.
-			self.walls['N'] = (Wall(x1 ,y1 ,x2 ,y1, 'N')) #top 
-			self.walls['S'] = (Wall(x1 ,y2 ,x2 ,y2, 'S')) #bottom
+		self.walls['N'] = (Wall(x1 ,y1 ,x2 ,y1, 'N')) #top 
+		self.walls['S'] = (Wall(x1 ,y2 ,x2 ,y2, 'S')) #bottom
 			
-			# Vertical walls.
-			self.walls['W'] = (Wall(x1 ,y1 ,x1 ,y2, 'W')) #left
-			self.walls['E'] = (Wall(x2 ,y1 ,x2 ,y2, 'E')) #right
+		# Vertical walls.
+		self.walls['W'] = (Wall(x1 ,y1 ,x1 ,y2, 'W')) #left
+		self.walls['E'] = (Wall(x2 ,y1 ,x2 ,y2, 'E')) #right
 	
 		# Possible ambient soundtrack.
 		self.music = null

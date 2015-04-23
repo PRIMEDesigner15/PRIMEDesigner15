@@ -66,15 +66,15 @@ def drawRoom(room):
 		
 # draws a wall, requires 2 more points to form trapezoidal 3d shape.
 def drawWall(wall,x3,y3,x4,y4):
-	drawWallpaper(wall.wallpaper,x3,y3,x4,y4)
+	drawWallpaper(wall,x3,y3,x4,y4)
 
 	
 # draws a wallpaper, requires 2 more points to form trapezoidal 3d shape.	
-def drawWallpaper(wallpaper,x3,y3,x4,y4):
+def drawWallpaper(wall,x3,y3,x4,y4):
 	global LINE_WIDTH, gui
 	# Maps points to Div
-	(X1,Y1) = mapCoordsToDIV(wallpaper.x1,wallpaper.y1)
-	(X2,Y2) = mapCoordsToDIV(wallpaper.x2,wallpaper.y2)
+	(X1,Y1) = mapCoordsToDIV(wall.x1,wall.y1)
+	(X2,Y2) = mapCoordsToDIV(wall.x2,wall.y2)
 	(X3,Y3) = mapCoordsToDIV(x3,y3)
 	(X4,Y4) = mapCoordsToDIV(x4,y4)
 	
