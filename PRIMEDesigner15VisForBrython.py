@@ -8,7 +8,9 @@ from browser import doc, html, alert, svg
 
 gui = None
 #is this saying that all of these are now 'None'?
-board=statusline=opselect=None
+board = None
+statusline = None
+opselect = None
 APANEL = None
 MARGIN = 20
 ROOM_SIZE = 100
@@ -110,7 +112,7 @@ def drawWall(wall,x3,y3,x4,y4):
 	
 # draws a wallpaper, requires 2 more points to form trapezoidal 3d shape.	
 def drawWallpaper(wall,x3,y3,x4,y4):
-	global LINE_WIDTH, gui
+	global LINE_WIDTH, APANEL
 	# Maps points to Div
 	(X1,Y1) = mapCoordsToDIV(wall.x1,wall.y1)
 	(X2,Y2) = mapCoordsToDIV(wall.x2,wall.y2)
@@ -121,8 +123,8 @@ def drawWallpaper(wall,x3,y3,x4,y4):
 	Points = str(X1) + "," + str(Y1) + " " + str(X2) + "," + str(Y2) + " " + str(X3) + "," + str(Y3) + " " + str(X4) + "," + str(Y4)
 	print(Points)
 	# Create div
-	#WallpaperDiv = svg_polygon(fill="black",stroke="red",stroke_width=LINE_WIDTH,
-	#				points=Points)
+	WallpaperDiv = svg_polygon(fill="black",stroke="red",stroke_width=LINE_WIDTH,
+					points=Points)
 	star = svg.polygon(fill="red", stroke="blue", stroke_width="10",
                    points=""" 75,38  90,80  135,80  98,107
                              111,150 75,125  38,150 51,107
@@ -131,7 +133,7 @@ def drawWallpaper(wall,x3,y3,x4,y4):
 	
 					
 	# Append div to gui
-	gui <= star
+	APANEL <= WallpaperDiv
 	
 def mapCoordsToDIV(x, y):
 	'''Convert x coordinate from the range [0.0, 1.0] to

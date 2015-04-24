@@ -89,13 +89,13 @@ class Wall:
 		self.x2 = x2
 		self.y2 = y2
 		self.loc = loc
-		self.door = null
+		self.door = None
 		
 		# Possible puzzle
-		self.puzzle = null
+		self.puzzle = None
 		
 		# Possible wallpaper.
-		self.wallpaper = null
+		self.wallpaper = None
 		
 class Wallpaper:
 	
@@ -124,8 +124,10 @@ class Operator:
 
 # takes a room num from 0 to 8 and a side for the door to be on, [N, S, E, W]
 def add_door_to_room(room_num, side):
+	global DOORS
 	ROOMS[room_num].walls[side].door = Door(next_door_pair)
 	if side == 'N':
+		
 		ROOMS[room_num - 3].walls['S'].door = Door(next_door_pair)
 		next_door_pair += 1
 	if side == 'S':
@@ -149,14 +151,15 @@ def add_wallpaper_to_room(room_num, url):
 print("Hello from PRIMEDesigner15.py (after COMMON_CODE)")
 	
 #<INITIAL_STATE> The game is a list of 9 rooms stored a list.
-INITIAL_STATE = []
+INITIAL_STATE = {}
 ROOMS = []
+DOORS = []
 next_door_pair = 0
 # Create 9 rooms, add them to the list.
 for j in range(3):
 	for i in range(3):
 		ROOMS.append( Room(i, j, i + 1, j + 1) )
-INITIAL_STATE.append(ROOMS)		
+INITIAL_STATE['Rooms'] = ROOMS		
 #</INITIAL_STATE>
 
 #It seems to me like the way this worked before is that in COMMON_CODE were all
