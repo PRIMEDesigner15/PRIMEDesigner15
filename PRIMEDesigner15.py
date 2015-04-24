@@ -78,7 +78,7 @@ class Room:
 		self.walls['E'] = (Wall(x2 ,y1 ,x2 ,y2, 'E')) #right
 	
 		# Possible ambient soundtrack.
-		self.music = null
+		self.music = None
 		
 """ A wall could contain a door or a wallpaper """	
 class Wall:
@@ -144,12 +144,9 @@ def add_wallpaper_to_room(room_num, url):
 	for loc in picked.walls:
 		picked.walls[loc].wallpaper = Wallpaper(url)
 
-
-		
 #</COMMON_CODE>		
 	
 print("Hello from PRIMEDesigner15.py (after COMMON_CODE)")
-
 	
 #<INITIAL_STATE> The game is a list of 9 rooms stored a list.
 INITIAL_STATE = []

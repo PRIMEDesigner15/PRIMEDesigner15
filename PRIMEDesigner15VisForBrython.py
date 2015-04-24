@@ -63,7 +63,7 @@ def hideOrShowSelection(event):
   render_state_svg_graphics(LAST_STATE)
 		
 def render_state_svg_graphics(state):
-	for room in state.ROOMS:
+	for room in state['Rooms']:
 		drawRoom(room)
 		
 # draws a room.		
@@ -119,7 +119,7 @@ def drawWallpaper(wall,x3,y3,x4,y4):
 	
 	# Create string of points for svg_polygon
 	Points = str(X1) + "," + str(Y1) + " " + str(X2) + "," + str(Y2) + " " + str(X3) + "," + str(Y3) + " " + str(X4) + "," + str(Y4)
-	
+	print(Points)
 	# Create div
 	#WallpaperDiv = svg_polygon(fill="black",stroke="red",stroke_width=LINE_WIDTH,
 	#				points=Points)
