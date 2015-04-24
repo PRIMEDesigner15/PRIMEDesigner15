@@ -95,11 +95,13 @@ class Wall:
 		self.puzzle = None
 		
 		# Possible wallpaper.
-		self.wallpaper = None
+		self.wallpaper = Wallpaper()
 		
+# Default url is wall.jpg
+# Test url is stripes.jpg for transformation testing.
 class Wallpaper:
 	
-	def __init__(self, url):
+	def __init__(self, url = "wall.jpg"):
 		self.url = url
 	
 

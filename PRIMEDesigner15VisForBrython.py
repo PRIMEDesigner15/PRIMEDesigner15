@@ -22,7 +22,7 @@ LAST_STATE = None # cache of current state for use in
 
 print("Hello from PRIMEDesignerVisForBrython!  Starting to process it.")
 
-LINE_WIDTH = 10
+LINE_WIDTH = 15
 def set_up_gui(opselectdiv, statuslinediv):
 	print("Entering set_up_gui in PRIMEDesignerVisForBrython.")
 	global gui
@@ -75,44 +75,60 @@ def drawRoom(room):
 	
 	# draws north wall
 	wall = room.walls['N']
-	x3 = wall.x1 + THICKNESS/pow(2,1/2)
+	x3 = wall.x2 - THICKNESS/pow(2,1/2)
 	y3 = wall.y1 + THICKNESS/pow(2,1/2)
-	x4 = wall.x2 - THICKNESS/pow(2,1/2)
+	x4 = wall.x1 + THICKNESS/pow(2,1/2)
 	y4 = y3
 	drawWall(wall,x3,y3,x4,y4)
 	
 	# draws south wall
 	wall = room.walls['S']
-	x3 = wall.x1 + THICKNESS/pow(2,1/2)
+	x3 = wall.x2 - THICKNESS/pow(2,1/2)
 	y3 = wall.y1 - THICKNESS/pow(2,1/2)
-	x4 = wall.x2 - THICKNESS/pow(2,1/2)
+	x4 = wall.x1 + THICKNESS/pow(2,1/2)
 	y4 = y3
 	drawWall(wall,x3,y3,x4,y4)
 	
 	# draws west wall
 	wall = room.walls['W']
-	x3 = wall.x1 + THICKNESS/pow(2,1/2)
-	y3 = wall.y1 + THICKNESS/pow(2,1/2)
+	x3 = wall.x2 + THICKNESS/pow(2,1/2)
+	y3 = wall.y2 - THICKNESS/pow(2,1/2)
 	x4 = x3
-	y3 = wall.y1 - THICKNESS/pow(2,1/2)
+	y4 = wall.y1 + THICKNESS/pow(2,1/2)
 	drawWall(wall,x3,y3,x4,y4)
 	
 	# draws east wall
 	wall = room.walls['E']
-	x3 = wall.x1 - THICKNESS/pow(2,1/2)
-	y3 = wall.y1 + THICKNESS/pow(2,1/2)
+	x3 = wall.x2 - THICKNESS/pow(2,1/2)
+	y3 = wall.y2 - THICKNESS/pow(2,1/2)
 	x4 = x3
-	y3 = wall.y1 - THICKNESS/pow(2,1/2)
+	y4 = wall.y1 + THICKNESS/pow(2,1/2)
 	drawWall(wall,x3,y3,x4,y4)
 		
 # draws a wall, requires 2 more points to form trapezoidal 3d shape.
-def drawWall(wall,x3,y3,x4,y4):
-	drawWallpaper(wall,x3,y3,x4,y4)
-
+# Temporary optional color for walls.
+def drawWall(wall,x3,y3,x4,y4, color = "black"):
+	drawWallpaper(wall,x3,y3,x4,y4,color)
 	
 # draws a wallpaper, requires 2 more points to form trapezoidal 3d shape.	
-def drawWallpaper(wall,x3,y3,x4,y4):
+# Temporary color parameter determines fill color of wall.
+def drawWallpaper(wall,x3,y3,x4,y4, color):
 	global LINE_WIDTH, APANEL
+	
+	# Create pattern for image representation.
+	defs = svg.defs()
+	pattern = svg.pattern(id="image",height="100",width = "50")
+	img = svg.image(xlink_href=wall.wallpaper.url, x="0",y="0", width="100", height="100")
+	
+	# Append
+	pattern <= img
+	defs <= pattern
+	APANEL <= defs
+	
+	# TODO: Tranform pattern based on wall orientation.
+	# The thing below doesn't work for some reason...
+	#transform = svg.animateTransform(attributeType = "XML", attributeName="transform", type="rotate",From="0,200,200",to="360,200,200",begin="0s", dur="1s", repeatCount="indefinite")
+
 	# Maps points to Div
 	(X1,Y1) = mapCoordsToDIV(wall.x1,wall.y1)
 	(X2,Y2) = mapCoordsToDIV(wall.x2,wall.y2)
@@ -121,18 +137,12 @@ def drawWallpaper(wall,x3,y3,x4,y4):
 	
 	# Create string of points for svg_polygon
 	Points = str(X1) + "," + str(Y1) + " " + str(X2) + "," + str(Y2) + " " + str(X3) + "," + str(Y3) + " " + str(X4) + "," + str(Y4)
-	print(Points)
-	# Create div
-	WallpaperDiv = svg_polygon(fill="black",stroke="red",stroke_width=LINE_WIDTH,
-					points=Points)
-	star = svg.polygon(fill="red", stroke="blue", stroke_width="10",
-                   points=""" 75,38  90,80  135,80  98,107
-                             111,150 75,125  38,150 51,107
-                              15,80  60,80""")
-				
 	
+	# Create polygon
+	WallpaperDiv = svg.polygon(fill="url(#image)",stroke="white",stroke_width=LINE_WIDTH,
+					points=Points)
 					
-	# Append div to gui
+	# Append polygon to svg panel
 	APANEL <= WallpaperDiv
 	
 def mapCoordsToDIV(x, y):
