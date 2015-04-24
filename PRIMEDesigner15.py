@@ -107,9 +107,11 @@ class Wallpaper:
 
 class Door:
 	
-	def __init__(self, pair_num):
-		self.pair_num = pair_num
+	def __init__(self, isOpen):
+		self.isOpen = isOpen
 		
+	def change_stance(self):
+		self.isOpen = not isOpen
 		
 #ask steve about what the Operator class in 05 does
 class Operator:
@@ -127,20 +129,17 @@ class Operator:
 # takes a room num from 0 to 8 and a side for the door to be on, [N, S, E, W]
 def add_door_to_room(room_num, side):
 	global DOORS
-	ROOMS[room_num].walls[side].door = Door(next_door_pair)
+	newDoor = Door(False) # Doors are initialized as closed
+	DOORS.append(newDoor)
+	ROOMS[room_num].walls[side].door = newDoor
 	if side == 'N':
-		
-		ROOMS[room_num - 3].walls['S'].door = Door(next_door_pair)
-		next_door_pair += 1
-	if side == 'S':
-		ROOMS[room_num + 3].walls['N'].door = Door(next_door_pair)
-		next_door_pair += 1
-	if side == 'E':
-		ROOMS[room_num + 1].walls['W'].door = Door(next_door_pair)
-		next_door_pair += 1
-	if side == 'W':
-		ROOMS[room_num - 1].walls['E'].door = Door(next_door_pair)
-		next_door_pair += 1
+		ROOMS[room_num - 3].walls['S'].door = newDoor
+	elif side == 'S':
+		ROOMS[room_num + 3].walls['N'].door = newDoor
+	elif side == 'E':
+		ROOMS[room_num + 1].walls['W'].door = newDoor
+	elif side == 'W':
+		ROOMS[room_num - 1].walls['E'].door = newDoor
 
 # takes a room num from 0 to 8 and a url for a wallpaper
 def add_wallpaper_to_room(room_num, url):
@@ -156,12 +155,12 @@ print("Hello from PRIMEDesigner15.py (after COMMON_CODE)")
 INITIAL_STATE = {}
 ROOMS = []
 DOORS = []
-next_door_pair = 0
 # Create 9 rooms, add them to the list.
 for j in range(3):
 	for i in range(3):
 		ROOMS.append( Room(i, j, i + 1, j + 1) )
-INITIAL_STATE['Rooms'] = ROOMS		
+INITIAL_STATE['Rooms'] = ROOMS
+INITIAL_STATE['Doors'] = DOORS		
 #</INITIAL_STATE>
 
 #It seems to me like the way this worked before is that in COMMON_CODE were all
