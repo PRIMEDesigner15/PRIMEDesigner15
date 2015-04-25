@@ -89,7 +89,7 @@ class Wall:
 		self.x2 = x2
 		self.y2 = y2
 		self.loc = loc
-		self.door = None
+		self.door = Door()
 		
 		# Possible puzzle
 		self.puzzle = None
@@ -107,7 +107,7 @@ class Wallpaper:
 
 class Door:
 	
-	def __init__(self, isOpen):
+	def __init__(self, isOpen = True):
 		self.isOpen = isOpen
 		
 	# Closes the door if it is open.
