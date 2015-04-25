@@ -94,7 +94,7 @@ class Wall:
 		# Possible puzzle
 		self.puzzle = None
 		
-		# Possible wallpaper.
+		# Creates a wallpaper, default picture is wall.jpg
 		self.wallpaper = Wallpaper()
 		
 # Default url is wall.jpg
@@ -110,7 +110,9 @@ class Door:
 	def __init__(self, isOpen):
 		self.isOpen = isOpen
 		
-	def change_stance(self):
+	# Closes the door if it is open.
+	# Opens the door if it is closed.
+	def open_or_close(self):
 		self.isOpen = not isOpen
 		
 #ask steve about what the Operator class in 05 does
@@ -129,7 +131,7 @@ class Operator:
 # takes a room num from 0 to 8 and a side for the door to be on, [N, S, E, W]
 def add_door_to_room(room_num, side):
 	global DOORS
-	newDoor = Door(False) # Doors are initialized as closed
+	newDoor = Door(isOpen = False) # Doors are initialized as closed
 	DOORS.append(newDoor)
 	ROOMS[room_num].walls[side].door = newDoor
 	if side == 'N':

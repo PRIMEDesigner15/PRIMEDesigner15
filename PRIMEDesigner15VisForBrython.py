@@ -64,6 +64,7 @@ def hideOrShowSelection(event):
     SHOW_SELECTION_Button.text = "Enable highlighting of the selected box."    
   render_state_svg_graphics(LAST_STATE)
 		
+# draws the game
 def render_state_svg_graphics(state):
 	for room in state['Rooms']:
 		drawRoom(room)
@@ -107,12 +108,13 @@ def drawRoom(room):
 		
 # draws a wall, requires 2 more points to form trapezoidal 3d shape.
 # Temporary optional color for walls.
-def drawWall(wall,x3,y3,x4,y4, color = "black"):
-	drawWallpaper(wall,x3,y3,x4,y4,color)
-	
+def drawWall(wall,x3,y3,x4,y4):
+	drawWallpaper(wall,x3,y3,x4,y4)
+	if not (wall.door is None):
+		drawDoor
+		
 # draws a wallpaper, requires 2 more points to form trapezoidal 3d shape.	
-# Temporary color parameter determines fill color of wall.
-def drawWallpaper(wall,x3,y3,x4,y4, color):
+def drawWallpaper(wall,x3,y3,x4,y4):
 	global LINE_WIDTH, APANEL
 	
 	# Create pattern for image representation.
@@ -144,11 +146,14 @@ def drawWallpaper(wall,x3,y3,x4,y4, color):
 					
 	# Append polygon to svg panel
 	APANEL <= WallpaperDiv
+
+def drawDoor:
+	# Does nothing for now.
 	
+# Convert x coordinate from the range [0.0, 1.0] to 
+# the range [0,GAME_WIDTH] and the y coordinate to the
+# range [0,GAME_HEIGHT].
 def mapCoordsToDIV(x, y):
-	'''Convert x coordinate from the range [0.0, 1.0] to
-    the range [MARGIN, PAINTING_WIDTH - MARGIN], and
-    the y coordinate to the range [MARGIN, PAINTING_HEIGHT - MARGIN].'''
 	global GAME_WIDTH, GAME_HEIGHT
 	newX = int( (x * GAME_WIDTH)/3) 
 	newY = int( (y * GAME_HEIGHT)/3) 
