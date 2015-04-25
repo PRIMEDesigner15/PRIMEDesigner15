@@ -110,9 +110,9 @@ def drawRoom(room):
 # Temporary optional color for walls.
 def drawWall(wall,x3,y3,x4,y4):
 	drawWallpaper(wall,x3,y3,x4,y4)
-	if not (wall.door is None):
-		drawDoor
-		
+	#if not (wall.door is None):
+	drawDoor(wall,x3,y3,x4,y4)
+	
 # draws a wallpaper, requires 2 more points to form trapezoidal 3d shape.	
 def drawWallpaper(wall,x3,y3,x4,y4):
 	global LINE_WIDTH, APANEL
@@ -131,9 +131,87 @@ def drawWallpaper(wall,x3,y3,x4,y4):
 	# The thing below doesn't work for some reason...
 	#transform = svg.animateTransform(attributeType = "XML", attributeName="transform", type="rotate",From="0,200,200",to="360,200,200",begin="0s", dur="1s", repeatCount="indefinite")
 
+	WallpaperDiv = create_polygon(wall.x1,wall.y1,wall.x2,wall.y2,x3,y3,x4,y4,fill="url(#image)" )
+					
+	# Append polygon to svg panel
+	APANEL <= WallpaperDiv
+
+# 	
+def drawDoor(wall,fx3,fy3,fx4,fy4):
+
+	DOOR_SIZE = (1/3)
+
+	# map coords independently of object values and reassign
+	(fx1,fy1,fx2,fy2) = (wall.x1,wall.y1,wall.x2,wall.y2)
+	
+	
+	if (wall.loc == 'E' or wall.loc == 'W'):
+		fy1 += DOOR_SIZE
+		fy2 -= DOOR_SIZE
+		fy3 -= DOOR_SIZE * (4/5)
+		fy4 += DOOR_SIZE * (4/5)
+		
+	if (wall.loc == 'N' or wall.loc == 'S'):
+		fx1 += DOOR_SIZE
+		fx2 -= DOOR_SIZE
+		fx3 -= DOOR_SIZE * (4/5)
+		fx4 += DOOR_SIZE * (4/5)
+	
+	(dx1,dy1,dx2,dy2,dx3,dy3,dx4,dy4) = (fx1,fy1,fx2,fy2,fx3,fy3,fx4,fy4)
+	
+	if(wall.loc == 'E'):
+		if(wall.door.isOpen):
+			dx1 = fx1
+			dy1 = fy1
+			dx2 = fx4 - DOOR_SIZE * (1/2)
+			dy2 = fy1
+			dx3 = dx2
+			dy3 = fy4
+			dx4 = fx4
+			dy4 = fy4
+		else:
+			dx1 = fx1
+			dy1 = fy1
+			dx2 = fx2 - .05 
+			dy2 = fy2
+			dx3 = fx3 - .05
+			dy3 = fy3
+			dx4 = fx4
+			dy4 = fy4
+	if(wall.loc == 'W'):
+		if(not wall.door.isOpen):
+			dx1 = fx1
+			dy1 = fy2
+			dx2 = fx4 + DOOR_SIZE * (1/2)
+			dy2 = fy2
+			dx3 = dx2
+			dy3 = fy3
+			dx4 = fx4
+			dy4 = fy3
+		else:
+			dx1 = fx1
+			dy1 = fy1
+			dx2 = fx2 + .05 
+			dy3 = fy2
+			dx3 = fx3 + .05
+			dy3 = fy3
+			dx4 = fx4
+			dy4 = fy4
+	
+	
+	
+	frameDiv = create_polygon(fx1,fy1,fx2,fy2,fx3,fy3,fx4,fy4, fill = "black")
+	doorDiv = create_polygon(dx1,dy1,dx2,dy2,dx3,dy3,dx4,dy4, fill = "brown")				
+	# Append polygon to svg panel
+	APANEL <= frameDiv
+	APANEL <= doorDiv
+
+# returns a div representing a polygon at the given 4 points.
+def create_polygon(x1,y1,x2,y2,x3,y3,x4,y4, fill = "black"):
+	
 	# Maps points to Div
-	(X1,Y1) = mapCoordsToDIV(wall.x1,wall.y1)
-	(X2,Y2) = mapCoordsToDIV(wall.x2,wall.y2)
+	(X1,Y1) = mapCoordsToDIV(x1,y1)
+	(X2,Y2) = mapCoordsToDIV(x2,y2)
 	(X3,Y3) = mapCoordsToDIV(x3,y3)
 	(X4,Y4) = mapCoordsToDIV(x4,y4)
 	
@@ -141,16 +219,13 @@ def drawWallpaper(wall,x3,y3,x4,y4):
 	Points = str(X1) + "," + str(Y1) + " " + str(X2) + "," + str(Y2) + " " + str(X3) + "," + str(Y3) + " " + str(X4) + "," + str(Y4)
 	
 	# Create polygon
-	WallpaperDiv = svg.polygon(fill="url(#image)",stroke="white",stroke_width=LINE_WIDTH,
+	poly = svg.polygon(fill= fill,stroke="white",stroke_width=LINE_WIDTH,
 					points=Points)
 					
 	# Append polygon to svg panel
-	APANEL <= WallpaperDiv
-
-def drawDoor:
-	# Does nothing for now.
+	return poly
 	
-# Convert x coordinate from the range [0.0, 1.0] to 
+# Convert x coordinate from the range [0.0, 3.0] to 
 # the range [0,GAME_WIDTH] and the y coordinate to the
 # range [0,GAME_HEIGHT].
 def mapCoordsToDIV(x, y):
