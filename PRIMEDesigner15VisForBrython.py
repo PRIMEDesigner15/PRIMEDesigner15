@@ -144,7 +144,6 @@ def drawDoor(wall,fx3,fy3,fx4,fy4):
 	# map coords independently of object values and reassign
 	(fx1,fy1,fx2,fy2) = (wall.x1,wall.y1,wall.x2,wall.y2)
 	
-	
 	if (wall.loc == 'E' or wall.loc == 'W'):
 		fy1 += DOOR_SIZE
 		fy2 -= DOOR_SIZE
@@ -197,7 +196,8 @@ def drawDoor(wall,fx3,fy3,fx4,fy4):
 			dy3 = fy3
 			dx4 = fx4
 			dy4 = fy4
-	
+	# TODO: add West and East door representations.
+		
 	
 	
 	frameDiv = create_polygon(fx1,fy1,fx2,fy2,fx3,fy3,fx4,fy4, fill = "black")
