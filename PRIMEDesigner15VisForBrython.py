@@ -74,6 +74,7 @@ def drawRoom(room):
 	# thickness of a room's walls.
 	THICKNESS = .2
 	
+	#(x3,y3) and (x4,y4) make up the shorter end of the trapezoid
 	# draws north wall
 	wall = room.walls['N']
 	x3 = wall.x2 - THICKNESS/pow(2,1/2)
@@ -110,8 +111,8 @@ def drawRoom(room):
 # Temporary optional color for walls.
 def drawWall(wall,x3,y3,x4,y4):
 	drawWallpaper(wall,x3,y3,x4,y4)
-	#if not (wall.door is None):
-	drawDoor(wall,x3,y3,x4,y4)
+	if (wall.door is not None):
+		drawDoor(wall,x3,y3,x4,y4)
 	
 # draws a wallpaper, requires 2 more points to form trapezoidal 3d shape.	
 def drawWallpaper(wall,x3,y3,x4,y4):
@@ -119,8 +120,18 @@ def drawWallpaper(wall,x3,y3,x4,y4):
 	
 	# Create pattern for image representation.
 	defs = svg.defs()
-	pattern = svg.pattern(id="image",height="100",width = "50")
-	img = svg.image(xlink_href=wall.wallpaper.url, x="0",y="0", width="100", height="100")
+	pattern = svg.pattern(id="image",height="100",width = "50", transform="rotate(0)")
+	if (wall.loc == 'N'):
+		img = svg.image(xlink_href=wall.wallpaper.url, x="0",y="0", width="100", height="100", transform="rotate(0)")
+	elif (wall.loc == 'S'):
+		img = svg.image(xlink_href=wall.wallpaper.url, x="0",y="0", width="100", height="100", transform="rotate(180, 50, 50)")
+	elif (wall.loc == 'E'):
+		#alert("East walls triggered")
+		img = svg.image(xlink_href=wall.wallpaper.url, x="0",y="0", width="100", height="100", transform="rotate(90, 50, 50)")
+	elif (wall.loc == 'W'):
+		img = svg.image(xlink_href=wall.wallpaper.url, x="0",y="0", width="100", height="100", transform="rotate(270, 50, 50)")
+	
+	
 	
 	# Append
 	pattern <= img
@@ -130,8 +141,9 @@ def drawWallpaper(wall,x3,y3,x4,y4):
 	# TODO: Tranform pattern based on wall orientation.
 	# The thing below doesn't work for some reason...
 	#transform = svg.animateTransform(attributeType = "XML", attributeName="transform", type="rotate",From="0,200,200",to="360,200,200",begin="0s", dur="1s", repeatCount="indefinite")
-
-	WallpaperDiv = create_polygon(wall.x1,wall.y1,wall.x2,wall.y2,x3,y3,x4,y4,fill="url(#image)" )
+	
+	WallpaperDiv = create_polygon(wall.x1, wall.y1, wall.x2, wall.y2, x3, y3, x4, y4,
+								  fill="url(#image)")
 					
 	# Append polygon to svg panel
 	APANEL <= WallpaperDiv
@@ -144,6 +156,7 @@ def drawDoor(wall,fx3,fy3,fx4,fy4):
 	# map coords independently of object values and reassign
 	(fx1,fy1,fx2,fy2) = (wall.x1,wall.y1,wall.x2,wall.y2)
 	
+	#fit the door (f)rame into a smaller trapezoid:
 	
 	if (wall.loc == 'E' or wall.loc == 'W'):
 		fy1 += DOOR_SIZE
@@ -151,7 +164,7 @@ def drawDoor(wall,fx3,fy3,fx4,fy4):
 		fy3 -= DOOR_SIZE * (4/5)
 		fy4 += DOOR_SIZE * (4/5)
 		
-	if (wall.loc == 'N' or wall.loc == 'S'):
+	elif (wall.loc == 'N' or wall.loc == 'S'):
 		fx1 += DOOR_SIZE
 		fx2 -= DOOR_SIZE
 		fx3 -= DOOR_SIZE * (4/5)
@@ -169,17 +182,8 @@ def drawDoor(wall,fx3,fy3,fx4,fy4):
 			dy3 = fy4
 			dx4 = fx4
 			dy4 = fy4
-		else:
-			dx1 = fx1
-			dy1 = fy1
-			dx2 = fx2 - .05 
-			dy2 = fy2
-			dx3 = fx3 - .05
-			dy3 = fy3
-			dx4 = fx4
-			dy4 = fy4
-	if(wall.loc == 'W'):
-		if(not wall.door.isOpen):
+	elif(wall.loc == 'W'):
+		if(wall.door.isOpen):
 			dx1 = fx1
 			dy1 = fy2
 			dx2 = fx4 + DOOR_SIZE * (1/2)
@@ -188,15 +192,6 @@ def drawDoor(wall,fx3,fy3,fx4,fy4):
 			dy3 = fy3
 			dx4 = fx4
 			dy4 = fy3
-		else:
-			dx1 = fx1
-			dy1 = fy1
-			dx2 = fx2 + .05 
-			dy3 = fy2
-			dx3 = fx3 + .05
-			dy3 = fy3
-			dx4 = fx4
-			dy4 = fy4
 	
 	
 	
@@ -207,7 +202,7 @@ def drawDoor(wall,fx3,fy3,fx4,fy4):
 	APANEL <= doorDiv
 
 # returns a div representing a polygon at the given 4 points.
-def create_polygon(x1,y1,x2,y2,x3,y3,x4,y4, fill = "black"):
+def create_polygon(x1,y1,x2,y2,x3,y3,x4,y4, fill = "black", transform = "rotate(0)"):
 	
 	# Maps points to Div
 	(X1,Y1) = mapCoordsToDIV(x1,y1)
@@ -220,7 +215,7 @@ def create_polygon(x1,y1,x2,y2,x3,y3,x4,y4, fill = "black"):
 	
 	# Create polygon
 	poly = svg.polygon(fill= fill,stroke="white",stroke_width=LINE_WIDTH,
-					points=Points)
+					points=Points, transform=transform)
 					
 	# Append polygon to svg panel
 	return poly
