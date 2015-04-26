@@ -89,6 +89,7 @@ class Wall:
 		self.x2 = x2
 		self.y2 = y2
 		self.loc = loc
+		# Start a wall of with a door, TEMPORARY FOR DEVELOPEMENT
 		self.door = Door()
 		
 		# Possible puzzle
@@ -107,6 +108,7 @@ class Wallpaper:
 
 class Door:
 	
+	# Default open state should be FALSE, true IS FOR DEVELOPEMENT
 	def __init__(self, isOpen = True):
 		self.isOpen = isOpen
 		

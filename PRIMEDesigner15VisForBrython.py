@@ -120,18 +120,19 @@ def drawWallpaper(wall,x3,y3,x4,y4):
 	
 	# Create pattern for image representation.
 	defs = svg.defs()
-	pattern = svg.pattern(id="image",height="100",width = "50", transform="rotate(0)")
-	if (wall.loc == 'N'):
-		img = svg.image(xlink_href=wall.wallpaper.url, x="0",y="0", width="100", height="100", transform="rotate(0)")
-	elif (wall.loc == 'S'):
-		img = svg.image(xlink_href=wall.wallpaper.url, x="0",y="0", width="100", height="100", transform="rotate(180, 50, 50)")
+	
+	transform="rotate(0)"
+	pattern = svg.pattern(id="wallpaper",height="100",width = "50", transform = transform)
+	
+	if (wall.loc == 'S'):
+		transform="rotate(180, 50, 50)"
 	elif (wall.loc == 'E'):
 		#alert("East walls triggered")
-		img = svg.image(xlink_href=wall.wallpaper.url, x="0",y="0", width="100", height="100", transform="rotate(90, 50, 50)")
+		transform="rotate(90, 50, 50)"
 	elif (wall.loc == 'W'):
-		img = svg.image(xlink_href=wall.wallpaper.url, x="0",y="0", width="100", height="100", transform="rotate(270, 50, 50)")
+		transform = "rotate(270, 50, 50)"
 	
-	
+	img = svg.image(xlink_href=wall.wallpaper.url, x="0",y="0", width="100", height="100", transform=transform)
 	
 	# Append
 	pattern <= img
@@ -143,83 +144,70 @@ def drawWallpaper(wall,x3,y3,x4,y4):
 	#transform = svg.animateTransform(attributeType = "XML", attributeName="transform", type="rotate",From="0,200,200",to="360,200,200",begin="0s", dur="1s", repeatCount="indefinite")
 	
 	WallpaperDiv = create_polygon(wall.x1, wall.y1, wall.x2, wall.y2, x3, y3, x4, y4,
-								  fill="url(#image)")
+								  fill="url(#wallpaper)")
 					
 	# Append polygon to svg panel
 	APANEL <= WallpaperDiv
 
-# 	
-def drawDoor(wall,fx3,fy3,fx4,fy4):
+# Draws a door frame on a wall with the given wall coordinates.
+# and then draws a door on that frame.
+def drawDoor(wall,x3,y3,x4,y4):
 
-	DOOR_SIZE = (1/3)
+	# Caution: Sensitive variable, keep it around 3 for a good sized door.
+	DOOR_SIZE = 3
 
-	# map coords independently of object values and reassign
-	(fx1,fy1,fx2,fy2) = (wall.x1,wall.y1,wall.x2,wall.y2)
+	# map (f)rame coords to wall coords before translation
+	(fx1,fy1,fx2,fy2,fx3,fy3,fx4,fy4) = (wall.x1,wall.y1,wall.x2,wall.y2,x3,y3,x4,y4)
 	
-<<<<<<< HEAD
-=======
-	#fit the door (f)rame into a smaller trapezoid:
-	
->>>>>>> origin/master
+	# fit the door (f)rame into a smaller trapezoid
 	if (wall.loc == 'E' or wall.loc == 'W'):
-		fy1 += DOOR_SIZE
-		fy2 -= DOOR_SIZE
-		fy3 -= DOOR_SIZE * (4/5)
-		fy4 += DOOR_SIZE * (4/5)
+		fy1 += 1/DOOR_SIZE
+		fy2 -= 1/DOOR_SIZE
+		fy3 -= 1/DOOR_SIZE * (4/5)
+		fy4 += 1/DOOR_SIZE * (4/5)
 		
 	elif (wall.loc == 'N' or wall.loc == 'S'):
-		fx1 += DOOR_SIZE
-		fx2 -= DOOR_SIZE
-		fx3 -= DOOR_SIZE * (4/5)
-		fx4 += DOOR_SIZE * (4/5)
+		fx1 += 1/DOOR_SIZE
+		fx2 -= 1/DOOR_SIZE
+		fx3 -= 1/DOOR_SIZE * (4/5)
+		fx4 += 1/DOOR_SIZE * (4/5)
 	
+	# Map default (d)oor coords to (f)rame coords. 
 	(dx1,dy1,dx2,dy2,dx3,dy3,dx4,dy4) = (fx1,fy1,fx2,fy2,fx3,fy3,fx4,fy4)
 	
-	if(wall.loc == 'E'):
-		if(wall.door.isOpen):
-			dx1 = fx1
-			dy1 = fy1
-			dx2 = fx4 - DOOR_SIZE * (1/2)
+	# Map (d)oor coordinates based off (f)rame's
+	if(wall.door.isOpen):
+		if(wall.loc == 'E'):
+			dx2 = fx4 - DOOR_SIZE * (1/15)
 			dy2 = fy1
 			dx3 = dx2
 			dy3 = fy4
-			dx4 = fx4
-			dy4 = fy4
-	elif(wall.loc == 'W'):
-		if(wall.door.isOpen):
-			dx1 = fx1
+		elif(wall.loc == 'W'):
 			dy1 = fy2
-			dx2 = fx4 + DOOR_SIZE * (1/2)
-			dy2 = fy2
+			dx2 = fx4 + DOOR_SIZE * (1/15)
 			dx3 = dx2
-			dy3 = fy3
-			dx4 = fx4
 			dy4 = fy3
-<<<<<<< HEAD
-		else:
-			dx1 = fx1
-			dy1 = fy1
-			dx2 = fx2 + .05 
-			dy3 = fy2
-			dx3 = fx3 + .05
-			dy3 = fy3
-			dx4 = fx4
-			dy4 = fy4
-	# TODO: add West and East door representations.
-		
-=======
+		elif(wall.loc == 'N'):
+			dx2 = fx1
+			dy2 = fy1 + DOOR_SIZE * (1/7.5)
+			dx3 = fx4 
+			dy3 = dy2
+		elif(wall.loc == 'S'):
+			dx1 = fx2
+			dy1 = fy2
+			dy2 = fy2 - DOOR_SIZE * (1/7.5)
+			dy3 = dy2
+			dx4 = fx3
 	
->>>>>>> origin/master
-	
-	
+	# Create frame and door polygons
 	frameDiv = create_polygon(fx1,fy1,fx2,fy2,fx3,fy3,fx4,fy4, fill = "black")
-	doorDiv = create_polygon(dx1,dy1,dx2,dy2,dx3,dy3,dx4,dy4, fill = "brown")				
+	doorDiv = create_polygon(dx1,dy1,dx2,dy2,dx3,dy3,dx4,dy4, fill = "#c9731e")				
 	# Append polygon to svg panel
 	APANEL <= frameDiv
 	APANEL <= doorDiv
 
-# returns a div representing a polygon at the given 4 points.
-def create_polygon(x1,y1,x2,y2,x3,y3,x4,y4, fill = "black", transform = "rotate(0)"):
+# returns an svg polygon at the given 4 points.
+def create_polygon(x1,y1,x2,y2,x3,y3,x4,y4, fill = "black", stroke = "black", transform = "rotate(0)"):
 	
 	# Maps points to Div
 	(X1,Y1) = mapCoordsToDIV(x1,y1)
@@ -231,10 +219,10 @@ def create_polygon(x1,y1,x2,y2,x3,y3,x4,y4, fill = "black", transform = "rotate(
 	Points = str(X1) + "," + str(Y1) + " " + str(X2) + "," + str(Y2) + " " + str(X3) + "," + str(Y3) + " " + str(X4) + "," + str(Y4)
 	
 	# Create polygon
-	poly = svg.polygon(fill= fill,stroke="white",stroke_width=LINE_WIDTH,
+	poly = svg.polygon(fill= fill,stroke=stroke,stroke_width=LINE_WIDTH,
 					points=Points, transform=transform)
 					
-	# Append polygon to svg panel
+	# return polygon
 	return poly
 	
 # Convert x coordinate from the range [0.0, 3.0] to 
