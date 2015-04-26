@@ -145,6 +145,7 @@ def add_door_to_room(room_num, side):
 
 # takes a room num from 0 to 8 and a url for a wallpaper
 def add_wallpaper_to_room(room_num, url):
+	global ROOMS
 	picked = ROOMS[room_num]
 	for loc in picked.walls:
 		picked.walls[loc].wallpaper = Wallpaper(url)
