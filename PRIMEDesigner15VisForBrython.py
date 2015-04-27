@@ -201,8 +201,16 @@ def drawDoor(wall,x3,y3,x4,y4):
 	
 	# Create frame and door polygons
 	frameDiv = create_polygon(fx1,fy1,fx2,fy2,fx3,fy3,fx4,fy4, fill = "black")
-	doorDiv = create_polygon(dx1,dy1,dx2,dy2,dx3,dy3,dx4,dy4, fill = "#c9731e")				
+	doorDiv = create_polygon(dx1,dy1,dx2,dy2,dx3,dy3,dx4,dy4, fill = "url(#door)") #fill = "#c9731e"	
+	
+	defs = svg.defs()
+	pattern = svg.pattern(id="door",height="100",width = "100")
+	img = svg.image(xlink_href=wall.door.url, x="0",y="0", height="100", width="100")
+	pattern <= img
+	defs <= pattern
+		
 	# Append polygon to svg panel
+	APANEL <= defs
 	APANEL <= frameDiv
 	APANEL <= doorDiv
 

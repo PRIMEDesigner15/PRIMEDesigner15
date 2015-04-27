@@ -109,8 +109,9 @@ class Wallpaper:
 class Door:
 	
 	# Default open state should be FALSE, true IS FOR DEVELOPEMENT
-	def __init__(self, isOpen = True):
+	def __init__(self, isOpen = True, url="door.jpg"):
 		self.isOpen = isOpen
+		self.url = url
 		
 	# Closes the door if it is open.
 	# Opens the door if it is closed.
