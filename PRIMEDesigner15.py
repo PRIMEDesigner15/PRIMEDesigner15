@@ -144,7 +144,7 @@ class Operator:
     return self.state_transf(state)
 
 # takes a room num from 0 to 8 and a side for the door to be on, [N, S, E, W]
-def add_door_to_room(room_num, side):
+def add_door_to_room(room_num, side, state):
 	global DOORS, ROOMS
 	newDoor = Door(isOpen = False) # Doors are initialized as closed
 	DOORS.append(newDoor)
@@ -159,13 +159,13 @@ def add_door_to_room(room_num, side):
 		ROOMS[room_num - 1].walls['E'].door = newDoor
 
 # takes a room num from 0 to 8 and a url for a wallpaper
-def add_wallpaper_to_room(room_num, url):
+def add_wallpaper_to_room(room_num, url, state):
 	global ROOMS
 	picked = ROOMS[room_num]
 	for loc in picked.walls:
 		picked.walls[loc].wallpaper = Wallpaper(url)
 
-def change_selection(state, room_num):
+def change_selection(room_num, state):
 	newState = copy_state(state)
 	newState["Selected"] = newState['Rooms'][room_num]
 	return newState
