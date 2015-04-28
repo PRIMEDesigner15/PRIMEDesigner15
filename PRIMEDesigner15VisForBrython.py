@@ -111,7 +111,7 @@ def drawRoom(room):
 # Temporary optional color for walls.
 def drawWall(wall,x3,y3,x4,y4):
 	drawWallpaper(wall,x3,y3,x4,y4)
-	if (wall.door is not None):
+	if (wall.door):
 		drawDoor(wall,x3,y3,x4,y4)
 	
 # draws a wallpaper, requires 2 more points to form trapezoidal 3d shape.	

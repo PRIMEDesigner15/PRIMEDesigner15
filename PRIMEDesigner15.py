@@ -105,7 +105,6 @@ class Wallpaper:
 	def __init__(self, url = "wall.jpg"):
 		self.url = url
 	
-
 class Door:
 	
 	# Default open state should be FALSE, true IS FOR DEVELOPEMENT
@@ -117,6 +116,19 @@ class Door:
 	# Opens the door if it is closed.
 	def open_or_close(self):
 		self.isOpen = not isOpen
+
+class Puzzle:
+	
+	def __init__(self):
+	
+	def copy(self):
+
+class Music:
+
+	def __init__(self):
+	
+	def copy(self):
+	
 		
 #ask steve about what the Operator class in 05 does
 class Operator:
@@ -125,15 +137,15 @@ class Operator:
     self.precond = precond
     self.state_transf = state_transf
 
-  def is_applicable(self, s):
-    return self.precond(s)
+  def is_applicable(self, state):
+    return self.precond(state)
 
-  def apply(self, s):
-    return self.state_transf(s)
+  def apply(self, state):
+    return self.state_transf(state)
 
 # takes a room num from 0 to 8 and a side for the door to be on, [N, S, E, W]
 def add_door_to_room(room_num, side):
-	global DOORS
+	global DOORS, ROOMS
 	newDoor = Door(isOpen = False) # Doors are initialized as closed
 	DOORS.append(newDoor)
 	ROOMS[room_num].walls[side].door = newDoor
@@ -153,6 +165,10 @@ def add_wallpaper_to_room(room_num, url):
 	for loc in picked.walls:
 		picked.walls[loc].wallpaper = Wallpaper(url)
 
+def change_selection(state, room_num):
+	newState = copy_state(state)
+	newState["Selected"] = newState['Rooms'][room_num]
+	return newState
 #</COMMON_CODE>		
 	
 print("Hello from PRIMEDesigner15.py (after COMMON_CODE)")
@@ -161,12 +177,14 @@ print("Hello from PRIMEDesigner15.py (after COMMON_CODE)")
 INITIAL_STATE = {}
 ROOMS = []
 DOORS = []
+Selected = 0
 # Create 9 rooms, add them to the list.
 for j in range(3):
 	for i in range(3):
 		ROOMS.append( Room(i, j, i + 1, j + 1) )
 INITIAL_STATE['Rooms'] = ROOMS
-INITIAL_STATE['Doors'] = DOORS		
+INITIAL_STATE['Doors'] = DOORS
+INITIAL_STATE['Selected'] = selected		
 #</INITIAL_STATE>
 
 #It seems to me like the way this worked before is that in COMMON_CODE were all
@@ -174,10 +192,13 @@ INITIAL_STATE['Doors'] = DOORS
 #valid to use in the current state. We should double check with Steve but
 #I'll be running with this interpretation. 
 #<OPERATORS>
-
+selection_operators =\
+	[Operator("Switch to room numbered " + num + 1 + " for editing",
+			lambda state: num is not state["Selected"]
+			lambda state: change_selection(state, num)
+	for num in range(9)]
 	
-# Operators is temporarily an empty list.
-OPERATORS = []
+OPERATORS = selection_operators
 #</OPERATORS>
 
 if "BRYTHON" in globals():
