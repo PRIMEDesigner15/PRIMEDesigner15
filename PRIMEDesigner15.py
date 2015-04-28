@@ -145,15 +145,19 @@ class Door:
 class Puzzle:
 	
 	def __init__(self):
-	
+		pass# nothing happens right now
+		
 	def copy(self):
-
+		pass# nothing happens right now
+		
 class Music:
 
 	def __init__(self):
+		pass# nothing happens right now
 	
 	def copy(self):
-		
+		pass# nothing happens right now
+	
 #ask steve about what the Operator class in 05 does
 class Operator:
   def __init__(self, name, precond, state_transf):
@@ -208,7 +212,7 @@ for j in range(3):
 		ROOMS.append( Room(i, j, i + 1, j + 1) )
 INITIAL_STATE['Rooms'] = ROOMS
 INITIAL_STATE['Doors'] = DOORS
-INITIAL_STATE['Selected'] = selected		
+INITIAL_STATE['Selected'] = Selected		
 #</INITIAL_STATE>
 
 #It seems to me like the way this worked before is that in COMMON_CODE were all
@@ -217,9 +221,9 @@ INITIAL_STATE['Selected'] = selected
 #I'll be running with this interpretation. 
 #<OPERATORS>
 selection_operators =\
-	[Operator("Switch to room numbered " + num + 1 + " for editing",
-			lambda state: num is not state["Selected"]
-			lambda state: change_selection(state, num)
+	[Operator("Switch to room numbered " + str(num + 1) + " for editing",
+			lambda state: num is not state["Selected"],
+			lambda state: change_selection(state, num))
 	for num in range(9)]
 	
 OPERATORS = selection_operators

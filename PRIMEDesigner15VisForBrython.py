@@ -66,8 +66,33 @@ def hideOrShowSelection(event):
 		
 # draws the game
 def render_state_svg_graphics(state):
+	global SHOWING_SELECTION
+	THICKNESS = 1.5
 	for room in state['Rooms']:
 		drawRoom(room)
+	
+	if SHOWING_SELECTION:
+		selected_room = state['Rooms'][state['Selected']]
+		
+		(x1, y1) = mapCoordsToDIV(selected_room.x1, selected_room.y1)
+		(x2, y2) = mapCoordsToDIV(selected_room.x2, selected_room.y2)
+		
+		'''#top left
+		x1 = selected_room.x1
+		y1 = selected_room.y1
+		#bottom right
+		x2 = selected_room.x2
+		y2 = selected_room.y2
+		'''
+		outline = svg.rect(x = x1, y = y1, width = x2 - x1, height = y2 - y1, fill = "none",
+					style = {"stroke": "gold", "stroke-width": THICKNESS})
+		APANEL <= outline
+
+def mapCoordsToDIV(x, y):
+  global GAME_WIDTH, GAME_HEIGHT
+  newX = int(MARGIN + x*(GAME_WIDTH - 2*MARGIN))
+  newY = int(MARGIN + y*(GAME_HEIGHT - 2*MARGIN))
+  return (newX, newY)
 		
 # draws a room.		
 def drawRoom(room):
@@ -121,17 +146,17 @@ def drawWallpaper(wall,x3,y3,x4,y4):
 	# Create pattern for image representation.
 	defs = svg.defs()
 	
-	transform="rotate(0)"
-	pattern = svg.pattern(id="wallpaper",height="100",width = "50", transform = transform)
-	
+	pattern = svg.pattern(id="wallpaper",height="100",width = "50", transform = "rotate(0)")
+
 	if (wall.loc == 'S'):
-		transform="rotate(180, 50, 50)"
+		transform = "rotate(180, 50, 50)"
 	elif (wall.loc == 'E'):
 		#alert("East walls triggered")
-		transform="rotate(90, 50, 50)"
+		transform = "rotate(90, 50, 50)"
 	elif (wall.loc == 'W'):
 		transform = "rotate(270, 50, 50)"
-	
+	else:
+		transform = "rotate(0)"
 	img = svg.image(xlink_href=wall.wallpaper.url, x="0",y="0", width="100", height="100", transform=transform)
 	
 	# Append
@@ -167,7 +192,8 @@ def drawDoor(wall,x3,y3,x4,y4):
 		fx2 -= 1/DOOR_SIZE * (1/3)
 		fx3 -= 1/DOOR_SIZE * (4/15)
 		fx4 += 1/DOOR_SIZE * (4/15)
-	
+	else:
+		alert("drawDoor wall location check broke")
 	# Map default (d)oor coords to (f)rame coords. 
 	(dx1,dy1,dx2,dy2,dx3,dy3,dx4,dy4) = (fx1,fy1,fx2,fy2,fx3,fy3,fx4,fy4)
 	
@@ -194,7 +220,8 @@ def drawDoor(wall,x3,y3,x4,y4):
 			dy2 = fy2 - DOOR_SIZE * (2/5)
 			dy3 = dy2
 			dx4 = fx3
-	
+		else:
+			alert("wall door isOpen location broke")
 	# Create frame and door polygons
 	frameDiv = create_polygon(fx1,fy1,fx2,fy2,fx3,fy3,fx4,fy4, fill = "black")
 	doorDiv = create_polygon(dx1,dy1,dx2,dy2,dx3,dy3,dx4,dy4, fill = "url(#door)") #fill = "#c9731e"	
