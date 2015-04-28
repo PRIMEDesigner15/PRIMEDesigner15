@@ -139,10 +139,6 @@ def drawWallpaper(wall,x3,y3,x4,y4):
 	defs <= pattern
 	APANEL <= defs
 	
-	# TODO: Tranform pattern based on wall orientation.
-	# The thing below doesn't work for some reason...
-	#transform = svg.animateTransform(attributeType = "XML", attributeName="transform", type="rotate",From="0,200,200",to="360,200,200",begin="0s", dur="1s", repeatCount="indefinite")
-	
 	WallpaperDiv = create_polygon(wall.x1, wall.y1, wall.x2, wall.y2, x3, y3, x4, y4,
 								  fill="url(#wallpaper)")
 					
@@ -154,23 +150,23 @@ def drawWallpaper(wall,x3,y3,x4,y4):
 def drawDoor(wall,x3,y3,x4,y4):
 
 	# Caution: Sensitive variable, keep it around 3 for a good sized door.
-	DOOR_SIZE = 3
+	DOOR_SIZE = 1
 
 	# map (f)rame coords to wall coords before translation
 	(fx1,fy1,fx2,fy2,fx3,fy3,fx4,fy4) = (wall.x1,wall.y1,wall.x2,wall.y2,x3,y3,x4,y4)
 	
 	# fit the door (f)rame into a smaller trapezoid
 	if (wall.loc == 'E' or wall.loc == 'W'):
-		fy1 += 1/DOOR_SIZE
-		fy2 -= 1/DOOR_SIZE
-		fy3 -= 1/DOOR_SIZE * (4/5)
-		fy4 += 1/DOOR_SIZE * (4/5)
+		fy1 += 1/DOOR_SIZE * (1/3)
+		fy2 -= 1/DOOR_SIZE * (1/3)
+		fy3 -= 1/DOOR_SIZE * (4/15)
+		fy4 += 1/DOOR_SIZE * (4/15)
 		
 	elif (wall.loc == 'N' or wall.loc == 'S'):
-		fx1 += 1/DOOR_SIZE
-		fx2 -= 1/DOOR_SIZE
-		fx3 -= 1/DOOR_SIZE * (4/5)
-		fx4 += 1/DOOR_SIZE * (4/5)
+		fx1 += 1/DOOR_SIZE * (1/3)
+		fx2 -= 1/DOOR_SIZE * (1/3)
+		fx3 -= 1/DOOR_SIZE * (4/15)
+		fx4 += 1/DOOR_SIZE * (4/15)
 	
 	# Map default (d)oor coords to (f)rame coords. 
 	(dx1,dy1,dx2,dy2,dx3,dy3,dx4,dy4) = (fx1,fy1,fx2,fy2,fx3,fy3,fx4,fy4)
@@ -178,24 +174,24 @@ def drawDoor(wall,x3,y3,x4,y4):
 	# Map (d)oor coordinates based off (f)rame's
 	if(wall.door.isOpen):
 		if(wall.loc == 'E'):
-			dx2 = fx4 - DOOR_SIZE * (1/15)
+			dx2 = fx4 - DOOR_SIZE * (1/5)
 			dy2 = fy1
 			dx3 = dx2
 			dy3 = fy4
 		elif(wall.loc == 'W'):
 			dy1 = fy2
-			dx2 = fx4 + DOOR_SIZE * (1/15)
+			dx2 = fx4 + DOOR_SIZE * (1/5)
 			dx3 = dx2
 			dy4 = fy3
 		elif(wall.loc == 'N'):
 			dx2 = fx1
-			dy2 = fy1 + DOOR_SIZE * (1/7.5)
+			dy2 = fy1 + DOOR_SIZE * (2/5)
 			dx3 = fx4 
 			dy3 = dy2
 		elif(wall.loc == 'S'):
 			dx1 = fx2
 			dy1 = fy2
-			dy2 = fy2 - DOOR_SIZE * (1/7.5)
+			dy2 = fy2 - DOOR_SIZE * (2/5)
 			dy3 = dy2
 			dx4 = fx3
 	

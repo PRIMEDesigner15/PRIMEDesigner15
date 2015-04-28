@@ -28,9 +28,14 @@ print("Hello from PRIMEDesigner15.py (after METADATA)")
 
 #<COMMON_CODE>
 
-#def copy_state(s):
-	# Performs an appropriately deep copy of a state,
-	# for use by operators in creating new states.
+def copy_state(state):
+	newState = {}
+	for key in state:
+		newState[key] = state[key].copy()
+	return newState
+		
+		
+	
 
 def describe_state(state):
 	""" Produces a textual description of a state.
@@ -58,7 +63,6 @@ class Room:
 
 	""" A room in the game contains 4 walls that could have wallpapers or doors
 		and a possible ambient soundtrack, and a possible puzzle. """
-	     
 	def __init__(self, x1, y1, x2, y2):
 		
 		# Coordinates for display of the room.
@@ -80,6 +84,14 @@ class Room:
 		# Possible ambient soundtrack.
 		self.music = None
 		
+		def copy(self):
+			newRoom = Room(x1,y1,x2,y2)
+			for direction in self.walls:
+				newRoom.walls[direction] = self.walls[direction].copy()
+			#newRoom.music = music.copy(), THIS IS TEMPORARY 
+				
+	
+		
 """ A wall could contain a door or a wallpaper """	
 class Wall:
 
@@ -98,6 +110,14 @@ class Wall:
 		# Creates a wallpaper, default picture is wall.jpg
 		self.wallpaper = Wallpaper()
 		
+		# Returns a copy of itself
+		def copy(self):
+			newWall = Wall(self.x1,self.y1,self.x2,self.y2,self.loc)
+			newWall.door = self.door.copy()
+			#newWall.puzzle = puzzle.copy(), THIS IS A TEMPORARY MEASURE
+			newWall.wallpaper = self.wallpaper.copy()
+			return newWall
+		
 # Default url is wall.jpg
 # Test url is stripes.jpg for transformation testing.
 class Wallpaper:
@@ -105,6 +125,9 @@ class Wallpaper:
 	def __init__(self, url = "wall.jpg"):
 		self.url = url
 	
+	# Returns a copy of itself.
+	def copy(self):
+		return Wallpaper(self.url)
 
 class Door:
 	
@@ -117,6 +140,10 @@ class Door:
 	# Opens the door if it is closed.
 	def open_or_close(self):
 		self.isOpen = not isOpen
+	
+	# Returns a copy of itself.
+	def copy(self):
+		return Door(self.isOpen,self.url)
 		
 #ask steve about what the Operator class in 05 does
 class Operator:
