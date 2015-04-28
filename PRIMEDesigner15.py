@@ -29,9 +29,29 @@ print("Hello from PRIMEDesigner15.py (after METADATA)")
 #<COMMON_CODE>
 
 def copy_state(state):
-	newState = {}
-	for key in state:
-		newState[key] = state[key].copy()
+	
+	newState = {"Rooms": [], "Doors": []}
+	
+	newRooms = []
+	newDoors = []
+
+	# Copy the rooms and doors into the newState's dictionary.
+	for room in state["Rooms"]:
+		newRooms.append(room.copy())
+	for door in state["Doors"]:
+		newDoors.append(door.copy())
+
+	# Add in doors to the walls in the rooms.
+	door_index = 0
+	for roomNum in range(8):
+		for wall in state["Rooms"].walls:
+			if(state["Rooms"][roomNum].walls[direction].door is not None and newState["Rooms"][roomNum].walls[direction].door is None):
+				add_door_to_room(roomNum, direction, newState, state["Doors"][door_index])
+				door_index++
+	
+	newState["Rooms"] = newRooms
+	newState["Doors"] = newDoors
+	
 	return newState
 		
 def describe_state(state):
@@ -85,7 +105,7 @@ class Room:
 			newRoom = Room(x1,y1,x2,y2)
 			for direction in self.walls:
 				newRoom.walls[direction] = self.walls[direction].copy()
-			#newRoom.music = music.copy(), THIS IS TEMPORARY 
+			newRoom.music = music.copy()
 				
 	
 		
@@ -107,10 +127,9 @@ class Wall:
 		# Creates a wallpaper, default picture is wall.jpg
 		self.wallpaper = Wallpaper()
 		
-		# Returns a copy of itself
+		# Returns a copy of itself. Does not copy its door.
 		def copy(self):
 			newWall = Wall(self.x1,self.y1,self.x2,self.y2,self.loc)
-			newWall.door = self.door.copy()
 			#newWall.puzzle = puzzle.copy(), THIS IS A TEMPORARY MEASURE
 			newWall.wallpaper = self.wallpaper.copy()
 			return newWall
@@ -128,8 +147,7 @@ class Wallpaper:
 
 class Door:
 	
-	# Default open state should be FALSE, true IS FOR DEVELOPEMENT
-	def __init__(self, isOpen = True, url="door.jpg"):
+	def __init__(self, isOpen = False, url="door.jpg"):
 		self.isOpen = isOpen
 		self.url = url
 		
@@ -158,6 +176,14 @@ class Music:
 	def copy(self):
 		pass# nothing happens right now
 	
+class Music:
+
+	def __init__(self):
+		pass
+	
+	def copy(self):
+		pass
+		
 #ask steve about what the Operator class in 05 does
 class Operator:
   def __init__(self, name, precond, state_transf):
@@ -172,10 +198,13 @@ class Operator:
     return self.state_transf(state)
 
 # takes a room num from 0 to 8 and a side for the door to be on, [N, S, E, W]
-def add_door_to_room(room_num, side, state):
-	global DOORS, ROOMS
-	newDoor = Door(isOpen = False) # Doors are initialized as closed
-	DOORS.append(newDoor)
+# Optional newDoor parameter which allows you to pass which door the walls will point to.
+# Is default set to the creation of a new door.
+def add_door_to_room(room_num, side, state, newDoor = Door() ):
+	
+	ROOMS = state["Rooms"]
+	DOORS = state["Doors"]
+	
 	ROOMS[room_num].walls[side].door = newDoor
 	if side == 'N':
 		ROOMS[room_num - 3].walls['S'].door = newDoor
@@ -185,10 +214,12 @@ def add_door_to_room(room_num, side, state):
 		ROOMS[room_num + 1].walls['W'].door = newDoor
 	elif side == 'W':
 		ROOMS[room_num - 1].walls['E'].door = newDoor
-
+	DOORS.append(newDoor)
+	
 # takes a room num from 0 to 8 and a url for a wallpaper
 def add_wallpaper_to_room(room_num, url, state):
-	global ROOMS
+	
+	ROOMS = state["Rooms"]
 	picked = ROOMS[room_num]
 	for loc in picked.walls:
 		picked.walls[loc].wallpaper = Wallpaper(url)
@@ -205,7 +236,7 @@ print("Hello from PRIMEDesigner15.py (after COMMON_CODE)")
 INITIAL_STATE = {}
 ROOMS = []
 DOORS = []
-Selected = 0
+selected = 0
 # Create 9 rooms, add them to the list.
 for j in range(3):
 	for i in range(3):
@@ -226,7 +257,8 @@ selection_operators =\
 			lambda state: change_selection(state, num))
 	for num in range(9)]
 	
-OPERATORS = selection_operators
+#OPERATORS = selection_operators	
+OPERATORS = []
 #</OPERATORS>
 
 if "BRYTHON" in globals():
