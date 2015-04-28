@@ -106,6 +106,7 @@ class Room:
 			for direction in self.walls:
 				newRoom.walls[direction] = self.walls[direction].copy()
 			newRoom.music = music.copy()
+			return newRoom
 				
 	
 		
@@ -166,7 +167,7 @@ class Puzzle:
 		pass# nothing happens right now
 		
 	def copy(self):
-		pass# nothing happens right now
+		return Puzzle() # nothing happens right now
 		
 class Music:
 
@@ -174,16 +175,8 @@ class Music:
 		pass# nothing happens right now
 	
 	def copy(self):
-		pass# nothing happens right now
+		return Music() # nothing happens right now
 	
-class Music:
-
-	def __init__(self):
-		pass
-	
-	def copy(self):
-		pass
-		
 #ask steve about what the Operator class in 05 does
 class Operator:
   def __init__(self, name, precond, state_transf):
@@ -236,7 +229,7 @@ print("Hello from PRIMEDesigner15.py (after COMMON_CODE)")
 INITIAL_STATE = {}
 ROOMS = []
 DOORS = []
-selected = 0
+Selected = 0
 # Create 9 rooms, add them to the list.
 for j in range(3):
 	for i in range(3):
@@ -254,11 +247,11 @@ INITIAL_STATE['Selected'] = Selected
 selection_operators =\
 	[Operator("Switch to room numbered " + str(num + 1) + " for editing",
 			lambda state: num is not state["Selected"],
-			lambda state: change_selection(state, num))
+			lambda state: change_selection(num, state))
 	for num in range(9)]
 	
-#OPERATORS = selection_operators	
-OPERATORS = []
+OPERATORS = selection_operators	
+#OPERATORS = []
 #</OPERATORS>
 
 if "BRYTHON" in globals():
