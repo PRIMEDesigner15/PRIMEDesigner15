@@ -101,12 +101,12 @@ class Room:
 		# Possible ambient soundtrack.
 		self.music = None
 		
-		def copy(self):
-			newRoom = Room(x1,y1,x2,y2)
-			for direction in self.walls:
-				newRoom.walls[direction] = self.walls[direction].copy()
-			newRoom.music = music.copy()
-			return newRoom
+	def copy(self):
+		newRoom = Room(x1,y1,x2,y2)
+		for direction in self.walls:
+			newRoom.walls[direction] = self.walls[direction].copy()
+		newRoom.music = music.copy()
+		return newRoom
 				
 	
 		
