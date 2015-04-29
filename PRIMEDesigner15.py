@@ -29,7 +29,7 @@ print("Hello from PRIMEDesigner15.py (after METADATA)")
 #<COMMON_CODE>
 
 def copy_state(state):
-	
+	alert("copy_state called")
 	newState = {"Rooms": [], "Doors": []}
 	
 	newRooms = []
@@ -40,17 +40,21 @@ def copy_state(state):
 		newRooms.append(room.copy())
 	for door in state["Doors"]:
 		newDoors.append(door.copy())
-
+		
+	alert("copying doors")
 	# Add in doors to the walls in the rooms.
 	door_index = 0
 	for roomNum in range(8):
-		for wall in state["Rooms"].walls:
+		alert(state["Doors"])
+		for direction in state["Rooms"][roomNum].walls:
 			if(state["Rooms"][roomNum].walls[direction].door is not None and newState["Rooms"][roomNum].walls[direction].door is None):
 				add_door_to_room(roomNum, direction, newState, state["Doors"][door_index])
 				door_index++
+				
 	
 	newState["Rooms"] = newRooms
 	newState["Doors"] = newDoors
+	newState["Selected"] = state["Selected"]
 	
 	return newState
 		
@@ -99,13 +103,13 @@ class Room:
 		self.walls['E'] = (Wall(x2 ,y1 ,x2 ,y2, 'E')) #right
 	
 		# Possible ambient soundtrack.
-		self.music = None
+		self.music = Music()
 		
 	def copy(self):
-		newRoom = Room(x1,y1,x2,y2)
+		newRoom = Room(self.x1,self.y1,self.x2,self.y2)
 		for direction in self.walls:
 			newRoom.walls[direction] = self.walls[direction].copy()
-		newRoom.music = music.copy()
+		newRoom.music = self.music.copy()
 		return newRoom
 				
 	
@@ -120,20 +124,20 @@ class Wall:
 		self.y2 = y2
 		self.loc = loc
 		# Start a wall of with a door, TEMPORARY FOR DEVELOPEMENT
-		self.door = Door()
+		self.door = None
 		
 		# Possible puzzle
-		self.puzzle = None
+		self.puzzle = Puzzle()
 		
 		# Creates a wallpaper, default picture is wall.jpg
 		self.wallpaper = Wallpaper()
 		
 		# Returns a copy of itself. Does not copy its door.
-		def copy(self):
-			newWall = Wall(self.x1,self.y1,self.x2,self.y2,self.loc)
-			#newWall.puzzle = puzzle.copy(), THIS IS A TEMPORARY MEASURE
-			newWall.wallpaper = self.wallpaper.copy()
-			return newWall
+	def copy(self):
+		newWall = Wall(self.x1,self.y1,self.x2,self.y2,self.loc)
+		#newWall.puzzle = puzzle.copy(), THIS IS A TEMPORARY MEASURE
+		newWall.wallpaper = self.wallpaper.copy()
+		return newWall
 		
 # Default url is wall.jpg
 # Test url is stripes.jpg for transformation testing.
@@ -218,6 +222,7 @@ def add_wallpaper_to_room(room_num, url, state):
 		picked.walls[loc].wallpaper = Wallpaper(url)
 
 def change_selection(room_num, state):
+	alert("hello?")
 	newState = copy_state(state)
 	newState["Selected"] = newState['Rooms'][room_num]
 	return newState
