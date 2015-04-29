@@ -102,10 +102,10 @@ class Room:
 		self.music = None
 		
 	def copy(self):
-		newRoom = Room(x1,y1,x2,y2)
+		newRoom = Room(self.x1, self.y1, self.x2, self.y2)
 		for direction in self.walls:
 			newRoom.walls[direction] = self.walls[direction].copy()
-		newRoom.music = music.copy()
+		newRoom.music = self.music.copy()
 		return newRoom
 				
 	
@@ -129,11 +129,11 @@ class Wall:
 		self.wallpaper = Wallpaper()
 		
 		# Returns a copy of itself. Does not copy its door.
-		def copy(self):
-			newWall = Wall(self.x1,self.y1,self.x2,self.y2,self.loc)
-			#newWall.puzzle = puzzle.copy(), THIS IS A TEMPORARY MEASURE
-			newWall.wallpaper = self.wallpaper.copy()
-			return newWall
+	def copy(self):
+		newWall = Wall(self.x1,self.y1,self.x2,self.y2,self.loc)
+		#newWall.puzzle = puzzle.copy(), THIS IS A TEMPORARY MEASURE
+		newWall.wallpaper = self.wallpaper.copy()
+		return newWall
 		
 # Default url is wall.jpg
 # Test url is stripes.jpg for transformation testing.

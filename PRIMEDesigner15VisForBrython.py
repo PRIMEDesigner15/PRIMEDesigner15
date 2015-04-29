@@ -28,7 +28,7 @@ def set_up_gui(opselectdiv, statuslinediv):
 	global gui
 	gui = html.DIV(Id = "thegui")
 	set_up_board_svg_graphics()
-	alert("SVG stuff should now be set up.")
+	#alert("SVG stuff should now be set up.")
 	gui <= opselectdiv
 	gui <= statuslinediv
 	doc <= gui
