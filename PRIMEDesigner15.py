@@ -44,11 +44,11 @@ def copy_state(state):
 	#alert("copying doors")
 	# Add in doors to the walls in the rooms.
 	door_index = 0
-	for roomNum in range(8):
+	for room_num in range(8):
 		#alert(state["Doors"])
-		for direction in state["Rooms"][roomNum].walls:
-			if(state["Rooms"][roomNum].walls[direction].door is not None and newState["Rooms"][roomNum].walls[direction].door is None):
-				add_door_to_room(roomNum, direction, newState, state["Doors"][door_index])
+		for direction in state["Rooms"][room_num].walls:
+			if(state["Rooms"][room_num].walls[direction].door is not None and newState["Rooms"][room_num].walls[direction].door is None):
+				add_door_to_room(room_num, direction, newState, state["Doors"][door_index])
 				door_index++
 				
 	
@@ -197,10 +197,10 @@ class Operator:
 # takes a room num from 0 to 8 and a side for the door to be on, [N, S, E, W]
 # Optional newDoor parameter which allows you to pass which door the walls will point to.
 # Is default set to the creation of a new door.
-def add_door_to_room(room_num, side, state, newDoor = Door() ):
-	
-	ROOMS = state["Rooms"]
-	DOORS = state["Doors"]
+def add_door_to_room(room_num, side, state, newDoor = Door()):
+	newState = copy_state(state)
+	ROOMS = newState["Rooms"]
+	DOORS = newState["Doors"]
 	
 	ROOMS[room_num].walls[side].door = newDoor
 	if side == 'N':
@@ -211,7 +211,39 @@ def add_door_to_room(room_num, side, state, newDoor = Door() ):
 		ROOMS[room_num + 1].walls['W'].door = newDoor
 	elif side == 'W':
 		ROOMS[room_num - 1].walls['E'].door = newDoor
+	else:
+		alert("Error: Invalid direction passed to add_door")
 	DOORS.append(newDoor)
+	
+	return newState
+
+def is_valid(side, state):
+	ROOMS = state["Rooms"]
+	DOORS = state["Doors"]
+	room_num = state["Selected"]
+	
+	if side == 'N':
+		north_room = room_num - 3
+		if (north_room < 0):
+			return False
+		elif (ROOMS[room_num].walls['N'].door is not None or ROOMS[north_room].walls['S'].door is not None):
+			return False
+		else:
+			return True
+	elif side == 'S':
+		south_room = room_num + 3
+		if (south_room > 8):
+			return False
+		elif (ROOMS[room_num].walls['S'].door is not None or ROOMS[south_room].walls['N'].door is not None):
+			return False
+		else:
+			return True
+	elif side == 'E':
+		return False
+	elif side == 'W':
+		return False
+	else:
+		return False
 	
 # takes a room num from 0 to 8 and a url for a wallpaper
 def add_wallpaper_to_room(room_num, url, state):
@@ -250,12 +282,18 @@ INITIAL_STATE['Selected'] = Selected
 #I'll be running with this interpretation. 
 #<OPERATORS>
 selection_operators =\
-	[Operator("Switch to room numbered " + str(num + 1) + " for editing",
+	[Operator("Switch to room numbered " + str(num + 1) + " for editing.",
 			lambda state: num is not state["Selected"],
 			lambda state: change_selection(num, state))
 	for num in range(9)]
+
+door_operators =\
+	[Operator("Add door to current room on " + cardinal + " wall.",
+			lambda state: is_valid(cardinal, state),
+			lambda state: add_door_to_room(state["Selected"], cardinal, state))
+	for cardinal in ['N', 'S', 'E', 'W']]		
 	
-OPERATORS = selection_operators	
+OPERATORS = selection_operators	+ door_operators
 #OPERATORS = []
 #</OPERATORS>
 
