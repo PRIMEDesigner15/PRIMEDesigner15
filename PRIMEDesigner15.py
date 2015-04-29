@@ -29,7 +29,7 @@ print("Hello from PRIMEDesigner15.py (after METADATA)")
 #<COMMON_CODE>
 
 def copy_state(state):
-	alert("copy_state called")
+	#alert("copy_state called")
 	newState = {"Rooms": [], "Doors": []}
 	
 	newRooms = []
@@ -41,11 +41,11 @@ def copy_state(state):
 	for door in state["Doors"]:
 		newDoors.append(door.copy())
 		
-	alert("copying doors")
+	#alert("copying doors")
 	# Add in doors to the walls in the rooms.
 	door_index = 0
 	for roomNum in range(8):
-		alert(state["Doors"])
+		#alert(state["Doors"])
 		for direction in state["Rooms"][roomNum].walls:
 			if(state["Rooms"][roomNum].walls[direction].door is not None and newState["Rooms"][roomNum].walls[direction].door is None):
 				add_door_to_room(roomNum, direction, newState, state["Doors"][door_index])
@@ -106,11 +106,7 @@ class Room:
 		self.music = Music()
 		
 	def copy(self):
-<<<<<<< HEAD
 		newRoom = Room(self.x1, self.y1, self.x2, self.y2)
-=======
-		newRoom = Room(self.x1,self.y1,self.x2,self.y2)
->>>>>>> origin/master
 		for direction in self.walls:
 			newRoom.walls[direction] = self.walls[direction].copy()
 		newRoom.music = self.music.copy()
@@ -226,9 +222,9 @@ def add_wallpaper_to_room(room_num, url, state):
 		picked.walls[loc].wallpaper = Wallpaper(url)
 
 def change_selection(room_num, state):
-	alert("hello?")
+	#alert("hello?")
 	newState = copy_state(state)
-	newState["Selected"] = newState['Rooms'][room_num]
+	newState["Selected"] = room_num
 	return newState
 #</COMMON_CODE>		
 	
