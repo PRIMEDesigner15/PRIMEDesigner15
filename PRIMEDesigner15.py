@@ -28,12 +28,13 @@ print("Hello from PRIMEDesigner15.py (after METADATA)")
 
 #<COMMON_CODE>
 
+# Prefroms a deep coopy of the given state. 
 def copy_state(state):
 	newState = {"Rooms": [], "Doors": []}
 	newRooms = []
 	newDoors = []
 
-	# Copy the rooms and doors into the newState's dictionary.
+	# Copy the rooms (without doors in their walls) and doors into the newState's dictionary.
 	for room in state["Rooms"]:
 		newRooms.append(room.copy())
 	for door in state["Doors"]:
@@ -122,7 +123,7 @@ class Wall:
 		self.x2 = x2
 		self.y2 = y2
 		self.loc = loc
-		# Start a wall of with a door, TEMPORARY FOR DEVELOPEMENT
+		
 		self.door = None
 		
 		# Possible puzzle
@@ -198,7 +199,7 @@ class Operator:
 	def apply(self, state):
 		return self.state_transf(state)
 
-# takes a room num from 0 to 8 and a side for the door to be on, [N, S, E, W]
+# Takes a room num from 0 to 8 and a side for the door to be on, [N, S, E, W]
 # Optional newDoor parameter which allows you to pass which door the walls will point to.
 # Is default set to the creation of a new door.
 def add_door_to_room(room_num, side, state, newDoor = Door()):
@@ -265,14 +266,17 @@ def doors_is_valid(side, state):
 	else:
 		return False
 	
-# takes a room num from 0 to 8 and a url for a wallpaper
-def add_wallpaper_to_room(room_num, url, state):
-	
-	ROOMS = state["Rooms"]
+# takes a room num from 0 to 8 and prompts the user for a url for the wallpaper
+def add_wallpaper_to_room(room_num, state):
+	newState = copy_state(state)
+	url = prompt("Enter wallpaper url","wall.jpg")
+	ROOMS = newState["Rooms"]
 	picked = ROOMS[room_num]
 	for loc in picked.walls:
-		picked.walls[loc].wallpaper = Wallpaper(url)
-
+		picked.walls[loc].wallpaper.url = url
+		alert(loc)
+	return newState
+	
 def change_selection(room_num, state):
 	#alert("hello?")
 	newState = copy_state(state)
@@ -312,8 +316,13 @@ door_operators =\
 			lambda state: doors_is_valid(cardinal, state),
 			lambda state: add_door_operator(state["Selected"], cardinal, state))
 	for cardinal in ['N', 'S', 'E', 'W']]		
-	
-OPERATORS = selection_operators	+ door_operators
+
+wallpaper_operators =\
+	Operator("Add wallpaper to current room.",
+			lambda state: True,
+			lambda state: add_wallpaper_to_room(state["Selected"], state))
+				
+OPERATORS = selection_operators	+ door_operators + wallpaper_operators
 #OPERATORS = []
 #</OPERATORS>
 
