@@ -42,20 +42,12 @@ def copy_state(state):
 	newState["Rooms"] = newRooms
 	newState["Doors"] = newDoors
 	newState["Selected"] = state["Selected"]	
-	
-	alert("Number of doors in previous state = " + str(len(state["Doors"])))
-	# Add in doors to the walls in the rooms.
-	door_index = 0
-	for room_num in range(9):
-		for direction in ['N','E','S','W']:
 		
 	# Add in doors to the walls in the rooms.
 	door_index = 0
 	for room_num in range(9):
-		#alert(state["Doors"])
 		for direction in ['N', 'S', 'E', 'W']:
 			if(state["Rooms"][room_num].walls[direction].door is not None and newState["Rooms"][room_num].walls[direction].door is None):
-				alert("adding door!")
 				add_door_to_room(room_num, direction, newState, state["Doors"][door_index])
 				door_index += 1
 	
@@ -112,7 +104,11 @@ class Room:
 		newRoom = Room(self.x1, self.y1, self.x2, self.y2)
 		for direction in self.walls:
 			newRoom.walls[direction] = self.walls[direction].copy()
-		newRoom.music = self.music.copy()
+		if(self.music is None):
+			newRoom.music = None
+		else:
+			newRoom.music = self.music.copy()
+		
 		return newRoom
 				
 	
@@ -130,7 +126,7 @@ class Wall:
 		self.door = None
 		
 		# Possible puzzle
-		self.puzzle = Puzzle()
+		self.puzzle = None
 		
 		# Creates a wallpaper, default picture is wall.jpg
 		self.wallpaper = Wallpaper()
@@ -138,7 +134,11 @@ class Wall:
 		# Returns a copy of itself. Does not copy its door.
 	def copy(self):
 		newWall = Wall(self.x1,self.y1,self.x2,self.y2,self.loc)
-		#newWall.puzzle = puzzle.copy(), THIS IS A TEMPORARY MEASURE
+		if(newWall.puzzle is None):
+			newWall.puzzle = None
+		else: 
+			newWall.puzzle =  puzzle.copy()
+		
 		newWall.wallpaper = self.wallpaper.copy()
 		return newWall
 		
