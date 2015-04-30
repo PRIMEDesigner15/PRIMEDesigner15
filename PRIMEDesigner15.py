@@ -91,19 +91,19 @@ class Room:
 		# 4 walls. 
 		self.walls = {}
 		# Horizontal walls.
-		self.walls['N'] = (Wall(x1 ,y1 ,x2 ,y1, 'N')) #top 
-		self.walls['S'] = (Wall(x1 ,y2 ,x2 ,y2, 'S')) #bottom
+		self.walls['N'] = Wall(x1 ,y1 ,x2 ,y1, 'N') #top 
+		self.walls['S'] = Wall(x1 ,y2 ,x2 ,y2, 'S') #bottom
 			
 		# Vertical walls.
-		self.walls['W'] = (Wall(x1 ,y1 ,x1 ,y2, 'W')) #left
-		self.walls['E'] = (Wall(x2 ,y1 ,x2 ,y2, 'E')) #right
+		self.walls['W'] = Wall(x1 ,y1 ,x1 ,y2, 'W') #left
+		self.walls['E'] = Wall(x2 ,y1 ,x2 ,y2, 'E') #right
 	
 		# Possible ambient soundtrack.
 		self.music = Music()
 		
 	def copy(self):
 		newRoom = Room(self.x1, self.y1, self.x2, self.y2)
-		for direction in self.walls:
+		for direction in ['N','S','W','E']:
 			newRoom.walls[direction] = self.walls[direction].copy()
 		if(self.music is None):
 			newRoom.music = None
@@ -147,7 +147,7 @@ class Wall:
 # Test url is stripes.jpg for transformation testing.
 class Wallpaper:
 	
-	def __init__(self, url = "wall.jpg"):
+	def __init__(self, url = "stripes.jpg"):
 		self.url = url
 	
 	# Returns a copy of itself.
@@ -274,7 +274,6 @@ def add_wallpaper_to_room(room_num, state):
 	picked = ROOMS[room_num]
 	for loc in picked.walls:
 		picked.walls[loc].wallpaper.url = url
-		alert(loc)
 	return newState
 	
 def change_selection(room_num, state):

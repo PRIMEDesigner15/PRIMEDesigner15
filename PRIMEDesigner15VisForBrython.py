@@ -67,10 +67,16 @@ def hideOrShowSelection(event):
 # draws the game
 def render_state_svg_graphics(state):
 	global SHOWING_SELECTION
-	THICKNESS = 1.5
-	for room in state['Rooms']:
-		drawRoom(room)
 	
+	# Clear svg panel
+	while APANEL.lastChild:
+		APANEL.removeChild(APANEL.lastChild)
+	
+	THICKNESS = 1.5
+	room_num = 0
+	for room in state['Rooms']:
+		drawRoom(room,room_num)
+		room_num += 1
 	if SHOWING_SELECTION:
 		selected_room = state['Rooms'][state['Selected']]
 		
@@ -88,6 +94,7 @@ def render_state_svg_graphics(state):
 					style = {"stroke": "gold", "stroke-width": THICKNESS})
 		APANEL <= outline
 
+# Maps coordinates in range
 def mapCoordsToDIV(x, y):
   global GAME_WIDTH, GAME_HEIGHT
   newX = int(MARGIN + x*(GAME_WIDTH - 2*MARGIN))
@@ -95,7 +102,7 @@ def mapCoordsToDIV(x, y):
   return (newX, newY)
 		
 # draws a room.		
-def drawRoom(room):
+def drawRoom(room,room_num):
 	# thickness of a room's walls.
 	THICKNESS = .2
 	
@@ -106,7 +113,7 @@ def drawRoom(room):
 	y3 = wall.y1 + THICKNESS/pow(2,1/2)
 	x4 = wall.x1 + THICKNESS/pow(2,1/2)
 	y4 = y3
-	drawWall(wall,x3,y3,x4,y4)
+	drawWall(wall,x3,y3,x4,y4,room_num)
 	
 	# draws south wall
 	wall = room.walls['S']
@@ -114,7 +121,7 @@ def drawRoom(room):
 	y3 = wall.y1 - THICKNESS/pow(2,1/2)
 	x4 = wall.x1 + THICKNESS/pow(2,1/2)
 	y4 = y3
-	drawWall(wall,x3,y3,x4,y4)
+	drawWall(wall,x3,y3,x4,y4,room_num)
 	
 	# draws west wall
 	wall = room.walls['W']
@@ -122,7 +129,7 @@ def drawRoom(room):
 	y3 = wall.y2 - THICKNESS/pow(2,1/2)
 	x4 = x3
 	y4 = wall.y1 + THICKNESS/pow(2,1/2)
-	drawWall(wall,x3,y3,x4,y4)
+	drawWall(wall,x3,y3,x4,y4,room_num)
 	
 	# draws east wall
 	wall = room.walls['E']
@@ -130,24 +137,22 @@ def drawRoom(room):
 	y3 = wall.y2 - THICKNESS/pow(2,1/2)
 	x4 = x3
 	y4 = wall.y1 + THICKNESS/pow(2,1/2)
-	drawWall(wall,x3,y3,x4,y4)
+	drawWall(wall,x3,y3,x4,y4,room_num)
 		
 # draws a wall, requires 2 more points to form trapezoidal 3d shape.
 # Temporary optional color for walls.
-def drawWall(wall,x3,y3,x4,y4):
-	drawWallpaper(wall,x3,y3,x4,y4)
-	if (wall.door):
+def drawWall(wall,x3,y3,x4,y4,room_num):
+	drawWallpaper(wall,x3,y3,x4,y4,room_num)
+	if (wall.door is not None):
 		drawDoor(wall,x3,y3,x4,y4)
 	
 # draws a wallpaper, requires 2 more points to form trapezoidal 3d shape.	
-def drawWallpaper(wall,x3,y3,x4,y4):
+def drawWallpaper(wall,x3,y3,x4,y4,room_num):
 	global LINE_WIDTH, APANEL
 	
-	# Create pattern for image representation.
-	defs = svg.defs()
 	
-	pattern = svg.pattern(id="wallpaper",height="100",width = "50", transform = "rotate(0)")
-
+	
+	#alert("wall loc is = " + wall.loc)
 	if (wall.loc == 'S'):
 		transform = "rotate(180, 50, 50)"
 	elif (wall.loc == 'E'):
@@ -157,15 +162,17 @@ def drawWallpaper(wall,x3,y3,x4,y4):
 		transform = "rotate(270, 50, 50)"
 	else:
 		transform = "rotate(0)"
-	img = svg.image(xlink_href=wall.wallpaper.url, x="0",y="0", width="100", height="100", transform=transform)
+	
+	# Create a pattern for image represntation.
+	pattern = svg.pattern(id="wallpaper" + str(room_num) + wall.loc,height="100",width = "50")
+	img = svg.image(xlink_href=wall.wallpaper.url, x="0",y="0", width="100", height="100", transform = transform)
 	
 	# Append
 	pattern <= img
-	defs <= pattern
-	APANEL <= defs
+	APANEL <= pattern
 	
 	WallpaperDiv = create_polygon(wall.x1, wall.y1, wall.x2, wall.y2, x3, y3, x4, y4,
-								  fill="url(#wallpaper)")
+								  fill="url(#wallpaper" + str(room_num) + wall.loc  + ")", id = wall.loc)
 					
 	# Append polygon to svg panel
 	APANEL <= WallpaperDiv
@@ -238,7 +245,7 @@ def drawDoor(wall,x3,y3,x4,y4):
 	APANEL <= doorDiv
 
 # returns an svg polygon at the given 4 points.
-def create_polygon(x1,y1,x2,y2,x3,y3,x4,y4, fill = "black", stroke = "black", transform = "rotate(0)"):
+def create_polygon(x1,y1,x2,y2,x3,y3,x4,y4, fill = "black", stroke = "black", transform = "rotate(0)", id = "polygon"):
 	
 	# Maps points to Div
 	(X1,Y1) = mapCoordsToDIV(x1,y1)
@@ -250,7 +257,7 @@ def create_polygon(x1,y1,x2,y2,x3,y3,x4,y4, fill = "black", stroke = "black", tr
 	Points = str(X1) + "," + str(Y1) + " " + str(X2) + "," + str(Y2) + " " + str(X3) + "," + str(Y3) + " " + str(X4) + "," + str(Y4)
 	
 	# Create polygon
-	poly = svg.polygon(fill= fill,stroke=stroke,stroke_width=LINE_WIDTH,
+	poly = svg.polygon(id=id,style = {"fill" : fill},stroke=stroke,stroke_width=LINE_WIDTH,
 					points=Points, transform=transform)
 					
 	# return polygon
