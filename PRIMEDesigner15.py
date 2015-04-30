@@ -222,10 +222,6 @@ def add_door_operator(room_num, side, state):
 	
 	newState = copy_state(state)
 	add_door_to_room(room_num, side, newState)
-<<<<<<< HEAD
-
-=======
->>>>>>> 627dfdccb27f920e64b40b42eb79b292ba10fbc5
 	return newState
 	
 def doors_is_valid(side, state):
