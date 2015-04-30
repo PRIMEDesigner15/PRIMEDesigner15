@@ -29,9 +29,7 @@ print("Hello from PRIMEDesigner15.py (after METADATA)")
 #<COMMON_CODE>
 
 def copy_state(state):
-	#alert("copy_state called")
 	newState = {"Rooms": [], "Doors": []}
-	
 	newRooms = []
 	newDoors = []
 
@@ -41,17 +39,15 @@ def copy_state(state):
 	for door in state["Doors"]:
 		newDoors.append(door.copy())
 		
-	#alert("copying doors")
 	# Add in doors to the walls in the rooms.
-	door_index = 0
-	for room_num in range(8):
+	'''door_index = 0
+	for room_num in range(9):
 		#alert(state["Doors"])
 		for direction in state["Rooms"][room_num].walls:
 			if(state["Rooms"][room_num].walls[direction].door is not None and newState["Rooms"][room_num].walls[direction].door is None):
 				add_door_to_room(room_num, direction, newState, state["Doors"][door_index])
-				door_index++
+				door_index++'''
 				
-	
 	newState["Rooms"] = newRooms
 	newState["Doors"] = newDoors
 	newState["Selected"] = state["Selected"]
@@ -201,7 +197,6 @@ def add_door_to_room(room_num, side, state, newDoor = Door()):
 	newState = copy_state(state)
 	ROOMS = newState["Rooms"]
 	DOORS = newState["Doors"]
-	
 	ROOMS[room_num].walls[side].door = newDoor
 	if side == 'N':
 		ROOMS[room_num - 3].walls['S'].door = newDoor
@@ -214,6 +209,7 @@ def add_door_to_room(room_num, side, state, newDoor = Door()):
 	else:
 		alert("Error: Invalid direction passed to add_door")
 	DOORS.append(newDoor)
+	alert(newState["Selected"])
 	
 	return newState
 
