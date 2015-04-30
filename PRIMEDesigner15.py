@@ -42,21 +42,18 @@ def copy_state(state):
 	newState["Rooms"] = newRooms
 	newState["Doors"] = newDoors
 	newState["Selected"] = state["Selected"]	
-<<<<<<< HEAD
 	
 	alert("Number of doors in previous state = " + str(len(state["Doors"])))
 	# Add in doors to the walls in the rooms.
 	door_index = 0
 	for room_num in range(9):
 		for direction in ['N','E','S','W']:
-=======
 		
 	# Add in doors to the walls in the rooms.
 	door_index = 0
 	for room_num in range(9):
 		#alert(state["Doors"])
 		for direction in ['N', 'S', 'E', 'W']:
->>>>>>> origin/master
 			if(state["Rooms"][room_num].walls[direction].door is not None and newState["Rooms"][room_num].walls[direction].door is None):
 				alert("adding door!")
 				add_door_to_room(room_num, direction, newState, state["Doors"][door_index])
@@ -218,15 +215,12 @@ def add_door_to_room(room_num, side, state, newDoor = Door()):
 	else:
 		alert("Error: Invalid direction passed to add_door")
 	DOORS.append(newDoor)
-<<<<<<< HEAD
-=======
-
+	
 def add_door_operator(room_num, side, state):
 	newState = copy_state(state)
 	
 	add_door_to_room(room_num, side, newState)
->>>>>>> origin/master
-	
+
 	return newState
 	
 def doors_is_valid(side, state):
