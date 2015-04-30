@@ -39,18 +39,18 @@ def copy_state(state):
 	for door in state["Doors"]:
 		newDoors.append(door.copy())
 		
-	# Add in doors to the walls in the rooms.
-	'''door_index = 0
-	for room_num in range(9):
-		#alert(state["Doors"])
-		for direction in state["Rooms"][room_num].walls:
-			if(state["Rooms"][room_num].walls[direction].door is not None and newState["Rooms"][room_num].walls[direction].door is None):
-				add_door_to_room(room_num, direction, newState, state["Doors"][door_index])
-				door_index++'''
-				
 	newState["Rooms"] = newRooms
 	newState["Doors"] = newDoors
-	newState["Selected"] = state["Selected"]
+	newState["Selected"] = state["Selected"]	
+		
+	# Add in doors to the walls in the rooms.
+	door_index = 0
+	for room_num in range(9):
+		#alert(state["Doors"])
+		for direction in ['N', 'S', 'E', 'W']:
+			if(state["Rooms"][room_num].walls[direction].door is not None and newState["Rooms"][room_num].walls[direction].door is None):
+				add_door_to_room(room_num, direction, newState, state["Doors"][door_index])
+				door_index += 1
 	
 	return newState
 		
@@ -194,9 +194,8 @@ class Operator:
 # Optional newDoor parameter which allows you to pass which door the walls will point to.
 # Is default set to the creation of a new door.
 def add_door_to_room(room_num, side, state, newDoor = Door()):
-	newState = copy_state(state)
-	ROOMS = newState["Rooms"]
-	DOORS = newState["Doors"]
+	ROOMS = state["Rooms"]
+	DOORS = state["Doors"]
 	ROOMS[room_num].walls[side].door = newDoor
 	if side == 'N':
 		ROOMS[room_num - 3].walls['S'].door = newDoor
@@ -209,10 +208,14 @@ def add_door_to_room(room_num, side, state, newDoor = Door()):
 	else:
 		alert("Error: Invalid direction passed to add_door")
 	DOORS.append(newDoor)
-	alert(newState["Selected"])
+
+def add_door_operator(room_num, side, state):
+	newState = copy_state(state)
+	
+	add_door_to_room(room_num, side, newState)
 	
 	return newState
-
+	
 def doors_is_valid(side, state):
 	ROOMS = state["Rooms"]
 	DOORS = state["Doors"]
@@ -298,7 +301,7 @@ selection_operators =\
 door_operators =\
 	[Operator("Add door to current room on " + cardinal + " wall.",
 			lambda state: doors_is_valid(cardinal, state),
-			lambda state: add_door_to_room(state["Selected"], cardinal, state))
+			lambda state: add_door_operator(state["Selected"], cardinal, state))
 	for cardinal in ['N', 'S', 'E', 'W']]		
 	
 OPERATORS = selection_operators	+ door_operators
