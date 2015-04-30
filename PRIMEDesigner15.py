@@ -179,21 +179,23 @@ class Music:
 	
 #ask steve about what the Operator class in 05 does
 class Operator:
-  def __init__(self, name, precond, state_transf):
-    self.name = name
-    self.precond = precond
-    self.state_transf = state_transf
+  
+	def __init__(self, name, precond, state_transf):
+		self.name = name
+		self.precond = precond
+		self.state_transf = state_transf
 
-  def is_applicable(self, state):
-    return self.precond(state)
+	def is_applicable(self, state):
+		return self.precond(state)
 
-  def apply(self, state):
-    return self.state_transf(state)
+	def apply(self, state):
+		return self.state_transf(state)
 
 # takes a room num from 0 to 8 and a side for the door to be on, [N, S, E, W]
 # Optional newDoor parameter which allows you to pass which door the walls will point to.
 # Is default set to the creation of a new door.
 def add_door_to_room(room_num, side, state, newDoor = Door()):
+	
 	ROOMS = state["Rooms"]
 	DOORS = state["Doors"]
 	ROOMS[room_num].walls[side].door = newDoor
@@ -210,13 +212,13 @@ def add_door_to_room(room_num, side, state, newDoor = Door()):
 	DOORS.append(newDoor)
 
 def add_door_operator(room_num, side, state):
+	
 	newState = copy_state(state)
-	
 	add_door_to_room(room_num, side, newState)
-	
 	return newState
 	
 def doors_is_valid(side, state):
+	
 	ROOMS = state["Rooms"]
 	DOORS = state["Doors"]
 	room_num = state["Selected"]
