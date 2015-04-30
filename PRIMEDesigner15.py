@@ -239,9 +239,21 @@ def is_valid(side, state):
 		else:
 			return True
 	elif side == 'E':
-		return False
+		east_room = room_num + 1
+		if (room_num + 1) % 3 is 1:
+			return False
+		elif (ROOMS[room_num].walls['E'].door is not None or ROOMS[east_room].walls['W'].door is not None): 	
+			return False
+		else:
+			return True
 	elif side == 'W':
-		return False
+		west_room = room_num - 1
+		if (room_num + 1) % 3 is 0:
+			return False
+		elif (ROOMS[room_num].walls['W'].door is not None or ROOMS[west_room].walls['E'].door is not None):	
+			return False
+		else: 
+			return True
 	else:
 		return False
 	
