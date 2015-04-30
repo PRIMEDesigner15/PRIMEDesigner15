@@ -72,12 +72,18 @@ def render_state_svg_graphics(state):
 	while APANEL.lastChild:
 		APANEL.removeChild(APANEL.lastChild)
 	
-	THICKNESS = 1.5
-	room_num = 0
+	
+	# Draw all the rooms.
+	room_num = 1
 	for room in state['Rooms']:
 		drawRoom(room,room_num)
 		room_num += 1
+		
+	# Draws a selection box
 	if SHOWING_SELECTION:
+		
+		#Thickness of the selection box 
+		THICKNESS = 1.5
 		selected_room = state['Rooms'][state['Selected']]
 		
 		(x1, y1) = mapCoordsToDIV(selected_room.x1, selected_room.y1)
@@ -142,9 +148,7 @@ def drawWall(wall,x3,y3,x4,y4,room_num):
 # draws a wallpaper, requires 2 more points to form trapezoidal 3d shape.	
 def drawWallpaper(wall,x3,y3,x4,y4,room_num):
 	global LINE_WIDTH, APANEL
-	
-	
-	
+
 	#alert("wall loc is = " + wall.loc)
 	if (wall.loc == 'S'):
 		transform = "rotate(180, 50, 50)"
