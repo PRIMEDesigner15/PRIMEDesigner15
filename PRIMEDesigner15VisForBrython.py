@@ -83,13 +83,6 @@ def render_state_svg_graphics(state):
 		(x1, y1) = mapCoordsToDIV(selected_room.x1, selected_room.y1)
 		(x2, y2) = mapCoordsToDIV(selected_room.x2, selected_room.y2)
 		
-		'''#top left
-		x1 = selected_room.x1
-		y1 = selected_room.y1
-		#bottom right
-		x2 = selected_room.x2
-		y2 = selected_room.y2
-		'''
 		outline = svg.rect(x = x1, y = y1, width = x2 - x1, height = y2 - y1, fill = "none",
 					style = {"stroke": "gold", "stroke-width": THICKNESS})
 		APANEL <= outline

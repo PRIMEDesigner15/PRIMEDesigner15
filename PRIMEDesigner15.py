@@ -269,9 +269,10 @@ def doors_is_valid(side, state):
 # takes a room num from 0 to 8 and prompts the user for a url for the wallpaper
 def add_wallpaper_to_room(room_num, state):
 	newState = copy_state(state)
-	url = prompt("Enter wallpaper url","wall.jpg")
+	url = prompt("Enter wallpaper url", "wall.jpg")
 	ROOMS = newState["Rooms"]
 	picked = ROOMS[room_num]
+	
 	for loc in picked.walls:
 		picked.walls[loc].wallpaper.url = url
 	return newState
@@ -287,16 +288,13 @@ print("Hello from PRIMEDesigner15.py (after COMMON_CODE)")
 	
 #<INITIAL_STATE> The game is a list of 9 rooms stored a list.
 INITIAL_STATE = {}
-ROOMS = []
-DOORS = []
-Selected = 0
+INITIAL_STATE['Rooms'] = []
+INITIAL_STATE['Doors'] = []
+INITIAL_STATE['Selected'] = 0
 # Create 9 rooms, add them to the list.
 for j in range(3):
 	for i in range(3):
-		ROOMS.append( Room(i, j, i + 1, j + 1) )
-INITIAL_STATE['Rooms'] = ROOMS
-INITIAL_STATE['Doors'] = DOORS
-INITIAL_STATE['Selected'] = Selected		
+		INITIAL_STATE['Rooms'].append( Room(i, j, i + 1, j + 1) )		
 #</INITIAL_STATE>
 
 #It seems to me like the way this worked before is that in COMMON_CODE were all
