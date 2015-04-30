@@ -39,18 +39,19 @@ def copy_state(state):
 	for door in state["Doors"]:
 		newDoors.append(door.copy())
 		
-	# Add in doors to the walls in the rooms.
-	'''door_index = 0
-	for room_num in range(9):
-		#alert(state["Doors"])
-		for direction in state["Rooms"][room_num].walls:
-			if(state["Rooms"][room_num].walls[direction].door is not None and newState["Rooms"][room_num].walls[direction].door is None):
-				add_door_to_room(room_num, direction, newState, state["Doors"][door_index])
-				door_index++'''
-				
 	newState["Rooms"] = newRooms
 	newState["Doors"] = newDoors
-	newState["Selected"] = state["Selected"]
+	newState["Selected"] = state["Selected"]	
+	
+	alert("Number of doors in previous state = " + str(len(state["Doors"])))
+	# Add in doors to the walls in the rooms.
+	door_index = 0
+	for room_num in range(9):
+		for direction in ['N','E','S','W']:
+			if(state["Rooms"][room_num].walls[direction].door is not None and newState["Rooms"][room_num].walls[direction].door is None):
+				alert("adding door!")
+				add_door_to_room(room_num, direction, newState, state["Doors"][door_index])
+				door_index += 1
 	
 	return newState
 		
@@ -209,7 +210,6 @@ def add_door_to_room(room_num, side, state, newDoor = Door()):
 	else:
 		alert("Error: Invalid direction passed to add_door")
 	DOORS.append(newDoor)
-	alert(newState["Selected"])
 	
 	return newState
 
