@@ -72,7 +72,6 @@ def render_state_svg_graphics(state):
 	while APANEL.lastChild:
 		APANEL.removeChild(APANEL.lastChild)
 	
-	
 	# Draw all the rooms.
 	room_num = 1
 	for room in state['Rooms']:

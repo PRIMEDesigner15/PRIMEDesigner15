@@ -147,7 +147,7 @@ class Wall:
 # Test url is stripes.jpg for transformation testing.
 class Wallpaper:
 	
-	def __init__(self, url = "stripes.jpg"):
+	def __init__(self, url = "wall.jpg"):
 		self.url = url
 	
 	# Returns a copy of itself.
@@ -269,7 +269,9 @@ def doors_is_valid(side, state):
 # takes a room num from 0 to 8 and prompts the user for a url for the wallpaper
 def add_wallpaper_to_room(room_num, state):
 	newState = copy_state(state)
-	url = prompt("Enter wallpaper url", "wall.jpg")
+	url = prompt("Enter wallpaper url", ".")
+	
+	
 	ROOMS = newState["Rooms"]
 	picked = ROOMS[room_num]
 	
