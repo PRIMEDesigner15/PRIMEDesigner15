@@ -28,6 +28,8 @@ print("Hello from PRIMEDesigner15.py (after METADATA)")
 
 #<COMMON_CODE>
 
+from browser import document
+
 # Prefroms a deep coopy of the given state. 
 def copy_state(state):
 	newState = {"Rooms": [], "Doors": []}
@@ -268,16 +270,32 @@ def doors_is_valid(side, state):
 	
 # takes a room num from 0 to 8 and prompts the user for a url for the wallpaper
 def add_wallpaper_to_room(room_num, state):
-	newState = copy_state(state)
-	url = prompt("Enter wallpaper url", ".")
+	url = prompt("Enter a complete URL for a wallpaper. Say 'cancel' to cancel.", "wall.jpg")
+	if(url == "cancel"):
+		
+		newState = copy_state(state)
+		
+	elif(url_is_valid(url)):	
 	
+		newState = copy_state(state)
+		ROOMS = newState["Rooms"]
+		picked = ROOMS[room_num]
+		for loc in picked.walls:
+			picked.walls[loc].wallpaper.url = url
 	
-	ROOMS = newState["Rooms"]
-	picked = ROOMS[room_num]
+	else:
 	
-	for loc in picked.walls:
-		picked.walls[loc].wallpaper.url = url
+		alert("URL was not valid. Try again.")
+		return add_wallpaper_to_room(room_num, state)
+	
 	return newState
+	
+def url_is_valid(url):	
+	try:
+		fileContents = open(url)
+		return True
+	except OSError:
+		return False
 	
 def change_selection(room_num, state):
 	#alert("hello?")
