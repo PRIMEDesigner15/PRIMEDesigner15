@@ -38,7 +38,7 @@ def set_up_board_svg_graphics():
 	#SHOW_SELECTION_Button isn't initialized before this call.
 	#Does this mean that with the global keyword, you can either 
 	#refer to a global variable or initialize a new one?
-	global APANEL, SHOW_SELECTION_Button, board
+	global APANEL, board
 	boarddiv = html.DIV(Id = "boarddivid", style = {"backgroundColor":"#CCFFCC"})
 	boarddiv <= html.I("Puzzle state:")
 	#what is APANEL intended to be
@@ -48,10 +48,6 @@ def set_up_board_svg_graphics():
 							"backgroundColor":"#AAAABB"})
 	board <= APANEL		
 	boarddiv <= board
-	# Put in a button for controlling whether or not the currently selected box is highlighted.
-	SHOW_SELECTION_Button = html.BUTTON("Hide/Show selected box", Id="HideOrShowSelected")
-	SHOW_SELECTION_Button.bind('click', hideOrShowSelection)
-	boarddiv <= SHOW_SELECTION_Button
 	gui <= boarddiv
 
 SHOWING_SELECTION = True

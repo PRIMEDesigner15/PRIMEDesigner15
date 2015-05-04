@@ -30,7 +30,7 @@ print("Hello from PRIMEDesigner15.py (after METADATA)")
 
 from browser import document
 
-# Prefroms a deep coopy of the given state. 
+# Preforms a deep copy of the given state. 
 def copy_state(state):
 	newState = {"Rooms": [], "Doors": []}
 	newRooms = []
@@ -134,7 +134,7 @@ class Wall:
 		# Creates a wallpaper, default picture is wall.jpg
 		self.wallpaper = Wallpaper()
 		
-		# Returns a copy of itself. Does not copy its door.
+	# Returns a copy of itself. Does not copy its door.
 	def copy(self):
 		newWall = Wall(self.x1,self.y1,self.x2,self.y2,self.loc)
 		if(newWall.puzzle is None):
@@ -158,7 +158,7 @@ class Wallpaper:
 
 class Door:
 	
-	def __init__(self, isOpen = False, url="door.jpg"):
+	def __init__(self, isOpen = True, url="door.jpg"):
 		self.isOpen = isOpen
 		self.url = url
 		
@@ -298,50 +298,66 @@ def url_is_valid(url):
 		return False
 	
 def change_selection(room_num, state):
-	#alert("hello?")
 	newState = copy_state(state)
 	newState["Selected"] = room_num
 	return newState
+	
+def change_role(state):
+		alert("change role lololol")
 #</COMMON_CODE>		
 	
 print("Hello from PRIMEDesigner15.py (after COMMON_CODE)")
-	
-#<INITIAL_STATE> The game is a list of 9 rooms stored a list.
-INITIAL_STATE = {}
-INITIAL_STATE['Rooms'] = []
-INITIAL_STATE['Doors'] = []
-INITIAL_STATE['Selected'] = 0
-# Create 9 rooms, add them to the list.
-for j in range(3):
-	for i in range(3):
-		INITIAL_STATE['Rooms'].append( Room(i, j, i + 1, j + 1) )		
-#</INITIAL_STATE>
 
 #It seems to me like the way this worked before is that in COMMON_CODE were all
 #the functions for operators, and then in OPERATORS it is determined which are
 #valid to use in the current state. We should double check with Steve but
 #I'll be running with this interpretation. 
 #<OPERATORS>
-selection_operators =\
-	[Operator("Switch to room numbered " + str(num + 1) + " for editing.",
-			lambda state: num is not state["Selected"],
-			lambda state: change_selection(num, state))
-	for num in range(9)]
+def set_operators(state):
+	global OPERATORS
+	if(state['Role'] == "Architect"):
+		selection_operators =\
+			[Operator("Switch to room numbered " + str(num + 1) + " for editing.",
+					lambda state: num is not state["Selected"],
+					lambda state: change_selection(num, state))
+			for num in range(9)]
 
-door_operators =\
-	[Operator("Add door to current room on " + cardinal + " wall.",
-			lambda state: doors_is_valid(cardinal, state),
-			lambda state: add_door_operator(state["Selected"], cardinal, state))
-	for cardinal in ['N', 'S', 'E', 'W']]		
+		door_operators =\
+			[Operator("Add door to current room on " + cardinal + " wall.",
+					lambda state: doors_is_valid(cardinal, state),
+					lambda state: add_door_operator(state["Selected"], cardinal, state))
+			for cardinal in ['N', 'S', 'E', 'W']]		
 
-wallpaper_operators =\
-	Operator("Add wallpaper to current room.",
-			lambda state: True,
-			lambda state: add_wallpaper_to_room(state["Selected"], state))
-				
-OPERATORS = selection_operators	+ door_operators + wallpaper_operators
-#OPERATORS = []
+		wallpaper_operators =\
+			Operator("Add wallpaper to current room.",
+					lambda state: True,
+					lambda state: add_wallpaper_to_room(state["Selected"], state))
+		
+		roll_operator =\
+			Operators("Change Role.",
+					lambda state: True,
+					lambda state: change_role(state))
+						
+		OPERATORS = selection_operators	+ door_operators + wallpaper_operators + roll_operator
+	else:
+		OPERATORS = []
 #</OPERATORS>
+	
+#<INITIAL_STATE> The game is a list of 9 rooms stored a list.
+INITIAL_STATE = {}
+INITIAL_STATE['Rooms'] = []
+INITIAL_STATE['Doors'] = []
+INITIAL_STATE['Selected'] = 0
+INITIAL_STATE['Role'] = "Architect"
+
+# Create 9 rooms, add them to the list.
+for j in range(3):
+	for i in range(3):
+		INITIAL_STATE['Rooms'].append( Room(i, j, i + 1, j + 1) )	
+# Now initialize operators.
+OPERATORS = []
+set_operators(INITIAL_STATE)		
+#</INITIAL_STATE>
 
 if "BRYTHON" in globals():
  from PRIMEDesigner15VisForBrython import set_up_gui as set_up_user_interface

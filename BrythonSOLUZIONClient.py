@@ -11,8 +11,8 @@ BACKTRACK_BUTTON = None
 if not 'PROBLEM_NAME' in globals():
   PROBLEM_NAME = "Problems"
 
-#doc['pagetitle'].text = "Solving "+PROBLEM_NAME+\
-#" in the Brython SOLUZION Client"
+'''doc['pagetitle'].text = "Solving "+PROBLEM_NAME+\
+" in the Brython SOLUZION Client"'''
 
 def set_up_operators_interface():
   global OPSELECT # make available for interaction.
