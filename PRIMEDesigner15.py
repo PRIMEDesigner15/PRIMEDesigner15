@@ -334,7 +334,7 @@ def set_operators(state):
 					lambda state: add_wallpaper_to_room(state["Selected"], state))
 		
 		roll_operator =\
-			Operators("Change Role.",
+			Operator("Change Role.",
 					lambda state: True,
 					lambda state: change_role(state))
 						
@@ -348,7 +348,7 @@ INITIAL_STATE = {}
 INITIAL_STATE['Rooms'] = []
 INITIAL_STATE['Doors'] = []
 INITIAL_STATE['Selected'] = 0
-INITIAL_STATE['Role'] = "Architect"
+INITIAL_STATE['Role'] = "Blargh"
 
 # Create 9 rooms, add them to the list.
 for j in range(3):

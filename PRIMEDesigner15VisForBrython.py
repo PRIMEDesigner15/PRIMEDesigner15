@@ -4,8 +4,8 @@ Set up a GUI and handle updates and events during a run of
 the PRIMEDesigner template in the Brython environment.
 '''
 
-from browser import doc, html, alert, svg
-
+from browser import window, document, html, alert, svg
+import javascript
 gui = None
 #is this saying that all of these are now 'None'?
 board = None
@@ -16,6 +16,10 @@ MARGIN = 20
 ROOM_SIZE = 100
 GAME_WIDTH = ROOM_SIZE * 3
 GAME_HEIGHT = ROOM_SIZE * 3
+
+#The canvas and its context will go here when initialized for manipulation
+roleCanvas = None
+ctx = None
 
 LAST_STATE = None # cache of current state for use in 
 				#refresh of display after selection hiding button click.
@@ -31,69 +35,70 @@ def set_up_gui(opselectdiv, statuslinediv):
 	#alert("SVG stuff should now be set up.")
 	gui <= opselectdiv
 	gui <= statuslinediv
-	doc <= gui
+	document <= gui
 	print("Leaving set_up_gui in PRIMEDesignerVisForBrython.")
 
 def set_up_board_svg_graphics():
 	#SHOW_SELECTION_Button isn't initialized before this call.
 	#Does this mean that with the global keyword, you can either 
 	#refer to a global variable or initialize a new one?
-	global APANEL, board
 	boarddiv = html.DIV(Id = "boarddivid", style = {"backgroundColor":"#CCFFCC"})
 	boarddiv <= html.I("Puzzle state:")
 	#what is APANEL intended to be
-	APANEL = svg.g(Id = "panel")
+	
+	global ctx, roleCanvas
+	roleCanvas = html.CANVAS(id = "roleCanvas", width = GAME_WIDTH, height = GAME_HEIGHT)
+	ctx = roleCanvas.getContext('2d');
+	
+	global APANEL, board
 	board = svg.svg(Id = "svgboard", 
 					style = {"width":GAME_WIDTH, "height":GAME_HEIGHT,
 							"backgroundColor":"#AAAABB"})
-	board <= APANEL		
+	APANEL = svg.g(Id = "panel")
+	
+	board <= APANEL	
 	boarddiv <= board
+	boarddiv <= roleCanvas
 	gui <= boarddiv
-
-SHOWING_SELECTION = True
-def hideOrShowSelection(event):
-  global SHOWING_SELECTION, SHOW_SELECTION_Button
-  SHOWING_SELECTION = not SHOWING_SELECTION
-  if SHOWING_SELECTION:
-    SHOW_SELECTION_Button.text = "Turn off highlighting of the selected box."    
-  else:
-    SHOW_SELECTION_Button.text = "Enable highlighting of the selected box."    
-  render_state_svg_graphics(LAST_STATE)
 		
 # draws the game
 def render_state_svg_graphics(state):
-	global SHOWING_SELECTION
+	global roleCanvas, ctx, APANEL
 	
 	# Clear svg panel
 	while APANEL.lastChild:
 		APANEL.removeChild(APANEL.lastChild)
 	
-	# Draw all the rooms.
-	room_num = 1
-	for room in state['Rooms']:
-		drawRoom(room,room_num)
-		room_num += 1
+	# Clear the roleCanvas
+	ctx.clearRect(0,0, GAME_WIDTH, GAME_HEIGHT)
+	
+	if state['Role'] == "Architect":
+		#Hide canvas, make sure svg stuff visible
+		roleCanvas.style.display = "none"
+		board.style.display = "initial"
 		
-	# Draws a selection box
-	if SHOWING_SELECTION:
-		
-		#Thickness of the selection box 
+		# Draw all the rooms.
+		room_num = 1
+		for room in state['Rooms']:
+			drawRoom(room,room_num)
+			room_num += 1
+			
 		THICKNESS = 1.5
 		selected_room = state['Rooms'][state['Selected']]
-		
+			
 		(x1, y1) = mapCoordsToDIV(selected_room.x1, selected_room.y1)
 		(x2, y2) = mapCoordsToDIV(selected_room.x2, selected_room.y2)
-		
+			
 		outline = svg.rect(x = x1, y = y1, width = x2 - x1, height = y2 - y1, fill = "none",
-					style = {"stroke": "gold", "stroke-width": THICKNESS})
+						style = {"stroke": "gold", "stroke-width": THICKNESS})
 		APANEL <= outline
+	else:
+		#Hide svg stuff, make canvas visible
+		board.style.display = "none"
+		roleCanvas.style.display = "initial"
 
-# Maps coordinates in range
-def mapCoordsToDIV(x, y):
-  global GAME_WIDTH, GAME_HEIGHT
-  newX = int(MARGIN + x*(GAME_WIDTH - 2*MARGIN))
-  newY = int(MARGIN + y*(GAME_HEIGHT - 2*MARGIN))
-  return (newX, newY)
+		img = html.IMG('', src = "metalfencing.jpg")
+		ctx.drawImage(img, 0, 0, GAME_WIDTH, GAME_HEIGHT)
 		
 # draws a room.		
 def drawRoom(room,room_num):
@@ -263,8 +268,3 @@ def mapCoordsToDIV(x, y):
 	newX = int( (x * GAME_WIDTH)/3) 
 	newY = int( (y * GAME_HEIGHT)/3) 
 	return (newX, newY)
-
-	
-	
-	
-	
