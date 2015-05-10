@@ -6,6 +6,7 @@ the PRIMEDesigner template in the Brython environment.
 
 from browser import window, document, html, alert, svg
 import javascript
+from javascript import JSConstructor 
 gui = None
 #is this saying that all of these are now 'None'?
 board = None
@@ -48,7 +49,7 @@ def set_up_board_svg_graphics():
 	
 	global ctx, roleCanvas
 	roleCanvas = html.CANVAS(id = "roleCanvas", width = GAME_WIDTH, height = GAME_HEIGHT)
-	ctx = roleCanvas.getContext('2d');
+	ctx = roleCanvas.getContext("2d");
 	
 	global APANEL, board
 	board = svg.svg(Id = "svgboard", 
@@ -96,9 +97,13 @@ def render_state_svg_graphics(state):
 		#Hide svg stuff, make canvas visible
 		board.style.display = "none"
 		roleCanvas.style.display = "initial"
-
-		img = html.IMG('', src = "metalfencing.jpg")
-		ctx.drawImage(img, 0, 0, GAME_WIDTH, GAME_HEIGHT)
+		img = html.IMG(src = "wall.jpg")
+		img.onload = ctx.drawImage(img.elt,3000,3000)
+		#img.src = "wall.jpg"
+		#alert(img.elt)
+		ctx.drawImage(img.elt,300,300)
+		ctx.fill()
+	
 		
 # draws a room.		
 def drawRoom(room,room_num):
