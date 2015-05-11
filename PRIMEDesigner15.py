@@ -29,6 +29,8 @@ print("Hello from PRIMEDesigner15.py (after METADATA)")
 #<COMMON_CODE>
 
 from browser import document
+from javascript import JSConstructor
+
 
 # Preforms a deep copy of the given state. 
 def copy_state(state):
@@ -303,7 +305,7 @@ def change_selection(room_num, state):
 	return newState
 	
 def change_role(state):
-		alert("change role lololol")
+		alert("change role")
 #</COMMON_CODE>		
 	
 print("Hello from PRIMEDesigner15.py (after COMMON_CODE)")
