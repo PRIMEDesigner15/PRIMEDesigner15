@@ -311,8 +311,8 @@ def change_role(role, state):
 
 def darkenCJS(state):
 	newState = copy_state(state)
-	CamanComms = JSConstructor(window.CamanComms("roleCanvas"))
-	CamanComms.darkenImg()
+	#CamanComms = JSConstructor(window.CamanComms)
+	#CamanComms("roleCanvas").darkenImg()
 	return newState
 	
 #</COMMON_CODE>		
@@ -357,7 +357,7 @@ def set_operators(state):
 				lambda state: True,
 				lambda state: darkenCJS(state))
 				
-		OPERATORS = darken_test + role_operators
+		OPERATORS = [darken_test] # + role_operators
 		
 	elif(state['Role'] == "Music Puzzle"):
 		OPERATORS = role_operators
