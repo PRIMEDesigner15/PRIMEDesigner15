@@ -49,7 +49,7 @@ def set_up_board_svg_graphics():
 	
 	global ctx, roleCanvas
 	roleCanvas = html.CANVAS(id = "roleCanvas", width = GAME_WIDTH, height = GAME_HEIGHT)
-	ctx = roleCanvas.getContext("2d");
+	ctx = roleCanvas.getContext("2d")
 	
 	global APANEL, board
 	board = svg.svg(Id = "svgboard", 
@@ -74,9 +74,7 @@ def render_state_svg_graphics(state):
 	ctx.clearRect(0,0, GAME_WIDTH, GAME_HEIGHT)
 	
 	if state['Role'] == "Architect":
-		#Hide canvas, make sure svg stuff visible
-		roleCanvas.style.display = "none"
-		board.style.display = "initial"
+		prepareSVG()
 		
 		# Draw all the rooms.
 		room_num = 1
@@ -93,18 +91,28 @@ def render_state_svg_graphics(state):
 		outline = svg.rect(x = x1, y = y1, width = x2 - x1, height = y2 - y1, fill = "none",
 						style = {"stroke": "gold", "stroke-width": THICKNESS})
 		APANEL <= outline
+	elif(state['Role'] == "Image Puzzle"):
+		prepareCanvas()
+		img = html.IMG('', src="metalfencing.jpg")
+		img.bind('load', lambda e: ctx.drawImage(img.elt,0,0))
+	elif(state['Role'] == "Music Puzzle"):
+		prepareCanvas()
+	elif(state['Role'] == "Rules"):
+		prepareSVG()
 	else:
-		#Hide svg stuff, make canvas visible
-		board.style.display = "none"
-		roleCanvas.style.display = "initial"
-		img = html.IMG(src = "wall.jpg")
-		img.onload = ctx.drawImage(img.elt,3000,3000)
-		#img.src = "wall.jpg"
-		#alert(img.elt)
-		ctx.drawImage(img.elt,300,300)
-		ctx.fill()
-	
-		
+		pass
+def prepareSVG():
+	global roleCanvas, board
+	#Hide canvas, make sure svg stuff visible
+	roleCanvas.style.display = "none"
+	board.style.display = "initial"	
+
+def prepareCanvas():
+	global roleCanvas, board
+	#Hide svg stuff, make canvas visible
+	board.style.display = "none"
+	roleCanvas.style.display = "initial"
+
 # draws a room.		
 def drawRoom(room,room_num):
 	# thickness of a room's walls.
