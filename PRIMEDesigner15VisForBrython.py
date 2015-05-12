@@ -100,6 +100,7 @@ def render_state_svg_graphics(state):
 		prepareSVG()
 	else:
 		pass
+		
 def prepareSVG():
 	global roleCanvas, board
 	#Hide canvas, make sure svg stuff visible
