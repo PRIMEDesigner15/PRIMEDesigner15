@@ -28,7 +28,7 @@ print("Hello from PRIMEDesigner15.py (after METADATA)")
 
 #<COMMON_CODE>
 
-from browser import document
+from browser import document, window
 from javascript import JSConstructor
 
 
@@ -308,6 +308,13 @@ def change_role(role, state):
 	newState = copy_state(state)
 	newState['Role'] = role
 	return newState
+
+def darkenCJS(state):
+	newState = copy_state(state)
+	CamanComms = JSConstructor(window.CamanComms("roleCanvas"))
+	CamanComms.darkenImg()
+	return newState
+	
 #</COMMON_CODE>		
 	
 print("Hello from PRIMEDesigner15.py (after COMMON_CODE)")
@@ -343,8 +350,15 @@ def set_operators(state):
 				lambda state: add_wallpaper_to_room(state["Selected"], state))
 					
 		OPERATORS = selection_operators	+ door_operators + wallpaper_operators + role_operators
+		
 	elif(state['Role'] == "Image Puzzle"):
-		OPERATORS = role_operators
+		darken_test =\
+			Operator("Darken the image.",
+				lambda state: True,
+				lambda state: darkenCJS(state))
+				
+		OPERATORS = darken_test + role_operators
+		
 	elif(state['Role'] == "Music Puzzle"):
 		OPERATORS = role_operators
 	elif(state['Role'] == "Rules"):
