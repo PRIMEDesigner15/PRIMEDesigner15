@@ -5,7 +5,6 @@ the PRIMEDesigner template in the Brython environment.
 '''
 
 from browser import window, document, html, alert, svg
-import javascript
 from javascript import JSConstructor 
 gui = None
 #is this saying that all of these are now 'None'?
