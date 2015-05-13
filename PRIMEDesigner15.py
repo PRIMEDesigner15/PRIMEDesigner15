@@ -29,7 +29,9 @@ print("Hello from PRIMEDesigner15.py (after METADATA)")
 #<COMMON_CODE>
 
 from browser import document, window
+import browser
 from javascript import JSConstructor
+
 
 
 # Preforms a deep copy of the given state. 
@@ -47,6 +49,7 @@ def copy_state(state):
 	newState["Rooms"] = newRooms
 	newState["Doors"] = newDoors
 	newState["Selected"] = state["Selected"]	
+	newState["Role"] = state["Role"]
 		
 	# Add in doors to the walls in the rooms.
 	door_index = 0
@@ -311,8 +314,10 @@ def change_role(role, state):
 
 def darkenCJS(state):
 	newState = copy_state(state)
-	#CamanComms = JSConstructor(window.CamanComms)
-	#CamanComms("roleCanvas").darkenImg()
+	com = JSConstructor(window.CamanComms)
+	yup = com("roleCanvas")
+	window.alert(yup)
+
 	return newState
 	
 #</COMMON_CODE>		
@@ -324,7 +329,6 @@ print("Hello from PRIMEDesigner15.py (after COMMON_CODE)")
 #of the current Role given the current State
 def set_operators(state):
 	OPERATORS = []
-	
 	role_operators =\
 		[Operator("Change Role to " + role + ".",
 			lambda state: state['Role'] is not role,
