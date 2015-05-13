@@ -323,15 +323,13 @@ print("Hello from PRIMEDesigner15.py (after COMMON_CODE)")
 #Method that can be called to set the Operators 
 #of the current Role given the current State
 def set_operators(state):
-	OPERATORS = []
-	
 	role_operators =\
 		[Operator("Change Role to " + role + ".",
 			lambda state: state['Role'] is not role,
 			lambda state: change_role(role, state))
 		for role in ["Architect", "Image Puzzle", "Music Puzzle", "Rules"]] 	
 			
-	if(state['Role'] == "Architect"):
+	if (state['Role'] == "Architect"):
 		selection_operators =\
 			[Operator("Switch to room numbered " + str(num + 1) + " for editing.",
 				lambda state: num is not state["Selected"],
