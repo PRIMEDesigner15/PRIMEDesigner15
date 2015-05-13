@@ -72,7 +72,7 @@ def render_state_svg_graphics(state):
 	# Clear the roleCanvas
 	ctx.clearRect(0,0, GAME_WIDTH, GAME_HEIGHT)
 	
-	if state['Role'] == "Architect":
+	if(state['Role'] == "Architect"):
 		prepareSVG()
 		
 		# Draw all the rooms.
