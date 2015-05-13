@@ -327,11 +327,8 @@ print("Hello from PRIMEDesigner15.py (after COMMON_CODE)")
 #<OPERATORS>
 #Method that can be called to set the Operators 
 #of the current Role given the current State
-def set_operators(state):
-<<<<<<< HEAD
+
 	OPERATORS = []
-=======
->>>>>>> origin/master
 	role_operators =\
 		[Operator("Change Role to " + role + ".",
 			lambda state: state['Role'] is not role,
