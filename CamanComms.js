@@ -1,9 +1,10 @@
-function CamanComms(canvasId) {
-	this.canvasId = canvasId
-};
+window.onload = function() {console.log("CamanComms online")}
 
-CamanComms.prototype.darkenImg = function() {
-	Caman(this.canvasId, function () {
-		this.brightness(-20).render();
-	});
+function CamanComms(canvasId) {
+	console.log("A CamanComm was made")
+	this.canvasId = canvasId
+	this.CamanFunction = function(command) {
+		console.log("camanfunction triggered")
+		Caman(canvasId, eval(command))
+	};
 };
