@@ -314,21 +314,11 @@ def change_role(role, state):
 
 def darkenCJS(state):
 	newState = copy_state(state)
-	#CamanComms = JSConstructor(window.CamanComms)
-	#CamanComms("roleCanvas").darkenImg()
 	
-	CAMANCOMMS = window.CamanComms
-	alert(CAMANCOMMS)
-	
-	
-	
-	'''camanComm = JSConstructor(window.CamanComms)
-	window.console.log("camanComm constructor: ")
-	window.console.log(camanComm)
-	translator = camanComm("#roleCanvas")
-	window.console.log("translator with id: ")
-	window.console.log(translator)
-	translator.command("function(){this.brightness(-20).render();}")'''
+	CamanCommConstructor = JSConstructor(CamanComms)
+	myCamanComm = CamanCommConstructor("#roleCanvas", "metalfencing.jpg")
+	myCamanComm.CamanFunction("function(){this.brightness(-20).render();}")
+
 	return newState
 	
 #</COMMON_CODE>		
