@@ -284,14 +284,15 @@ def create_image_puzzle(state):
 		
 # takes a room num from 0 to 8 and prompts the user for a url for the wallpaper
 def add_wallpaper_to_room(room_num, state):
-	url = prompt("Enter a complete URL for a wallpaper. Say 'cancel' to cancel.", "wall.jpg")
+	url = window.prompt("Enter a complete URL for a wallpaper. Say 'cancel' to cancel.", "wall.jpg")
+	#alert(url)
 	#Does not work
-	if(url == "cancel"):
-		alert("hello2")
+	if(url is None):
+		
 		newState = copy_state(state)
 		
 	elif(url_is_valid(url)):	
-	
+		alert("hello2")
 		newState = copy_state(state)
 		ROOMS = newState["Rooms"]
 		picked = ROOMS[room_num]
