@@ -82,7 +82,7 @@ def render_state_svg_graphics(state):
 			room_num += 1
 			
 		THICKNESS = 1.5
-		selected_room = state['Rooms'][state['Selected']]
+		selected_room = state['Rooms'][state['Selected_Room']]
 			
 		(x1, y1) = mapCoordsToDIV(selected_room.x1, selected_room.y1)
 		(x2, y2) = mapCoordsToDIV(selected_room.x2, selected_room.y2)
@@ -92,8 +92,6 @@ def render_state_svg_graphics(state):
 		APANEL <= outline
 	elif(state['Role'] == "Image Puzzle"):
 		prepareCanvas()
-		img = html.IMG('', src="metalfencing.jpg")
-		img.bind('load', lambda e: ctx.drawImage(img.elt,0,0))
 	elif(state['Role'] == "Music Puzzle"):
 		prepareCanvas()
 	elif(state['Role'] == "Rules"):
@@ -113,6 +111,11 @@ def prepareCanvas():
 	board.style.display = "none"
 	roleCanvas.style.display = "initial"
 
+def placeImageOnCanvas(url):
+	global ctx
+	img = html.IMG('', src = url)
+	img.bind('load', lambda e: ctx.drawImage(img.elt,0,0))
+	
 # draws a room.		
 def drawRoom(room,room_num):
 	# thickness of a room's walls.
@@ -281,3 +284,9 @@ def mapCoordsToDIV(x, y):
 	newX = int( (x * GAME_WIDTH)/3) 
 	newY = int( (y * GAME_HEIGHT)/3) 
 	return (newX, newY)
+	
+def darkenCJSVis(url):
+	CamanCommConstructor = JSConstructor(CamanComms)
+	alert(url)
+	myCamanComm = CamanCommConstructor("#roleCanvas", url)
+	myCamanComm.CamanFunction("this.brightness(-20).render();")

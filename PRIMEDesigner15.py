@@ -47,8 +47,10 @@ def copy_state(state):
 		newDoors.append(door.copy())
 		
 	newState["Rooms"] = newRooms
+	newState["Puzzles"] = state["Puzzles"]
 	newState["Doors"] = newDoors
-	newState["Selected"] = state["Selected"]	
+	newState["Selected_Room"] = state["Selected_Room"]	
+	newState["Selected_Puzzle"] = state["Selected_Puzzle"]
 	newState["Role"] = state["Role"]
 		
 	# Add in doors to the walls in the rooms.
@@ -58,9 +60,6 @@ def copy_state(state):
 			if(state["Rooms"][room_num].walls[direction].door is not None and newState["Rooms"][room_num].walls[direction].door is None):
 				add_door_to_room(room_num, direction, newState, state["Doors"][door_index])
 				door_index += 1
-	
-	# reset the operators
-	set_operators(newState)
 	
 	return newState
 		
@@ -180,31 +179,15 @@ class Door:
 		return Door(self.isOpen, self.url)
 
 class Puzzle:
+	def __init__(self, url, transformList = []):
+		self.url = url
+		self.transformList = transformList
 	
-<<<<<<< HEAD
-	#def __init__(url, transformList = []):
-	#	self.url = url
-	#	self.transformList = transformList
-	
-	def __init__():
-		pass
-		
-	# Returns a deep copy of itself	
-	def copy(self):
-		#return Puzzle(self.url,self.transformList) 
-		return Puzzle()
-=======
-	def __init__(self, canvasId, ogJpeg, operations = []):
-		self.canvasId = canvasId
-		self.ogJpeg = ogJpeg
-		self.operations = operations
-	
-	def add_operation(self, operation):
-		self.operations = operations + operation
+	def add_transform(self, transform):
+		self.transformList = self.transformList + transform
 	
 	def copy(self):
-		return Puzzle(self.operations)
->>>>>>> origin/master
+		return Puzzle(self.url, self.transformList)
 		
 class Music:
 
@@ -258,7 +241,7 @@ def doors_is_valid(side, state):
 	
 	ROOMS = state["Rooms"]
 	DOORS = state["Doors"]
-	room_num = state["Selected"]
+	room_num = state["Selected_Room"]
 	
 	if side == 'N':
 		north_room = room_num - 3
@@ -301,10 +284,8 @@ def create_image_puzzle(state):
 # takes a room num from 0 to 8 and prompts the user for a url for the wallpaper
 def add_wallpaper_to_room(room_num, state):
 	url = window.prompt("Enter a complete URL for a wallpaper. Say 'cancel' to cancel.", "wall.jpg")
-	#alert(url)
-	#Does not work
-	if(url is None):
-		
+
+	if(url is "cancel"):
 		newState = copy_state(state)
 		
 	elif(url_is_valid(url)):	
@@ -316,7 +297,6 @@ def add_wallpaper_to_room(room_num, state):
 			picked.walls[loc].wallpaper.url = url
 	
 	else:
-	
 		alert("URL was not valid. Try again.")
 		return add_wallpaper_to_room(room_num, state)
 	
@@ -331,21 +311,44 @@ def url_is_valid(url):
 	
 def change_selection(room_num, state):
 	newState = copy_state(state)
-	newState["Selected"] = room_num
+	newState["Selected_Room"] = room_num
 	return newState
 	
 def change_role(role, state):
+	global OPERATORS
 	newState = copy_state(state)
 	newState['Role'] = role
+	
+	# reset the operators
+	OPERATORS = set_operators(newState)
+	
 	return newState
 
-def darkenCJS(state):
-	newState = copy_state(state)
-	
-	CamanCommConstructor = JSConstructor(CamanComms)
-	myCamanComm = CamanCommConstructor("#roleCanvas", "metalfencing.jpg")
-	myCamanComm.CamanFunction("this.brightness(-20).render();")
+def create_puzzle(state):
+	url = window.prompt("Enter a complete URL for a picture. Say 'cancel' to cancel.", "metalfencing.jpg")
 
+	if(url is "cancel"):
+		newState = copy_state(state)
+		
+	elif(url_is_valid(url)):	
+		newState = copy_state(state)
+		
+		from PRIMEDesigner15VisForBrython import placeImageOnCanvas
+		placeImageOnCanvas(url)
+		newPuzzle = Puzzle(url)
+		newState["Puzzles"].append(newPuzzle)
+		newState["Selected_Puzzle"] = len(state["Puzzles"]) - 1
+		
+	else:
+		alert("URL was not valid. Try again.")
+		return add_wallpaper_to_room(room_num, state)
+	
+	return newState
+	
+def darkenCJS(state):
+	from PRIMEDesigner15VisForBrython import darkenCJSVis
+	newState = copy_state(state)
+	darkenCJSVis(newState["Puzzles"][newState["Selected_Puzzle"]].url)
 	return newState
 	
 #</COMMON_CODE>		
@@ -365,30 +368,35 @@ def set_operators(state):
 	if (state['Role'] == "Architect"):
 		selection_operators =\
 			[Operator("Switch to room numbered " + str(num + 1) + " for editing.",
-				lambda state: num is not state["Selected"],
+				lambda state: num is not state["Selected_Room"],
 				lambda state: change_selection(num, state))
 			for num in range(9)]
 
 		door_operators =\
 			[Operator("Add door to current room on " + cardinal + " wall.",
 				lambda state: doors_is_valid(cardinal, state),
-				lambda state: add_door_operator(state["Selected"], cardinal, state))
+				lambda state: add_door_operator(state["Selected_Room"], cardinal, state))
 			for cardinal in ['N', 'S', 'E', 'W']]		
 
 		wallpaper_operators =\
 			Operator("Add wallpaper to current room.",
 				lambda state: True,
-				lambda state: add_wallpaper_to_room(state["Selected"], state))
+				lambda state: add_wallpaper_to_room(state["Selected_Room"], state))
 					
 		OPERATORS = selection_operators	+ door_operators + wallpaper_operators + role_operators
 		
 	elif(state['Role'] == "Image Puzzle"):
+		create_new_puzzle =\
+			Operator("Create a new puzzle.",
+				lambda state: True,
+				lambda state: create_puzzle(state))
+		
 		darken_test =\
 			Operator("Darken the image.",
-				lambda state: True,
+				lambda state: state["Selected_Puzzle"] > -1,
 				lambda state: darkenCJS(state))
 				
-		OPERATORS = role_operators + darken_test
+		OPERATORS = role_operators + create_new_puzzle + darken_test
 		
 	elif(state['Role'] == "Music Puzzle"):
 		OPERATORS = role_operators
@@ -405,13 +413,10 @@ INITIAL_STATE = {}
 INITIAL_STATE['Rooms'] = []
 INITIAL_STATE['Doors'] = []
 INITIAL_STATE['Puzzles'] = []
-INITIAL_STATE['Selected'] = 0
-<<<<<<< HEAD
-INITIAL_STATE['Role'] = "Architect"
-=======
+INITIAL_STATE['Selected_Room'] = 0
+INITIAL_STATE['Selected_Puzzle'] = -1
 INITIAL_STATE['Role'] = "Image Puzzle"
-INITIAL_STATE['Puzzles'] = []
->>>>>>> origin/master
+
 
 # Create 9 rooms, add them to the list.
 for j in range(3):
