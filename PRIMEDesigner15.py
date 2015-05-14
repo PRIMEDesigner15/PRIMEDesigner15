@@ -59,6 +59,9 @@ def copy_state(state):
 				add_door_to_room(room_num, direction, newState, state["Doors"][door_index])
 				door_index += 1
 	
+	# reset the operators
+	set_operators(newState)
+	
 	return newState
 		
 def describe_state(state):
@@ -178,6 +181,7 @@ class Door:
 
 class Puzzle:
 	
+<<<<<<< HEAD
 	#def __init__(url, transformList = []):
 	#	self.url = url
 	#	self.transformList = transformList
@@ -189,6 +193,18 @@ class Puzzle:
 	def copy(self):
 		#return Puzzle(self.url,self.transformList) 
 		return Puzzle()
+=======
+	def __init__(self, canvasId, ogJpeg, operations = []):
+		self.canvasId = canvasId
+		self.ogJpeg = ogJpeg
+		self.operations = operations
+	
+	def add_operation(self, operation):
+		self.operations = operations + operation
+	
+	def copy(self):
+		return Puzzle(self.operations)
+>>>>>>> origin/master
 		
 class Music:
 
@@ -390,7 +406,12 @@ INITIAL_STATE['Rooms'] = []
 INITIAL_STATE['Doors'] = []
 INITIAL_STATE['Puzzles'] = []
 INITIAL_STATE['Selected'] = 0
+<<<<<<< HEAD
 INITIAL_STATE['Role'] = "Architect"
+=======
+INITIAL_STATE['Role'] = "Image Puzzle"
+INITIAL_STATE['Puzzles'] = []
+>>>>>>> origin/master
 
 # Create 9 rooms, add them to the list.
 for j in range(3):
