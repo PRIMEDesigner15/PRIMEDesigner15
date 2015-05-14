@@ -29,12 +29,8 @@ print("Hello from PRIMEDesigner15.py (after METADATA)")
 #<COMMON_CODE>
 
 from browser import document, window
-<<<<<<< HEAD
 from javascript import JSObject, JSConstructor
-=======
 import browser
-from javascript import JSConstructor
->>>>>>> origin/master
 
 
 
@@ -340,6 +336,7 @@ def darkenCJS(state):
 print("Hello from PRIMEDesigner15.py (after COMMON_CODE)")
 
 #<OPERATORS>
+def set_operators(state):
 #Method that can be called to set the Operators 
 #of the current Role given the current State
 	role_operators =\
