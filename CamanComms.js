@@ -8,9 +8,9 @@ function CamanComms(canvasId, imagePath) {
 		console.log("camanfunction triggered");
 		
 		Caman(canvasId, imagePath, function() {
-			this.brightness(-10).render();
+			//alert(command);
+			eval(command);
+			//eval("this.brightness(-20).render();")
 		});
-		//Caman(canvasId, function() {
-		//	eval(command)});
 	};
 };

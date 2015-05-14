@@ -317,7 +317,7 @@ def darkenCJS(state):
 	
 	CamanCommConstructor = JSConstructor(CamanComms)
 	myCamanComm = CamanCommConstructor("#roleCanvas", "metalfencing.jpg")
-	myCamanComm.CamanFunction("function(){this.brightness(-20).render();}")
+	myCamanComm.CamanFunction("this.brightness(-20).render();")
 
 	return newState
 	
@@ -361,7 +361,7 @@ def set_operators(state):
 				lambda state: True,
 				lambda state: darkenCJS(state))
 				
-		OPERATORS = [darken_test] # + role_operators
+		OPERATORS = role_operators + darken_test
 		
 	elif(state['Role'] == "Music Puzzle"):
 		OPERATORS = role_operators
