@@ -29,7 +29,13 @@ print("Hello from PRIMEDesigner15.py (after METADATA)")
 #<COMMON_CODE>
 
 from browser import document, window
+<<<<<<< HEAD
 from javascript import JSObject, JSConstructor
+=======
+import browser
+from javascript import JSConstructor
+>>>>>>> origin/master
+
 
 
 # Preforms a deep copy of the given state. 
@@ -47,6 +53,7 @@ def copy_state(state):
 	newState["Rooms"] = newRooms
 	newState["Doors"] = newDoors
 	newState["Selected"] = state["Selected"]	
+	newState["Role"] = state["Role"]
 		
 	# Add in doors to the walls in the rooms.
 	door_index = 0
@@ -335,7 +342,6 @@ print("Hello from PRIMEDesigner15.py (after COMMON_CODE)")
 #<OPERATORS>
 #Method that can be called to set the Operators 
 #of the current Role given the current State
-def set_operators(state):
 	role_operators =\
 		[Operator("Change Role to " + role + ".",
 			lambda state: state['Role'] is not role,
