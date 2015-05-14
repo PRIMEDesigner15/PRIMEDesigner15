@@ -172,17 +172,23 @@ class Door:
 	def open_or_close(self):
 		self.isOpen = not isOpen
 	
-	# Returns a copy of itself.
+	# Returns a deep copy of itself.
 	def copy(self):
 		return Door(self.isOpen, self.url)
 
 class Puzzle:
 	
-	def __init__(self):
-		pass# nothing happens right now
+	#def __init__(url, transformList = []):
+	#	self.url = url
+	#	self.transformList = transformList
+	
+	def __init__():
+		pass
 		
+	# Returns a deep copy of itself	
 	def copy(self):
-		return Puzzle() # nothing happens right now
+		#return Puzzle(self.url,self.transformList) 
+		return Puzzle()
 		
 class Music:
 
@@ -272,12 +278,16 @@ def doors_is_valid(side, state):
 			return True
 	else:
 		return False
-	
+
+def create_image_puzzle(state):
+	url = prompt("Enter a complete URL for a puzzle image. Say 'cancel' to cancel.", "wall.jpg")
+		
 # takes a room num from 0 to 8 and prompts the user for a url for the wallpaper
 def add_wallpaper_to_room(room_num, state):
 	url = prompt("Enter a complete URL for a wallpaper. Say 'cancel' to cancel.", "wall.jpg")
+	#Does not work
 	if(url == "cancel"):
-		
+		alert("hello2")
 		newState = copy_state(state)
 		
 	elif(url_is_valid(url)):	
@@ -377,8 +387,9 @@ def set_operators(state):
 INITIAL_STATE = {}
 INITIAL_STATE['Rooms'] = []
 INITIAL_STATE['Doors'] = []
+INITIAL_STATE['Puzzles'] = []
 INITIAL_STATE['Selected'] = 0
-INITIAL_STATE['Role'] = "Image Puzzle"
+INITIAL_STATE['Role'] = "Architect"
 
 # Create 9 rooms, add them to the list.
 for j in range(3):
