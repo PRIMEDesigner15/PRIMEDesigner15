@@ -39,15 +39,18 @@ def copy_state(state):
 	newState = {"Rooms": [], "Doors": []}
 	newRooms = []
 	newDoors = []
+	newPuzzles = []
 
 	# Copy the rooms (without doors in their walls) and doors into the newState's dictionary.
 	for room in state["Rooms"]:
 		newRooms.append(room.copy())
 	for door in state["Doors"]:
 		newDoors.append(door.copy())
+	for puzzle in state["Puzzles"]:
+		newPuzzles.append(puzzle.copy())
 		
 	newState["Rooms"] = newRooms
-	newState["Puzzles"] = state["Puzzles"]
+	newState["Puzzles"] = newPuzzles
 	newState["Doors"] = newDoors
 	newState["Selected_Room"] = state["Selected_Room"]	
 	newState["Selected_Puzzle"] = state["Selected_Puzzle"]
@@ -289,7 +292,6 @@ def add_wallpaper_to_room(room_num, state):
 		newState = copy_state(state)
 		
 	elif(url_is_valid(url)):	
-		alert("hello2")
 		newState = copy_state(state)
 		ROOMS = newState["Rooms"]
 		picked = ROOMS[room_num]
@@ -318,7 +320,6 @@ def change_role(role, state):
 	global OPERATORS
 	newState = copy_state(state)
 	newState['Role'] = role
-	
 	# reset the operators
 	OPERATORS = set_operators(newState)
 	
@@ -333,11 +334,10 @@ def create_puzzle(state):
 	elif(url_is_valid(url)):	
 		newState = copy_state(state)
 		
-		from PRIMEDesigner15VisForBrython import placeImageOnCanvas
-		placeImageOnCanvas(url)
+		from PRIMEDesigner15VisForBrython import drawPuzzle
 		newPuzzle = Puzzle(url)
 		newState["Puzzles"].append(newPuzzle)
-		newState["Selected_Puzzle"] = len(state["Puzzles"]) - 1
+		newState["Selected_Puzzle"] = len(newState["Puzzles"]) - 1
 		
 	else:
 		alert("URL was not valid. Try again.")
@@ -345,10 +345,12 @@ def create_puzzle(state):
 	
 	return newState
 	
-def darkenCJS(state):
-	from PRIMEDesigner15VisForBrython import darkenCJSVis
+def darkenImage(state):
 	newState = copy_state(state)
-	darkenCJSVis(newState["Puzzles"][newState["Selected_Puzzle"]].url)
+	
+	# Add transform to newState list
+	newState["Puzzles"][newState["Selected_Puzzle"]].add_transform("this.brightness(-20);")
+
 	return newState
 	
 #</COMMON_CODE>		
@@ -394,7 +396,7 @@ def set_operators(state):
 		darken_test =\
 			Operator("Darken the image.",
 				lambda state: state["Selected_Puzzle"] > -1,
-				lambda state: darkenCJS(state))
+				lambda state: darkenImage(state))
 				
 		OPERATORS = role_operators + create_new_puzzle + darken_test
 		

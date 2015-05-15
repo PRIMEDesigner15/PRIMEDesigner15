@@ -32,7 +32,6 @@ def set_up_gui(opselectdiv, statuslinediv):
 	global gui
 	gui = html.DIV(Id = "thegui")
 	set_up_board_svg_graphics()
-	#alert("SVG stuff should now be set up.")
 	gui <= opselectdiv
 	gui <= statuslinediv
 	document <= gui
@@ -70,7 +69,8 @@ def render_state_svg_graphics(state):
 		APANEL.removeChild(APANEL.lastChild)
 	
 	# Clear the roleCanvas
-	ctx.clearRect(0,0, GAME_WIDTH, GAME_HEIGHT)
+	#ctx.clearRect(0,0, GAME_WIDTH, GAME_HEIGHT)
+
 	
 	if(state['Role'] == "Architect"):
 		prepareSVG()
@@ -92,6 +92,8 @@ def render_state_svg_graphics(state):
 		APANEL <= outline
 	elif(state['Role'] == "Image Puzzle"):
 		prepareCanvas()
+		if(state["Selected_Puzzle"] != -1):
+			drawPuzzle(state["Puzzles"][state["Selected_Puzzle"]])
 	elif(state['Role'] == "Music Puzzle"):
 		prepareCanvas()
 	elif(state['Role'] == "Rules"):
@@ -110,11 +112,6 @@ def prepareCanvas():
 	#Hide svg stuff, make canvas visible
 	board.style.display = "none"
 	roleCanvas.style.display = "initial"
-
-def placeImageOnCanvas(url):
-	global ctx
-	img = html.IMG('', src = url)
-	img.bind('load', lambda e: ctx.drawImage(img.elt,0,0))
 	
 # draws a room.		
 def drawRoom(room,room_num):
@@ -165,11 +162,9 @@ def drawWall(wall,x3,y3,x4,y4,room_num):
 def drawWallpaper(wall,x3,y3,x4,y4,room_num):
 	global LINE_WIDTH, APANEL
 
-	#alert("wall loc is = " + wall.loc)
 	if (wall.loc == 'S'):
 		transform = "rotate(180, 50, 50)"
 	elif (wall.loc == 'E'):
-		#alert("East walls triggered")
 		transform = "rotate(90, 50, 50)"
 	elif (wall.loc == 'W'):
 		transform = "rotate(270, 50, 50)"
@@ -285,8 +280,16 @@ def mapCoordsToDIV(x, y):
 	newY = int( (y * GAME_HEIGHT)/3) 
 	return (newX, newY)
 	
-def darkenCJSVis(url):
+def drawPuzzle(puzzle):
+	
 	CamanCommConstructor = JSConstructor(CamanComms)
-	alert(url)
-	myCamanComm = CamanCommConstructor("#roleCanvas", url)
-	myCamanComm.CamanFunction("this.brightness(-20).render();")
+	myCamanComm = CamanCommConstructor("#roleCanvas", puzzle.url)
+	myCamanComm.CamanFunction("this.reset()")
+	i = 0
+	for transform in puzzle.transformList:
+		myCamanComm.CamanFunction(transform)
+		alert("applying transformation " + str(i) + " " + transform)
+		i = i + 1
+		
+	myCamanComm.CamanFunction("this.render()")
+	
