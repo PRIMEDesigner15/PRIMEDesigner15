@@ -288,7 +288,7 @@ def create_image_puzzle(state):
 def add_wallpaper_to_room(room_num, state):
 	url = window.prompt("Enter a complete URL for a wallpaper. Say 'cancel' to cancel.", "wall.jpg")
 
-	if(url is "cancel"):
+	if(url == "cancel"):
 		newState = copy_state(state)
 		
 	elif(url_is_valid(url)):	
@@ -328,7 +328,7 @@ def change_role(role, state):
 def create_puzzle(state):
 	url = window.prompt("Enter a complete URL for a picture. Say 'cancel' to cancel.", "metalfencing.jpg")
 
-	if(url is "cancel"):
+	if(url == "cancel"):
 		newState = copy_state(state)
 		
 	elif(url_is_valid(url)):	
@@ -338,10 +338,10 @@ def create_puzzle(state):
 		newPuzzle = Puzzle(url)
 		newState["Puzzles"].append(newPuzzle)
 		newState["Selected_Puzzle"] = len(newState["Puzzles"]) - 1
-		
+
 	else:
 		alert("URL was not valid. Try again.")
-		return add_wallpaper_to_room(room_num, state)
+		return create_puzzle(state)
 	
 	return newState
 	

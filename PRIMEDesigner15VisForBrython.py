@@ -17,6 +17,10 @@ ROOM_SIZE = 100
 GAME_WIDTH = ROOM_SIZE * 3
 GAME_HEIGHT = ROOM_SIZE * 3
 
+CamanCommConstructor = JSConstructor(CamanComms)
+camanTranslator = CamanCommConstructor("#roleCanvas", "start.jpg")
+camanTranslator.CamanFunction("this.render()")
+
 #The canvas and its context will go here when initialized for manipulation
 roleCanvas = None
 ctx = None
@@ -69,7 +73,8 @@ def render_state_svg_graphics(state):
 		APANEL.removeChild(APANEL.lastChild)
 	
 	# Clear the roleCanvas
-	#ctx.clearRect(0,0, GAME_WIDTH, GAME_HEIGHT)
+	ctx.clearRect(0,0, GAME_WIDTH, GAME_HEIGHT)
+	#alert("canvas was cleared")
 
 	
 	if(state['Role'] == "Architect"):
@@ -94,6 +99,7 @@ def render_state_svg_graphics(state):
 		prepareCanvas()
 		if(state["Selected_Puzzle"] != -1):
 			drawPuzzle(state["Puzzles"][state["Selected_Puzzle"]])
+			
 	elif(state['Role'] == "Music Puzzle"):
 		prepareCanvas()
 	elif(state['Role'] == "Rules"):
@@ -281,15 +287,18 @@ def mapCoordsToDIV(x, y):
 	return (newX, newY)
 	
 def drawPuzzle(puzzle):
+	global camanTranslator
 	
-	CamanCommConstructor = JSConstructor(CamanComms)
-	myCamanComm = CamanCommConstructor("#roleCanvas", puzzle.url)
-	myCamanComm.CamanFunction("this.reset()")
+	camanTranslator.setURL(puzzle.url)
+	camanTranslator.resetCamanImage()
+	
+
 	i = 0
 	for transform in puzzle.transformList:
-		myCamanComm.CamanFunction(transform)
+		camanTranslator.CamanFunction(transform)
 		alert("applying transformation " + str(i) + " " + transform)
 		i = i + 1
 		
-	myCamanComm.CamanFunction("this.render()")
+	camanTranslator.CamanFunction("this.render();")
+	alert("finished rendering")
 	
