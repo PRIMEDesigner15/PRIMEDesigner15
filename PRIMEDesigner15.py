@@ -334,7 +334,10 @@ def create_puzzle(state):
 	elif(url_is_valid(url)):	
 		newState = copy_state(state)
 		
-		from PRIMEDesigner15VisForBrython import drawPuzzle
+		from PRIMEDesigner15VisForBrython import camanTranslator
+		
+
+		
 		newPuzzle = Puzzle(url)
 		newState["Puzzles"].append(newPuzzle)
 		newState["Selected_Puzzle"] = len(newState["Puzzles"]) - 1
