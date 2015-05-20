@@ -41,7 +41,7 @@ class PixelInfo
   # The counterpart to getPixelRelative, this updates the value of a pixel whose location is 
   # specified in relation to the current pixel.
   putPixelRelative: (horiz, vert, rgba) ->
-    nowLoc = @loc + (@c.dimensions.width * 4 * (vert * -1)) + (4 * horiz)
+    newLoc = @loc + (@c.dimensions.width * 4 * (vert * -1)) + (4 * horiz)
 
     return if newLoc > @c.pixelData.length or newLoc < 0
 

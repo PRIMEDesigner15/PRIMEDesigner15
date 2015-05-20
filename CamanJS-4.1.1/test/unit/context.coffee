@@ -1,13 +1,13 @@
 if exports?
   {Caman} = require '../../dist/caman.full'
   {assert} = require 'chai'
-  {greyPath} = require '../ext/grey'
+  {greyImage, greyPath, rgbData} = require '../ext/grey'
 
   Canvas = require 'canvas'
 
 describe "Context", ->
   it "can be updated after external changes", (done) ->
-    caman = Caman greyPath, ->
+    caman = Caman greyImage, ->
       canvas = caman.canvas
       context = canvas.getContext('2d')
       context.fillStyle = "rgba(255, 0, 0, 1)"

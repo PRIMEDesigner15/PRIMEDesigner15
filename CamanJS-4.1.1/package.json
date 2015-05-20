@@ -1,8 +1,15 @@
 {
   "name": "caman",
-  "version": "4.1.1",
+  "version": "4.1.2",
   "description": "Javascript (Ca)nvas (Man)ipulation for NodeJS and the browser",
-  "keywords": ["canvas", "image", "manipulate", "filter", "image manipulation", "editing"],
+  "keywords": [
+    "canvas",
+    "image",
+    "manipulate",
+    "filter",
+    "image manipulation",
+    "editing"
+  ],
   "homepage": "http://camanjs.com",
   "author": {
     "name": "Ryan LeFevre",
@@ -45,17 +52,21 @@
   },
   "devDependencies": {
     "coffee-script": ">= 1.6.1",
-    "docco": "0.6.0",
+    "docco": "0.6.2",
+    "codo": "*",
     "jsmin": "*",
     "packer": "*",
-    "mocha": "*",
     "chai": "*",
     "servedir": "*",
     "cli": "*",
-    "cli-table": "*"
+    "cli-table": "*",
+    "karma": "~ 0.10",
+    "karma-mocha": "*"
   },
   "scripts": {
-    "test": "./node_modules/mocha/bin/mocha --compilers coffee:coffee-script --reporter spec --globals Caman ./test/unit/*.coffee",
-    "examples": "./node_modules/servedir/bin/servedir"
+    "test": "./node_modules/mocha/bin/mocha --compilers coffee:coffee-script --reporter spec --globals Caman ./test/unit/*.coffee && ./node_modules/.bin/karma start --single-run --browsers Firefox",
+    "examples": "./node_modules/servedir/bin/servedir",
+    "docs": "codo",
+    "docs-server": "codo --server"
   }
 }

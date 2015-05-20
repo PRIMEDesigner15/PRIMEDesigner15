@@ -74,8 +74,13 @@
               </a>
             
               
-              <a class="source" href="pixelinfo.html">
-                pixelinfo.coffee
+              <a class="source" href="module.html">
+                module.coffee
+              </a>
+            
+              
+              <a class="source" href="pixel.html">
+                pixel.coffee
               </a>
             
               
@@ -144,6 +149,11 @@
               </a>
             
               
+              <a class="source" href="rotate.html">
+                rotate.coffee
+              </a>
+            
+              
               <a class="source" href="stackBlur.html">
                 stackBlur.coffee
               </a>
@@ -177,8 +187,8 @@
 
             </div>
             
-            <div class="content"><div class="highlight"><pre><span class="nv">Caman.Blender = </span><span class="k">class</span> <span class="nx">Blender</span>
-  <span class="vi">@blenders = </span><span class="p">{}</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="class"><span class="keyword">class</span> <span class="title">Caman</span>.<span class="title">Blender</span></span>
+  <span class="property">@blenders</span> = {}</pre></div></div>
             
         </li>
         
@@ -189,13 +199,14 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-2">&#182;</a>
               </div>
-              
-<p>Registers a blender. Can be used to add your own blenders outside of
+              <p>Registers a blender. Can be used to add your own blenders outside of
 the core library, if needed.</p>
+<p>@param [String] name Name of the blender.
+@param [Function] func The blender function.</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre>  <span class="vi">@register: </span><span class="nf">(name, func) -&gt;</span> <span class="nx">@blenders</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">func</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>  <span class="property">@register</span>: (name, func) -&gt; <span class="property">@blenders</span>[name] = func</pre></div></div>
             
         </li>
         
@@ -206,15 +217,30 @@ the core library, if needed.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
-              
-<p>Executes a blender to combine a layer with its parent.</p>
+              <p>Executes a blender to combine a layer with its parent.</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre>  <span class="vi">@execute: </span><span class="nf">(name, rgbaLayer, rgbaParent) -&gt;</span>
-    <span class="nx">@blenders</span><span class="p">[</span><span class="nx">name</span><span class="p">](</span><span class="nx">rgbaLayer</span><span class="p">,</span> <span class="nx">rgbaParent</span><span class="p">)</span>
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>@param [String] name Name of the blending function to invoke.
+@param [Object] rgbaLayer RGBA object of the current pixel from the layer.
+@param [Object] rgbaParent RGBA object of the corresponding pixel in the parent layer.
+@return [Object] RGBA object representing the blended pixel.</p>
 
-</pre></div></div>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="property">@execute</span>: (name, rgbaLayer, rgbaParent) -&gt;
+    <span class="property">@blenders</span>[name](rgbaLayer, rgbaParent)
+
+Blender = Caman.Blender</pre></div></div>
             
         </li>
         

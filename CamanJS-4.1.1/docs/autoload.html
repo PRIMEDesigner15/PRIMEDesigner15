@@ -74,8 +74,13 @@
               </a>
             
               
-              <a class="source" href="pixelinfo.html">
-                pixelinfo.coffee
+              <a class="source" href="module.html">
+                module.coffee
+              </a>
+            
+              
+              <a class="source" href="pixel.html">
+                pixel.coffee
               </a>
             
               
@@ -144,6 +149,11 @@
               </a>
             
               
+              <a class="source" href="rotate.html">
+                rotate.coffee
+              </a>
+            
+              
               <a class="source" href="stackBlur.html">
                 stackBlur.coffee
               </a>
@@ -173,17 +183,19 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-1">&#182;</a>
               </div>
-              
+              <p>Inform CamanJS that the DOM has been updated, and that it
+should re-scan for CamanJS instances in the document.</p>
+
             </div>
             
-            <div class="content"><div class="highlight"><pre><span class="nv">Caman.DOMUpdated = </span><span class="o">-&gt;</span>
-  <span class="nv">imgs = </span><span class="nb">document</span><span class="p">.</span><span class="nx">querySelectorAll</span><span class="p">(</span><span class="s">&quot;img[data-caman]&quot;</span><span class="p">)</span>
-  <span class="k">return</span> <span class="nx">unless</span> <span class="nx">imgs</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span>
+            <div class="content"><div class='highlight'><pre>Caman.<span class="function"><span class="title">DOMUpdated</span></span> = -&gt;
+  imgs = document.querySelectorAll(<span class="string">"img[data-caman]"</span>)
+  <span class="keyword">return</span> <span class="keyword">unless</span> imgs.length &gt; <span class="number">0</span>
 
-  <span class="k">for</span> <span class="nx">img</span> <span class="k">in</span> <span class="nx">imgs</span>
-    <span class="nv">parser = </span><span class="k">new</span> <span class="nx">CamanParser</span> <span class="nx">img</span><span class="p">,</span> <span class="o">-&gt;</span>
-      <span class="nx">@parse</span><span class="p">()</span>
-      <span class="nx">@execute</span><span class="p">()</span></pre></div></div>
+  <span class="keyword">for</span> img <span class="keyword">in</span> imgs
+    parser = <span class="keyword">new</span> CamanParser img, -&gt;
+      <span class="property">@parse</span>()
+      <span class="property">@execute</span>()</pre></div></div>
             
         </li>
         
@@ -194,18 +206,17 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-2">&#182;</a>
               </div>
-              
-<p>If enabled, we check the page to see if there are any
+              <p>If enabled, we check the page to see if there are any
 images with Caman instructions provided using HTML5
 data attributes.</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre><span class="k">if</span> <span class="nx">Caman</span><span class="p">.</span><span class="nx">autoload</span> <span class="k">then</span> <span class="nx">do</span> <span class="o">-&gt;</span>
-  <span class="k">if</span> <span class="nb">document</span><span class="p">.</span><span class="nx">readyState</span> <span class="o">is</span> <span class="s">&quot;complete&quot;</span>
-    <span class="nx">Caman</span><span class="p">.</span><span class="nx">DOMUpdated</span><span class="p">()</span>
-  <span class="k">else</span>
-    <span class="nb">document</span><span class="p">.</span><span class="nx">addEventListener</span> <span class="s">&quot;DOMContentLoaded&quot;</span><span class="p">,</span> <span class="nx">Caman</span><span class="p">.</span><span class="nx">DOMUpdated</span><span class="p">,</span> <span class="kc">false</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="keyword">if</span> Caman.autoload <span class="keyword">then</span> <span class="keyword">do</span> -&gt;
+  <span class="keyword">if</span> document.readyState <span class="keyword">is</span> <span class="string">"complete"</span>
+    Caman.DOMUpdated()
+  <span class="keyword">else</span>
+    document.addEventListener <span class="string">"DOMContentLoaded"</span>, Caman.DOMUpdated, <span class="literal">false</span></pre></div></div>
             
         </li>
         
@@ -216,20 +227,11 @@ data attributes.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
-              
-<p>Parses Caman instructions embedded in the HTML data-caman attribute</p>
+              <p>Parses Caman instructions embedded in the HTML data-caman attribute.</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre><span class="k">class</span> <span class="nx">CamanParser</span>
-  <span class="nv">INST_REGEX = </span><span class="s">&quot;(\\w+)\\((.*?)\\)&quot;</span>
-
-  <span class="nv">constructor: </span><span class="nf">(ele, ready) -&gt;</span>
-    <span class="vi">@dataStr = </span><span class="nx">ele</span><span class="p">.</span><span class="nx">getAttribute</span><span class="p">(</span><span class="s">&#39;data-caman&#39;</span><span class="p">)</span>
-    <span class="vi">@caman = </span><span class="nx">Caman</span> <span class="nx">ele</span><span class="p">,</span> <span class="nx">ready</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="nx">@</span><span class="p">)</span>
-
-  <span class="nv">parse: </span><span class="o">-&gt;</span>
-    <span class="vi">@ele = </span><span class="nx">@caman</span><span class="p">.</span><span class="nx">canvas</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="class"><span class="keyword">class</span> <span class="title">CamanParser</span></span></pre></div></div>
             
         </li>
         
@@ -240,15 +242,11 @@ data attributes.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
-              
-<p>First we find each instruction as a whole using a global
-regex search.</p>
+              <p>Regex used for parsing options out of the data-caman attribute.</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre>    <span class="nv">r = </span><span class="k">new</span> <span class="nb">RegExp</span><span class="p">(</span><span class="nx">INST_REGEX</span><span class="p">,</span> <span class="s">&#39;g&#39;</span><span class="p">)</span>
-    <span class="nv">unparsedInstructions = </span><span class="nx">@dataStr</span><span class="p">.</span><span class="nx">match</span> <span class="nx">r</span>
-    <span class="k">return</span> <span class="nx">unless</span> <span class="nx">unparsedInstructions</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>  INST_REGEX = <span class="string">"(\\w+)\\((.*?)\\)"</span></pre></div></div>
             
         </li>
         
@@ -259,15 +257,15 @@ regex search.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
-              
-<p>Once we gather all the instructions, we go through each one
-and parse out the filter name + it&#39;s parameters.</p>
+              <p>Creates a new parser instance.</p>
+<p>@param [DOMObject] ele DOM object to be instantiated with CamanJS
+@param [Function] ready Callback function to pass to CamanJS</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre>    <span class="nv">r = </span><span class="k">new</span> <span class="nb">RegExp</span><span class="p">(</span><span class="nx">INST_REGEX</span><span class="p">)</span>
-    <span class="k">for</span> <span class="nx">inst</span> <span class="k">in</span> <span class="nx">unparsedInstructions</span>
-      <span class="p">[</span><span class="nx">m</span><span class="p">,</span> <span class="nx">filter</span><span class="p">,</span> <span class="nx">args</span><span class="p">]</span> <span class="o">=</span> <span class="nx">inst</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="nx">r</span><span class="p">)</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>  constructor: (ele, ready) -&gt;
+    <span class="property">@dataStr</span> = ele.getAttribute(<span class="string">'data-caman'</span>)
+    <span class="property">@caman</span> = Caman ele, ready.bind(@)</pre></div></div>
             
         </li>
         
@@ -278,29 +276,91 @@ and parse out the filter name + it&#39;s parameters.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
+              <p>Parse the DOM object and call the parsed filter functions on the Caman object.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  parse: -&gt;
+    <span class="property">@ele</span> = <span class="property">@caman</span>.canvas</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
               
-<p>Create a factory function so we can catch any errors that
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>First we find each instruction as a whole using a global
+regex search.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    r = <span class="keyword">new</span> RegExp(INST_REGEX, <span class="string">'g'</span>)
+    unparsedInstructions = <span class="property">@dataStr</span>.match r
+    <span class="keyword">return</span> <span class="keyword">unless</span> unparsedInstructions.length &gt; <span class="number">0</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <p>Once we gather all the instructions, we go through each one
+and parse out the filter name + it&#39;s parameters.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    r = <span class="keyword">new</span> RegExp(INST_REGEX)
+    <span class="keyword">for</span> inst <span class="keyword">in</span> unparsedInstructions
+      [m, filter, args] = inst.match(r)</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <p>Create a factory function so we can catch any errors that
 are produced when running the filters. This also makes it very
 simple to support multiple/complex filter arguments.</p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre>      <span class="nv">instFunc = </span><span class="k">new</span> <span class="nb">Function</span><span class="p">(</span><span class="s">&quot;return function() {</span>
-<span class="s">        this.</span><span class="si">#{</span><span class="nx">filter</span><span class="si">}</span><span class="s">(</span><span class="si">#{</span><span class="nx">args</span><span class="si">}</span><span class="s">);</span>
-<span class="s">      };&quot;</span><span class="p">)</span>
+            <div class="content"><div class='highlight'><pre>      instFunc = <span class="keyword">new</span> Function(<span class="string">"return function() {
+        this.<span class="subst">#{filter}</span>(<span class="subst">#{args}</span>);
+      };"</span>)
 
-      <span class="k">try</span>
-        <span class="nv">func = </span><span class="nx">instFunc</span><span class="p">()</span>
-        <span class="nx">func</span><span class="p">.</span><span class="nx">call</span> <span class="nx">@caman</span>
-      <span class="k">catch</span> <span class="nx">e</span>
-        <span class="nx">Log</span><span class="p">.</span><span class="nx">debug</span> <span class="nx">e</span>
+      <span class="keyword">try</span>
+        func = instFunc()
+        func.call <span class="property">@caman</span>
+      <span class="keyword">catch</span> e
+        Log.debug e</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <p>Execute {Caman#render} on this Caman instance.</p>
 
-  <span class="nv">execute: </span><span class="o">-&gt;</span>
-    <span class="nv">ele = </span><span class="nx">@ele</span>
-    <span class="nx">@caman</span><span class="p">.</span><span class="nx">render</span> <span class="o">-&gt;</span>
-      <span class="nx">ele</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">.</span><span class="nx">replaceChild</span> <span class="nx">@toImage</span><span class="p">(),</span> <span class="nx">ele</span>
-
-</pre></div></div>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  execute: -&gt;
+    ele = <span class="property">@ele</span>
+    <span class="property">@caman</span>.render -&gt;
+      ele.parentNode.replaceChild <span class="property">@toImage</span>(), ele</pre></div></div>
             
         </li>
         

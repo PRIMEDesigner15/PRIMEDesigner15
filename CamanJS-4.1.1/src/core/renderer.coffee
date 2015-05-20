@@ -1,6 +1,6 @@
 # Handles all of the various rendering methods in Caman. Most of the image modification happens 
 # here. A new Renderer object is created for every render operation.
-Caman.Renderer = class Renderer
+class Caman.Renderer
   # The number of blocks to split the image into during the render process to simulate 
   # concurrency. This also helps the browser manage the (possibly) long running render jobs.
   @Blocks = if Caman.NodeJS then require('os').cpus().length else 4
@@ -98,24 +98,23 @@ Caman.Renderer = class Renderer
       startPixel: start
       endPixel: end
 
-    data = r: 0, g: 0, b: 0, a: 0
-    pixelInfo = new PixelInfo @c
+    pixel = new Pixel()
+    pixel.setContext @c
 
     for i in [start...end] by 4
-      pixelInfo.loc = i
+      pixel.loc = i
 
-      data.r = @c.pixelData[i]
-      data.g = @c.pixelData[i+1]
-      data.b = @c.pixelData[i+2]
-      data.a = @c.pixelData[i+3]
+      pixel.r = @c.pixelData[i]
+      pixel.g = @c.pixelData[i+1]
+      pixel.b = @c.pixelData[i+2]
+      pixel.a = @c.pixelData[i+3]
 
-      res = @currentJob.processFn.call pixelInfo, data
-      res.a = data.a if not res.a?
+      @currentJob.processFn pixel
 
-      @c.pixelData[i]   = Util.clampRGB res.r
-      @c.pixelData[i+1] = Util.clampRGB res.g
-      @c.pixelData[i+2] = Util.clampRGB res.b
-      @c.pixelData[i+3] = Util.clampRGB res.a
+      @c.pixelData[i]   = Util.clampRGB pixel.r
+      @c.pixelData[i+1] = Util.clampRGB pixel.g
+      @c.pixelData[i+2] = Util.clampRGB pixel.b
+      @c.pixelData[i+3] = Util.clampRGB pixel.a
 
     if Caman.NodeJS
       Fiber.yield(bnum)
@@ -141,18 +140,19 @@ Caman.Renderer = class Renderer
 
     builder = (adjustSize - 1) / 2
 
-    pixelInfo = new PixelInfo @c
+    pixel = new Pixel()
+    pixel.setContext(@c)
 
     for i in [start...end] by 4
-      pixelInfo.loc = i
+      pixel.loc = i
       builderIndex = 0
 
       for j in [-builder..builder]
         for k in [builder..-builder]
-          pixel = pixelInfo.getPixelRelative j, k
-          kernel[builderIndex * 3]     = pixel.r
-          kernel[builderIndex * 3 + 1] = pixel.g
-          kernel[builderIndex * 3 + 2] = pixel.b
+          p = pixel.getPixelRelative j, k
+          kernel[builderIndex * 3]     = p.r
+          kernel[builderIndex * 3 + 1] = p.g
+          kernel[builderIndex * 3 + 2] = p.b
 
           builderIndex++
 
@@ -205,7 +205,7 @@ Caman.Renderer = class Renderer
 
   # Loads an image onto the current canvas
   loadOverlay: (layer, src) ->
-    img = document.createElement 'img'
+    img = new Image()
     img.onload = =>
       layer.context.drawImage img, 0, 0, @c.dimensions.width, @c.dimensions.height
       layer.imageData = layer.context.getImageData 0, 0, @c.dimensions.width, @c.dimensions.height
@@ -217,3 +217,5 @@ Caman.Renderer = class Renderer
 
     proxyUrl = IO.remoteCheck src
     img.src = if proxyUrl? then proxyUrl else src
+
+Renderer = Caman.Renderer
