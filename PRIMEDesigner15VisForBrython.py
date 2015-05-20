@@ -295,6 +295,21 @@ def mapCoordsToDIV(x, y):
 def drawPuzzle(puzzle):
 	global camanTranslator
 	
+	for transform in puzzle.transformList:
+		if (transform == "darkenImage"):
+			camanTranslator.CamanFunction("this.brightness(-20);")
+		elif (transform == "brightenImage"):
+			camanTranslator.CamanFunction("this.brightness(20);")
+		elif (transform == "rotate180"):
+			#get a 2d array or list of lists from camanTranslator
+			#do stuff with it
+			#give caman back its 2d array/ list of lists
+		else:
+			alert("Not supported transform")
+			
+	camanTranslator.CamanFunction("this.render();")
+	alert("finished rendering")
+	'''
 	i = 0
 	for transform in puzzle.transformList:
 		camanTranslator.CamanFunction(transform)
@@ -303,4 +318,4 @@ def drawPuzzle(puzzle):
 		
 	camanTranslator.CamanFunction("this.render();")
 	alert("finished rendering")
-	
+	'''

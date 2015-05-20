@@ -348,14 +348,13 @@ def create_puzzle(state):
 	
 	return newState
 	
-def darkenImage(state):
+def addTransformation(transformation, state):
 	newState = copy_state(state)
 	
 	# Add transform to newState list
-	newState["Puzzles"][newState["Selected_Puzzle"]].add_transform("this.brightness(-20);")
+	newState["Puzzles"][newState["Selected_Puzzle"]].add_transform(transformation)
 
 	return newState
-	
 #</COMMON_CODE>		
 	
 print("Hello from PRIMEDesigner15.py (after COMMON_CODE)")
@@ -399,9 +398,17 @@ def set_operators(state):
 		darken_test =\
 			Operator("Darken the image.",
 				lambda state: state["Selected_Puzzle"] > -1,
-				lambda state: darkenImage(state))
+				lambda state: addTransformation("darkenImage", state))
+		brighten_test =\
+			Operator("Brighten the image.",
+				lambda state: state["Selected_Puzzle"] > -1,
+				lambda state: addTransformation("brightenImage", state))
+		rotate_180 =\
+			Operator("Rotate the image 180 degrees.",
+				lambda state: state["Selected_Puzzle"] > -1,
+				lambda state: addTransformation("rotate180", state))
 				
-		OPERATORS = role_operators + create_new_puzzle + darken_test
+		OPERATORS = role_operators + create_new_puzzle + darken_test + brighten_test + rotate_180
 		
 	elif(state['Role'] == "Music Puzzle"):
 		OPERATORS = role_operators
