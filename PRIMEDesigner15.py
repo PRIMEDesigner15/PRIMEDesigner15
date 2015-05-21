@@ -311,9 +311,14 @@ def url_is_valid(url):
 	except OSError:
 		return False
 	
-def change_selection(room_num, state):
+def change_room_selection(room_num, state):
 	newState = copy_state(state)
 	newState["Selected_Room"] = room_num
+	return newState
+
+def change_puzzle_selection(puzzle_num, state):
+	newState = copy_state(state)
+	newState["Selected_Puzzle"] = puzzle_num
 	return newState
 	
 def change_role(role, state):
@@ -373,7 +378,7 @@ def set_operators(state):
 		selection_operators =\
 			[Operator("Switch to room numbered " + str(num + 1) + " for editing.",
 				lambda state: num is not state["Selected_Room"],
-				lambda state: change_selection(num, state))
+				lambda state: change_room_selection(num, state))
 			for num in range(9)]
 
 		door_operators =\
@@ -390,25 +395,34 @@ def set_operators(state):
 		OPERATORS = selection_operators	+ door_operators + wallpaper_operators + role_operators
 		
 	elif(state['Role'] == "Image Puzzle"):
+		
+		selection_operators =\
+			[Operator("Switch to puzzle numbered " + str(num + 1) + " for editing.",
+				lambda state: num < len(state["Puzzles"]) and len(state["Puzzles"]) > 1 and num != state["Selected_Puzzle"],
+				lambda state: change_puzzle_selection(num,state))
+			for num in range(9)]
+	
 		create_new_puzzle =\
 			Operator("Create a new puzzle.",
 				lambda state: True,
 				lambda state: create_puzzle(state))
-		
+				
 		darken_test =\
 			Operator("Darken the image.",
 				lambda state: state["Selected_Puzzle"] > -1,
 				lambda state: addTransformation("darkenImage", state))
+				
 		brighten_test =\
 			Operator("Brighten the image.",
 				lambda state: state["Selected_Puzzle"] > -1,
 				lambda state: addTransformation("brightenImage", state))
+				
 		rotate_180 =\
 			Operator("Rotate the image 180 degrees.",
 				lambda state: state["Selected_Puzzle"] > -1,
 				lambda state: addTransformation("rotate180", state))
 				
-		OPERATORS = role_operators + create_new_puzzle + darken_test + brighten_test + rotate_180
+		OPERATORS = selection_operators + role_operators + create_new_puzzle + darken_test + brighten_test + rotate_180
 		
 	elif(state['Role'] == "Music Puzzle"):
 		OPERATORS = role_operators

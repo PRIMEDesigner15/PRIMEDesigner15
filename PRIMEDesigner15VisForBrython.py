@@ -105,6 +105,7 @@ def render_state_svg_graphics(state):
 				camanTranslator.setURL(puzzle.url)
 				camanTranslator.resetCamanImage()
 				selected_puzzle = state["Selected_Puzzle"]
+				alert(state["Selected_Puzzle"])
 			drawPuzzle(puzzle)	
 	elif(state['Role'] == "Music Puzzle"):
 		prepareCanvas()
@@ -296,6 +297,7 @@ def drawPuzzle(puzzle):
 	global camanTranslator
 	
 	for transform in puzzle.transformList:
+		alert("applying transform " + transform)
 		if (transform == "darkenImage"):
 			camanTranslator.CamanFunction("this.brightness(-20);")
 		elif (transform == "brightenImage"):
@@ -310,13 +312,3 @@ def drawPuzzle(puzzle):
 			
 	camanTranslator.CamanFunction("this.render();")
 	alert("finished rendering")
-	'''
-	i = 0
-	for transform in puzzle.transformList:
-		camanTranslator.CamanFunction(transform)
-		alert("applying transformation " + str(i) + " " + transform)
-		i = i + 1
-		
-	camanTranslator.CamanFunction("this.render();")
-	alert("finished rendering")
-	'''
