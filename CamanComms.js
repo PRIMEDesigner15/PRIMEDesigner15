@@ -26,8 +26,8 @@ function CamanComms(canvasId, imagePath) {
 	this.canvasId = canvasId
 	this.imagePath = imagePath
 	this.i = 0
-	this.setURL = function(image) {
-		this.imagePath = image
+	this.setURL = function(url) {
+		this.imagePath = url
 	};
 	this.resetCamanImage = function() {
 		nohashtagsallowed = canvasId.slice(1);
@@ -35,7 +35,6 @@ function CamanComms(canvasId, imagePath) {
 	};
 	this.CamanFunction = function(command) {
 		Caman(this.canvasId, this.imagePath, function() {
-			console.log(command)
 			eval(command);
 		});
 	};

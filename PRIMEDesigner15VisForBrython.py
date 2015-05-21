@@ -98,15 +98,14 @@ def render_state_svg_graphics(state):
 						style = {"stroke": "gold", "stroke-width": THICKNESS})
 		APANEL <= outline
 	elif(state['Role'] == "Image Puzzle"):
-		prepareCanvas()
+		prepareCanvas()	
+		if(state["Selected_Puzzle"] != selected_puzzle):
+			camanTranslator.resetCamanImage()
 		if(state["Selected_Puzzle"] != -1):
 			puzzle = state["Puzzles"][state["Selected_Puzzle"]]
-			if(state["Selected_Puzzle"] != selected_puzzle):
-				camanTranslator.setURL(puzzle.url)
-				camanTranslator.resetCamanImage()
-				selected_puzzle = state["Selected_Puzzle"]
-				alert(state["Selected_Puzzle"])
-			drawPuzzle(puzzle)	
+			camanTranslator.setURL(puzzle.url)
+			selected_puzzle = state["Selected_Puzzle"]
+			drawPuzzle(puzzle)
 	elif(state['Role'] == "Music Puzzle"):
 		prepareCanvas()
 	elif(state['Role'] == "Rules"):
@@ -295,13 +294,12 @@ def mapCoordsToDIV(x, y):
 	
 def drawPuzzle(puzzle):
 	global camanTranslator
-	
+	transformations = "this.revert();\n"
 	for transform in puzzle.transformList:
-		alert("applying transform " + transform)
 		if (transform == "darkenImage"):
-			camanTranslator.CamanFunction("this.brightness(-20);")
+			transformations = transformations + "this.brightness(-20);\n"
 		elif (transform == "brightenImage"):
-			camanTranslator.CamanFunction("this.brightness(20);")
+			transformations = transformations + "this.brightness(20);\n"
 		elif (transform == "rotate180"):
 			camanTranslator.Caman180Flip()
 			#get a 2d array or list of lists from camanTranslator
@@ -309,6 +307,6 @@ def drawPuzzle(puzzle):
 			#give caman back its 2d array/ list of lists
 		else:
 			alert("Not supported transform")
-			
-	camanTranslator.CamanFunction("this.render();")
-	alert("finished rendering")
+	transformations = transformations + "this.render()"
+	camanTranslator.CamanFunction(transformations)
+	#alert("finished rendering")
