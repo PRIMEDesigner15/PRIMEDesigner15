@@ -17,15 +17,42 @@ window.onload = function() {
       this.c.pixelData[newLoc + 3] = rgba.a;
       return true;
     };
+	Caman.Filter.register("getPixels", function (test) {
+		this.process("getPixels", function (rgba) {
+			Y = rgba.locationXY().y; // e.g. {x: 0, y: 0}
+			alert("r = " + rgba.r);
+			globalImg[Y].push(new PixelWrapper(rgba.r,rgba.g,rgba.b,rgba.a));
+		});
+		return this;
+	});
+	Caman.Filter.register("putPixels", function (width) {
+		this.process("putPixels", function (rgba) {
+			X = rgba.locationXY().x; // e.g. {x: 0, y: 0}
+			Y = rgba.locationXY().y;
+			//console.log(globalImg[X,Y])
+			rgba.putPixel(X, Y, {r : globalImg[X,Y].r, g : globalImg[X,Y].g,
+						b : globalImg[X,Y].b, a : globalImg[X,Y].a});
+		});
+		return this;
+	});
 	console.log("HELLO from CamanComms!")
 }
 
+var globalImg = [];
+var globalCounter = 0;
 
+function PixelWrapper(r,g,b,a) {
 	
+	this.r = r;
+	this.g = g;
+	this.b = b;
+	this.a = a;
+	
+};
+
 function CamanComms(canvasId, imagePath) {
 	this.canvasId = canvasId
 	this.imagePath = imagePath
-	this.i = 0
 	this.setURL = function(url) {
 		this.imagePath = url
 	};
@@ -38,67 +65,39 @@ function CamanComms(canvasId, imagePath) {
 			eval(command);
 		});
 	};
-	this.Caman180Flip = function() {
-		Caman.Filter.register("example", function (adjust) {
-	  this.process("example", function (rgba) {
-		rgba.locationXY(); // e.g. {x: 0, y: 0}
+	this.CamanFlip180 = function() {
 
-		// Gets the RGBA object for the pixel that is 2 rows down
-		// and 3 columns to the right.
-		rgba.getPixelRelative(-2, 3);
-
-		// Sets the color for the pixel that is 2 rows down and
-		// 3 columns to the right.
-		rgba.putPixelRelative(-2, 3, {
-		  r: 100,
-		  g: 120,
-		  b: 140,
-		  a: 255
-		});
-
-		// Gets the RGBA object for the pixel at the given absolute
-		// coordinates. Rgba is relative to the top left corner.
-		rgba.getPixel(20, 50);
-
-		// Sets the color for the pixel at the given absolute coordinates.
-		// Also relative to the top left corner.
-		rgba.putPixel(20, 50, {
-		  r: 100,
-		  g: 120,
-		  b: 140,
-		  a: 255
-		});
-	  });
-	  return this;
-	});
-
-
-		Caman(this.canvasId, function () {
-
-		  // // this works
-		  this.brightness(5).render();
-		  alert("brightened")
-		  // this doesn't :(
-		  this.example().render();
-		});
-		/*myCaman = Caman(this.canvasId, function() {});
-		Caman.Filter.register("Flip180", function (adjust) {
-			console.log(this.getPixel(10,15));
-			this.process("Flip180", function(this) {
-				return this
-			});
-		});
-		myCaman.Flip180("test");
-		var height = myCaman.imageHeight();
-		var width = myCaman.imageWidth();
-		console.log("height: " + height + " width: " + width);
-		console.log(myCaman.getPixel(10,15));
-		/*var originalImg = [[],[]];
-		for(var x = 0; x < w; x++) {
-			for(var y = 0; y < h; y++) {
-				originalImg[x][y] = myCaman.Pixel.getPixel(x,y)
+		Caman(this.canvasId, this.imagePath, function () {
+			var w = this.imageWidth()
+			var h = this.imageHeight()
+			alert("the width and height happened")
+			for(var x = 1; x < w + 1; x++) {
+				globalImg[x] = [];
 			}
-		}
-		*/
-	}
+			alert("globalImg has things!")
+			console.log(globalImg)
+			this.getPixels("test").render();
+			console.log(globalImg)
+			alert("globalImg is full of pixels!")
+			var flippedImg = []
+			for(var x = 1; x < w + 1; x++) {
+				flippedImg[x] = [];
+				for(var y = 1; y < h + 1; y++) {
+					/*console.log("x: " + x + "y: " + y)
+					console.log("flippedImg: ")
+					console.log(w + 1 - x)
+					console.log(h + 1 - y)
+					console.log(globalImg[w + 1 - x][h + 1 - y])
+					console.log(globalImg[10][16])*/
+					flippedImg[x][y] = globalImg[w + 1 - x][h + 1 - y]
+				}
+			}
+			alert("we made a flipped img!")
+			globalImg = flippedImg
+			alert("we gave the flipped img to the glbal one")
+			this.putPixels().render();
+			alert("we put them into the caman pixels")
+			this.render();
+		});
+	};
 };

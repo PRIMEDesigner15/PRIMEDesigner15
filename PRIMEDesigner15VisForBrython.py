@@ -301,7 +301,7 @@ def drawPuzzle(puzzle):
 		elif (transform == "brightenImage"):
 			transformations = transformations + "this.brightness(20);\n"
 		elif (transform == "rotate180"):
-			camanTranslator.Caman180Flip()
+			camanTranslator.CamanFlip180()
 			#get a 2d array or list of lists from camanTranslator
 			#do stuff with it
 			#give caman back its 2d array/ list of lists
