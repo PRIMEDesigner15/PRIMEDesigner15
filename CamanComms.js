@@ -36,11 +36,8 @@ function CamanComms(canvasId, imagePath) {
 				globalImg[x] = [];
 			}
 			alert("globalImg has space!")
-			console.log(globalImg)
-			globalImg[1].push(new PixelWrapper(100,101,102,103));
-			console.log(globalImg)
-			/*this.getPixels("test");
-			console.log(globalImg)
+			//globalImg[1].push(new PixelWrapper(100,101,102,103));
+			this.getPixels();
 			alert("globalImg is full of pixels!")
 			
 			var flippedImg = []
@@ -50,7 +47,8 @@ function CamanComms(canvasId, imagePath) {
 					flippedImg[x][y] = globalImg[w + 1 - x][h + 1 - y]
 				}
 			}
-			
+			console.log(globalImg)
+			/*
 			alert("we made a flipped img!")
 			globalImg = flippedImg
 			alert("we gave the flipped img to the glbal one")
@@ -85,7 +83,7 @@ window.onload = function() {
 	Caman.Filter.register("getPixels", function (test) {
 		this.process("getPixels", function (rgba) {
 			Y = rgba.locationXY().y; // e.g. {x: 0, y: 0}
-			alert("r = " + rgba.r);
+			//alert("r = " + rgba.r);
 			globalImg[Y].push(new PixelWrapper(rgba.r,rgba.g,rgba.b,rgba.a));
 		});
 		return this;
