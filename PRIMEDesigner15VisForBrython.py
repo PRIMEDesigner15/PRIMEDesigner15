@@ -4,7 +4,7 @@ Set up a GUI and handle updates and events during a run of
 the PRIMEDesigner template in the Brython environment.
 '''
 
-from browser import window, document, html, alert, svg
+from browser import window, document, html, alert, svg, console
 from javascript import JSConstructor 
 gui = None
 #is this saying that all of these are now 'None'?
@@ -301,10 +301,18 @@ def drawPuzzle(puzzle):
 		elif (transform == "brightenImage"):
 			transformations = transformations + "this.brightness(20);\n"
 		elif (transform == "rotate180"):
-			camanTranslator.CamanFlip180()
-			#get a 2d array or list of lists from camanTranslator
-			#do stuff with it
-			#give caman back its 2d array/ list of lists
+			global ctx, roleCanvas
+			imgData0 = None
+			imgData1 = None
+			imgData0 = ctx.getImageData(0,0,roleCanvas.width,roleCanvas.height)
+			imgData1 = ctx.getImageData(0,0,roleCanvas.width,roleCanvas.height)
+			console.log("before the nested loop")
+			for i in range(roleCanvas.width):
+				for j in range(roleCanvas.height):
+					for k in range(4):
+						imgData1.data[(j * roleCanvas.width) * 4 + i * 4 + k] = imgData0.data[(roleCanvas.height - 1 - j) * roleCanvas.width * 4 + (roleCanvas.width - 1 - i) * 4 + k]
+			console.log("outside of the nested loop")
+			ctx.putImageData(imgData1, 0, 0);
 		else:
 			alert("Not supported transform")
 	transformations = transformations + "this.render()"
