@@ -31,7 +31,6 @@ LAST_STATE = None # cache of current state for use in
 				#refresh of display after selection hiding button click.
 
 print("Hello from PRIMEDesignerVisForBrython!  Starting to process it.")
-
 LINE_WIDTH = 15
 def set_up_gui(opselectdiv, statuslinediv):
 	print("Entering set_up_gui in PRIMEDesignerVisForBrython.")
@@ -306,8 +305,13 @@ def drawPuzzle(puzzle):
 			imgData1 = None
 			imgData0 = ctx.getImageData(0,0,roleCanvas.width,roleCanvas.height)
 			imgData1 = ctx.getImageData(0,0,roleCanvas.width,roleCanvas.height)
+			alert("test")
+			alert(roleCanvas.width)
+			console.log("width: " + roleCanvas.width)
+			console.log("height: " + roleCanvas.height)
 			console.log("before the nested loop")
 			for i in range(roleCanvas.width):
+				console.log(i)
 				for j in range(roleCanvas.height):
 					for k in range(4):
 						imgData1.data[(j * roleCanvas.width) * 4 + i * 4 + k] = imgData0.data[(roleCanvas.height - 1 - j) * roleCanvas.width * 4 + (roleCanvas.width - 1 - i) * 4 + k]
