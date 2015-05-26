@@ -1,12 +1,16 @@
-<img id=img src=noPuzzle.jpg>
-<canvas id=canvas width=300 height=300>
+<div id = "test8"> </div>
 <script>
-var img = document.getElementById("img");
-	var can = document.getElementById("canvas");
+	//<img id=img src=noPuzzle.jpg>
+	//<canvas id=canvas width=300 height=300>
+	var img = document.createElement("img");
+	img.src = "noPuzzle.jpg";
+	var can = document.createElement("canvas");
 	var ctx = can.getContext('2d');
 	var imgData0;
 	var imgData1;
 	img.onload = function() {
+		can.width = img.width;
+		can.height = img.height;
 		ctx.drawImage(img, 0, 0);
 		imgData0 = ctx.getImageData.apply(ctx, [0,0,300,300]);
 		imgData1 = ctx.getImageData.apply(ctx, [0,0,300,300]);
@@ -19,6 +23,7 @@ var img = document.getElementById("img");
 		}
 		ctx.putImageData(imgData1, 0, 0);
 	}
+	document.getElementById("test8").appendChild(can);
 
 
 
@@ -43,7 +48,3 @@ var img = document.getElementById("img");
 	}
 	*/
 </script>
-
-for x in range(w):
-        for y in range(h):
-            pix2[x,y] = pix1[w-1-x, h-1-y]
