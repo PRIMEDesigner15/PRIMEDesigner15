@@ -18,7 +18,7 @@ GAME_WIDTH = ROOM_SIZE * 3
 GAME_HEIGHT = ROOM_SIZE * 3
 
 CamanCommConstructor = JSConstructor(CamanComms)
-camanTranslator = CamanCommConstructor("#roleCanvas", "noPuzzle.jpg")
+camanTranslator = CamanCommConstructor("#roleCanvas", "none.jpg")
 camanTranslator.CamanFunction("this.render()")
 # Store the selected puzzle to reset CamanJS when it changes
 selected_puzzle = -1
@@ -301,21 +301,24 @@ def drawPuzzle(puzzle):
 		elif (transform == "brightenImage"):
 			transformations = transformations + "this.brightness(20);\n"
 		elif (transform == "rotate180"):
-			camanTranslator.rotate180()
-			'''global ctx, roleCanvas
+			#camanTranslator.rotate180()
+			global ctx, roleCanvas
 			imgData0 = None
 			imgData1 = None
 			imgData0 = ctx.getImageData(0,0,roleCanvas.width,roleCanvas.height)
 			imgData1 = ctx.getImageData(0,0,roleCanvas.width,roleCanvas.height)
 			alert(roleCanvas.width)
-			console.log("before the nested loop")
+			#console.log("before the nested loop")
+			#alert("before the nested loop")
 			for i in range(roleCanvas.width):
-				console.log(i)
+				#console.log(i)
+				alert(i)
 				for j in range(roleCanvas.height):
 					for k in range(4):
-						imgData1.data[(j * roleCanvas.width) * 4 + i * 4 + k] = imgData0.data[(roleCanvas.height - 1 - j) * roleCanvas.width * 4 + (roleCanvas.width - 1 - i) * 4 + k]
-			console.log("outside of the nested loop")
-			ctx.putImageData(imgData1, 0, 0);'''
+						pass
+						#imgData1.data[(j * roleCanvas.width) * 4 + i * 4 + k] = imgData0.data[(roleCanvas.height - 1 - j) * roleCanvas.width * 4 + (roleCanvas.width - 1 - i) * 4 + k]
+			#console.log("outside of the nested loop")
+			ctx.putImageData(imgData1, 0, 0);
 		else:
 			alert("Not supported transform")
 	transformations = transformations + "this.render()"

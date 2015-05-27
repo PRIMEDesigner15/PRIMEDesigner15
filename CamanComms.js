@@ -50,7 +50,7 @@ function CamanComms(canvasId, imagePath) {
 			var ctx = can.getContext('2d');
 			ctx.drawImage(canImg, 0, 0);
 		}
-		alert("setImg")
+		//alert("setImg")
 	}
 	this.rotate180 = function() {
 		var can = document.getElementById("roleCanvas");
@@ -60,8 +60,8 @@ function CamanComms(canvasId, imagePath) {
 		var canImg = this.img;
 		canImg.onload = function() {
 			ctx.drawImage(canImg, 0, 0);
-			imgData0 = ctx.getImageData.apply(ctx, [0,0,300,300]);
-			imgData1 = ctx.getImageData.apply(ctx, [0,0,300,300]);
+			imgData0 = ctx.getImageData(0,0,300,300);
+			imgData1 = ctx.getImageData(0,0,300,300);
 			for (var i = 0; i < can.width; i++) {
 				for(var j = 0; j < can.height; j++) {
 					for(var k = 0; k < 4; k++) {
