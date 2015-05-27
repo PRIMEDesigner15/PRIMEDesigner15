@@ -5,7 +5,9 @@ the PRIMEDesigner template in the Brython environment.
 '''
 
 from browser import window, document, html, alert, svg, console
-from javascript import JSConstructor 
+from javascript import JSConstructor
+
+
 gui = None
 #is this saying that all of these are now 'None'?
 board = None
@@ -17,8 +19,10 @@ ROOM_SIZE = 100
 GAME_WIDTH = ROOM_SIZE * 3
 GAME_HEIGHT = ROOM_SIZE * 3
 
-CamanCommConstructor = JSConstructor(CamanComms)
+
+CamanCommConstructor = JSConstructor(window.CamanComms)
 camanTranslator = CamanCommConstructor("#roleCanvas", "none.jpg")
+
 camanTranslator.CamanFunction("this.render()")
 # Store the selected puzzle to reset CamanJS when it changes
 selected_puzzle = -1
@@ -120,8 +124,9 @@ def prepareSVG():
 
 def prepareCanvas():
 	global roleCanvas, board
+	alert("Prepare Canvas Called")
 	#Hide svg stuff, make canvas visible
-	board.style.display = "none"
+	#board.style.display = "none"
 	roleCanvas.style.display = "initial"
 	
 # draws a room.		
