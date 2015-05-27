@@ -28,7 +28,7 @@ print("Hello from PRIMEDesigner15.py (after METADATA)")
 
 #<COMMON_CODE>
 
-from browser import document, window
+from browser import document, window, alert
 from javascript import JSObject, JSConstructor
 import browser
 
@@ -449,7 +449,7 @@ for j in range(3):
 	for i in range(3):
 		INITIAL_STATE['Rooms'].append( Room(i, j, i + 1, j + 1) )	
 # Now initialize operators.
-OPERATORS = set_operators(INITIAL_STATE)		
+OPERATORS = set_operators(INITIAL_STATE)	
 #</INITIAL_STATE>
 
 if "BRYTHON" in globals():

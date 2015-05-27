@@ -3,6 +3,11 @@
 # (C) S. Tanimoto, 2014
 
 from browser import doc, alert, html
+from PRIMEDesigner15VisForBrython import set_up_gui as set_up_user_interface
+from PRIMEDesigner15VisForBrython import render_state_svg_graphics as render_state
+from PRIMEDesigner15 import OPERATORS, INITIAL_STATE
+
+
 OPSELECT = None
 STATE_STACK = []
 RESET_BUTTON = None
@@ -10,20 +15,23 @@ BACKTRACK_BUTTON = None
 
 if not 'PROBLEM_NAME' in globals():
   PROBLEM_NAME = "Problems"
+  
 
 '''doc['pagetitle'].text = "Solving "+PROBLEM_NAME+\
 " in the Brython SOLUZION Client"'''
 
 def set_up_operators_interface():
   global OPSELECT # make available for interaction.
-  global OPERATORS
   opselectdiv = html.DIV(Id="spselectdivid", style={"backgroundColor":"#AAFFFF"})
   opselectdiv <= html.I("Operator selection:")
   OPSELECT = html.SELECT(Id="theoptselect")
+  alert(OPERATORS)
   for i, elt in enumerate(OPERATORS):
     OPSELECT <= html.OPTION(elt.name, value = i)
+	alert(i)
+  alert("Size of OPSelect = " + str(OPSELECT.size))
   applybutton = html.BUTTON(Id="applyButtonID")
-  applybutton.text ="Apply selected operator"
+  applybutton.text = "Apply selected operator"
   applybutton.bind('click',handleApplyButtonClick)
   opselectdiv <= OPSELECT
   opselectdiv <= applybutton
@@ -45,11 +53,9 @@ def find_applicable_op_indexes(OPERATORS, current_state):
   return res
 
 def repopulate_operator_choices(choices):
-  noptions = len(OPSELECT)
   got_one_selected = False
-  for i in range(noptions):
-    item = OPSELECT[i]
-    if i in choices:
+  for item in OPSELECT:
+    if item in choices:
         item.disabled = False
         if not got_one_selected:
           item.selected = True
@@ -135,7 +141,7 @@ def set_up_reset_and_backtrack_div():
   return reset_and_backtrack_div
 
 def initialize():
-  global CURRENT_STATE, INITIAL_STATE, STATE_STACK
+  global CURRENT_STATE, STATE_STACK
   global RESET_BUTTON, BACKTRACK_BUTTON
 
   CURRENT_STATE = INITIAL_STATE # comes from the problem template file.
