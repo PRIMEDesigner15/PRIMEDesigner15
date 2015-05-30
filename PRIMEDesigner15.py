@@ -404,7 +404,7 @@ def set_operators(state):
 				lambda state: state["Selected_Puzzle"] > -1,
 				lambda state: addTransformation("rotate180", state))
 				
-		OPERATORS = selection_operators + role_operators + create_new_puzzle + darken_test + brighten_test + rotate_180
+		OPERATORS = selection_operators + role_operators + create_new_puzzle + rotate_180
 		
 	elif(state['Role'] == "Music Puzzle"):
 		OPERATORS = role_operators
