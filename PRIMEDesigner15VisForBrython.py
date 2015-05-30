@@ -21,7 +21,7 @@ GAME_HEIGHT = ROOM_SIZE * 3
 
 
 CamanCommConstructor = JSConstructor(window.CamanComms)
-camanTranslator = CamanCommConstructor("#roleCanvas", "none.jpg")
+camanTranslator = CamanCommConstructor("#roleCanvas", "wall.jpg")
 
 camanTranslator.CamanFunction("this.render()")
 # Store the selected puzzle to reset CamanJS when it changes
@@ -124,7 +124,6 @@ def prepareSVG():
 
 def prepareCanvas():
 	global roleCanvas, board
-	alert("Prepare Canvas Called")
 	#Hide svg stuff, make canvas visible
 	#board.style.display = "none"
 	roleCanvas.style.display = "initial"
@@ -312,17 +311,14 @@ def drawPuzzle(puzzle):
 			imgData1 = None
 			imgData0 = ctx.getImageData(0,0,roleCanvas.width,roleCanvas.height)
 			imgData1 = ctx.getImageData(0,0,roleCanvas.width,roleCanvas.height)
-			alert(roleCanvas.width)
 			#console.log("before the nested loop")
 			#alert("before the nested loop")
 			for i in range(roleCanvas.width):
 				#console.log(i)
-				alert(i)
 				for j in range(roleCanvas.height):
 					for k in range(4):
-						pass
-						#imgData1.data[(j * roleCanvas.width) * 4 + i * 4 + k] = imgData0.data[(roleCanvas.height - 1 - j) * roleCanvas.width * 4 + (roleCanvas.width - 1 - i) * 4 + k]
-			#console.log("outside of the nested loop")
+						console.log(i)
+						imgData1.data[(j * roleCanvas.width) * 4 + i * 4 + k] = imgData0.data[(roleCanvas.height - 1 - j) * roleCanvas.width * 4 + (roleCanvas.width - 1 - i) * 4 + k]
 			ctx.putImageData(imgData1, 0, 0);
 		else:
 			alert("Not supported transform")

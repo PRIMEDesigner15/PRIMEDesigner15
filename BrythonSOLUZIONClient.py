@@ -13,6 +13,7 @@ STATE_STACK = []
 RESET_BUTTON = None
 BACKTRACK_BUTTON = None
 
+
 if not 'PROBLEM_NAME' in globals():
 	PROBLEM_NAME = "Problems"
   
@@ -25,10 +26,9 @@ def set_up_operators_interface():
 	opselectdiv = html.DIV(Id="spselectdivid", style={"backgroundColor":"#AAFFFF"})
 	opselectdiv <= html.I("Operator selection:")
 	OPSELECT = html.SELECT(Id="theoptselect")
-	alert(OPERATORS)
 	for i, elt in enumerate(OPERATORS):
-		OPSELECT <= html.OPTION(elt.name, value = i)
-		alert(i)
+		#OPSELECT <= html.OPTION(elt.name, value = i)
+		#OPSELECT <= html.OPTION(elt.name)
 	alert("Size of OPSelect = " + str(OPSELECT.size))
 	applybutton = html.BUTTON(Id="applyButtonID")
 	applybutton.text = "Apply selected operator"
@@ -160,5 +160,4 @@ statuslinediv <= reset_and_backtrack_div
 if not 'GOAL_TEST' in globals():
 	def GOAL_TEST(s): return False # Default goal-testing function-can be overridden.
 
-  
 initialize()

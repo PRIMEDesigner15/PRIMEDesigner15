@@ -77,11 +77,9 @@ function CamanComms(canvasId, imagePath) {
 		Caman(this.canvasId, this.imagePath, function () {
 			var w = this.imageWidth()
 			var h = this.imageHeight()
-			alert("width = " + this.imageWidth())
 			for(x = 1; x < w + 1; x++) {
 				globalImg[x] = [];
 			}
-			alert("globalImg has space!")
 			//globalImg[1].push(new PixelWrapper(100,101,102,103));
 			Caman.Event.listen(this, "processComplete", once(function () {
 				console.log("getpixels done");
@@ -97,7 +95,6 @@ function CamanComms(canvasId, imagePath) {
 				}
 				//console.log(flippedImg);
 				globalImg = flippedImg;
-				alert("globalImg is full of pixels!")
 				Caman.Event.listen(this, "processComplete", once(function() {
 					console.log("putpixels is done");
 					this.render();
