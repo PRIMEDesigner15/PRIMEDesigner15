@@ -296,22 +296,11 @@ def mapCoordsToDIV(x, y):
 def drawPuzzle(puzzle):
 	global canMan
 	canMan.setImg()
+	
+	camanTranslator.setImg()
+	transformations = "this.revert();\n"
 	for transform in puzzle.transformList:
 		if (transform == "rotate180"):
-			#canMan.rotate180()
-			global ctx, roleCanvas
-			imgData0 = None
-			imgData1 = None
-			imgData0 = ctx.getImageData(0,0,roleCanvas.width,roleCanvas.height)
-			imgData1 = ctx.getImageData(0,0,roleCanvas.width,roleCanvas.height)
-			#console.log("before the nested loop")
-			#alert("before the nested loop")
-			for i in range(roleCanvas.width):
-				console.log("current outer:")
-				console.log(i)
-				for j in range(roleCanvas.height):
-					for k in range(4):
-						imgData1.data[(j * roleCanvas.width) * 4 + i * 4 + k] = imgData0.data[(roleCanvas.height - 1 - j) * roleCanvas.width * 4 + (roleCanvas.width - 1 - i) * 4 + k]
-			ctx.putImageData(imgData1, 0, 0);
+			canMan.rotate180()
 		else:
 			alert("Not supported transform")
