@@ -2,7 +2,7 @@
 # Ver 0.9, June 23, 2014.
 # (C) S. Tanimoto, 2014
 
-from browser import doc, alert, html, console
+from browser import doc, alert, html, console, alert
 from PRIMEDesigner15VisForBrython import set_up_gui as set_up_user_interface
 from PRIMEDesigner15VisForBrython import render_state_svg_graphics as render_state
 from PRIMEDesigner15 import OPERATORS, INITIAL_STATE
@@ -50,9 +50,18 @@ def find_applicable_op_indexes(OPERATORS, current_state):
 			alert("Bad state or bad precondition with operator "+op.name+" and current state.")
 	return res
 
-def repopulate_operator_choices(choices):
-	global OPSELECT
+def repopulate_operator_choices(choices, CURRENT_STATE):
+	global OPSELECT, OPERATORS
 	got_one_selected = False
+	
+	#OPERATORS = CURRENT_STATE["Operators"]
+	#alert(OPERATORS)
+	
+	# Refill OPSELECT
+	#OPSELECT.options.length = 0
+	#for i, elt in enumerate(OPERATORS):
+	#	OPSELECT <= html.OPTION(elt.name, value = i)
+	
 	for item in OPSELECT:
 		if int(item.value) in (choices):
 			item.disabled = False
@@ -113,7 +122,7 @@ def handleresetbuttonclick(e):
 def handlebacktrackbuttonclick(e):
 	global CURRENT_STATE, STATE_STACK
 	global RESET_BUTTON, BACKTRACK_BUTTON
-	if len(STATE_STACK)>2:
+	if len(STATE_STACK) > 2:
 		STATE_STACK.pop()
 		CURRENT_STATE = STATE_STACK[-1]
 		render_state(CURRENT_STATE)
@@ -143,10 +152,11 @@ def initialize():
 	global CURRENT_STATE, STATE_STACK
 	global RESET_BUTTON, BACKTRACK_BUTTON
 	CURRENT_STATE = INITIAL_STATE # comes from the problem template file.
+	console.log(CURRENT_STATE)
 	STATE_STACK = [INITIAL_STATE]
 	render_state(CURRENT_STATE)
 	choices = find_applicable_op_indexes(OPERATORS, CURRENT_STATE)
-	repopulate_operator_choices(choices)
+	repopulate_operator_choices(choices, CURRENT_STATE)
 	RESET_BUTTON.disabled = True
 	BACKTRACK_BUTTON.disabled = True
 

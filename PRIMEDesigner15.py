@@ -55,6 +55,7 @@ def copy_state(state):
 	newState["Selected_Room"] = state["Selected_Room"]	
 	newState["Selected_Puzzle"] = state["Selected_Puzzle"]
 	newState["Role"] = state["Role"]
+	newState["Operators"] = state["Operators"]
 		
 	# Add in doors to the walls in the rooms.
 	door_index = 0
@@ -200,7 +201,6 @@ class Music:
 	def copy(self):
 		return Music() # nothing happens right now
 	
-#ask steve about what the Operator class in 05 does
 class Operator:
   
 	def __init__(self, name, precond, state_transf):
@@ -326,7 +326,7 @@ def change_role(role, state):
 	newState = copy_state(state)
 	newState['Role'] = role
 	# reset the operators
-	OPERATORS = set_operators(newState)
+	newState['Operators'] = set_operators(newState)
 	
 	return newState
 
@@ -424,6 +424,7 @@ INITIAL_STATE['Puzzles'] = []
 INITIAL_STATE['Selected_Room'] = 0
 INITIAL_STATE['Selected_Puzzle'] = -1
 INITIAL_STATE['Role'] = "Image Puzzle"
+INITIAL_STATE['Operators'] = set_operators(INITIAL_STATE)	
 
 
 # Create 9 rooms, add them to the list.
@@ -431,11 +432,11 @@ for j in range(3):
 	for i in range(3):
 		INITIAL_STATE['Rooms'].append( Room(i, j, i + 1, j + 1) )	
 # Now initialize operators.
-OPERATORS = set_operators(INITIAL_STATE)	
+OPERATORS = INITIAL_STATE['Operators']
 #</INITIAL_STATE>
 
 if "BRYTHON" in globals():
- from PRIMEDesigner15VisForBrython import set_up_gui as set_up_user_interface
- from PRIMEDesigner15VisForBrython import render_state_svg_graphics as render_state
+	from PRIMEDesigner15VisForBrython import set_up_gui as set_up_user_interface
+	from PRIMEDesigner15VisForBrython import render_state_svg_graphics as render_state
 
 
