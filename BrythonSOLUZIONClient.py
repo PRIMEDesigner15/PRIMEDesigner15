@@ -52,15 +52,9 @@ def find_applicable_op_indexes(OPERATORS, current_state):
 
 def repopulate_operator_choices(choices):
 	global OPSELECT
-	console.log("choices passed to repopulate operator:")
-	console.log(*choices)
 	got_one_selected = False
 	for item in OPSELECT:
-		#console.log(int(item.value))
 		if int(item.value) in (choices):
-			console.log("considered valid:")
-			console.log(item.value)
-			console.log(item)
 			item.disabled = False
 			if not got_one_selected:
 				item.selected = True
@@ -148,7 +142,6 @@ def set_up_reset_and_backtrack_div():
 def initialize():
 	global CURRENT_STATE, STATE_STACK
 	global RESET_BUTTON, BACKTRACK_BUTTON
-	console.log(OPERATORS)
 	CURRENT_STATE = INITIAL_STATE # comes from the problem template file.
 	STATE_STACK = [INITIAL_STATE]
 	render_state(CURRENT_STATE)

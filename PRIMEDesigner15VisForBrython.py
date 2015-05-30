@@ -296,6 +296,29 @@ def mapCoordsToDIV(x, y):
 	
 def drawPuzzle(puzzle):
 	global camanTranslator
+	# Testing out pixel retrieving 
+	global ctx, roleCanvas
+	imgData0 = None
+	imgData1 = None
+	imgData0 = ctx.getImageData(0,0,roleCanvas.width,roleCanvas.height)
+	imgData1 = ctx.getImageData(0,0,roleCanvas.width,roleCanvas.height)
+	#imgData2 = ctx.createImageData(canvas.width,canvas.height)
+	data0 = imgData0.data
+	data1 = imgData1.data
+	pixel = data0[1]
+	#pixel = data0[1]
+	#alert(pixel)
+	#alert("before the nested loop")
+	#for i in range(roleCanvas.width):
+	#	for j in range(roleCanvas.height):
+	#		for k in range(4):
+	#			pass
+				#set_pixel(imgData2,5,5,255,0,0,255)
+				#data1[(j * roleCanvas.width) * 4 + i * 4 + k] = data0[(roleCanvas.height - 1 - j) * roleCanvas.width * 4 + (roleCanvas.width - 1 - i) * 4 + k]
+				#imgData1.data[(j * roleCanvas.width) * 4 + i * 4 + k] = imgData0.data[(roleCanvas.height - 1 - j) * roleCanvas.width * 4 + (roleCanvas.width - 1 - i) * 4 + k]
+	#ctx.putImageData(imgData1, 0, 0);
+	# END TESTING
+	
 	camanTranslator.setImg()
 	transformations = "this.revert();\n"
 	for transform in puzzle.transformList:
@@ -310,17 +333,35 @@ def drawPuzzle(puzzle):
 			imgData1 = None
 			imgData0 = ctx.getImageData(0,0,roleCanvas.width,roleCanvas.height)
 			imgData1 = ctx.getImageData(0,0,roleCanvas.width,roleCanvas.height)
-			#console.log("before the nested loop")
+			#imgData2 = ctx.createImageData(canvas.width,canvas.height)
+			imgTest = JSConstructor(imgData0)
+			data0 = imgData0.data
+			data1 = imgData1.data
+			pixel = data0[1]
+			alert(pixel)
 			#alert("before the nested loop")
 			for i in range(roleCanvas.width):
-				#console.log(i)
 				for j in range(roleCanvas.height):
 					for k in range(4):
-						console.log(i)
-						imgData1.data[(j * roleCanvas.width) * 4 + i * 4 + k] = imgData0.data[(roleCanvas.height - 1 - j) * roleCanvas.width * 4 + (roleCanvas.width - 1 - i) * 4 + k]
-			ctx.putImageData(imgData1, 0, 0);
+						pass
+						#set_pixel(imgData2,5,5,255,0,0,255)
+						#data1[(j * roleCanvas.width) * 4 + i * 4 + k] = data0[(roleCanvas.height - 1 - j) * roleCanvas.width * 4 + (roleCanvas.width - 1 - i) * 4 + k]
+						#imgData1.data[(j * roleCanvas.width) * 4 + i * 4 + k] = imgData0.data[(roleCanvas.height - 1 - j) * roleCanvas.width * 4 + (roleCanvas.width - 1 - i) * 4 + k]
+			#ctx.putImageData(imgData1, 0, 0);
 		else:
 			alert("Not supported transform")
 	transformations = transformations + "this.render()"
 	#camanTranslator.CamanFunction(transformations)
 	#alert("finished rendering")
+
+def my_range(stard, end, step):
+	while(start <= end):
+		yield start
+		start += step
+
+def set_pixel(image_data,x,y,r,g,b,a):
+	index = (x + y * image_data.width) * 4
+	image_data.data[index+0] = r
+	image_data.data[index+1] = g
+	image_data.data[index+2] = b
+	image_data.data[index+3] = a
