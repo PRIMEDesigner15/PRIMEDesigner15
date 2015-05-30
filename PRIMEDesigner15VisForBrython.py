@@ -35,7 +35,7 @@ LAST_STATE = None # cache of current state for use in
 				#refresh of display after selection hiding button click.
 
 print("Hello from PRIMEDesignerVisForBrython!  Starting to process it.")
-LINE_WIDTH = 1
+LINE_WIDTH = 4
 def set_up_gui(opselectdiv, statuslinediv):
 	print("Entering set_up_gui in PRIMEDesignerVisForBrython.")
 	global gui
@@ -267,9 +267,9 @@ def drawDoor(wall,x3,y3,x4,y4):
 	APANEL <= doorDiv
 
 # returns an svg polygon at the given 4 points.
-def create_polygon(x1,y1,x2,y2,x3,y3,x4,y4, fill = "black", stroke = "red", transform = "rotate(0)", id = "polygon"):
+def create_polygon(x1,y1,x2,y2,x3,y3,x4,y4, fill = "black", stroke = "black", transform = "rotate(0)", id = "polygon"):
+	global LINE_WIDTH
 	
-	alert(fill)
 	# Maps points to Div
 	(X1,Y1) = mapCoordsToDIV(x1,y1)
 	(X2,Y2) = mapCoordsToDIV(x2,y2)
@@ -280,7 +280,7 @@ def create_polygon(x1,y1,x2,y2,x3,y3,x4,y4, fill = "black", stroke = "red", tran
 	Points = str(X1) + "," + str(Y1) + " " + str(X2) + "," + str(Y2) + " " + str(X3) + "," + str(Y3) + " " + str(X4) + "," + str(Y4)
 	
 	# Create polygon
-	poly = svg.polygon(id=id,fill = fill,stroke_width=LINE_WIDTH,
+	poly = svg.polygon(id=id,fill = fill, stroke = stroke, stroke_width = LINE_WIDTH,
 					points=Points, transform=transform)				
 	# return polygon
 	return poly

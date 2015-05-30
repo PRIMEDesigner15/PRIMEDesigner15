@@ -27,9 +27,9 @@ def set_up_operators_interface():
 	opselectdiv <= html.I("Operator selection:")
 	OPSELECT = html.SELECT(Id="theoptselect")
 	for i, elt in enumerate(OPERATORS):
-		#OPSELECT <= html.OPTION(elt.name, value = i)
+		OPSELECT <= html.OPTION(elt.name, value = i)
 		#OPSELECT <= html.OPTION(elt.name)
-	alert("Size of OPSelect = " + str(OPSELECT.size))
+		
 	applybutton = html.BUTTON(Id="applyButtonID")
 	applybutton.text = "Apply selected operator"
 	applybutton.bind('click',handleApplyButtonClick)
