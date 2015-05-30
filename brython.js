@@ -7325,7 +7325,7 @@ return $B.$JS2Py(res)
 }else{
 throw _b_.AttributeError("no attribute "+attr+' for '+this)
 }}
-$JSObjectDict.__getitem__=function(self,rank){console.log('get item '+rank+' of',self)
+$JSObjectDict.__getitem__=function(self,rank){//console.log('get item '+rank+' of',self)
 try{return getattr(self.js,'__getitem__')(rank)}
 catch(err){if(self.js[rank]!==undefined)return JSObject(self.js[rank])
 throw _b_.AttributeError(self+' has no attribute __getitem__')

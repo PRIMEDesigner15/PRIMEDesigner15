@@ -338,11 +338,6 @@ def create_puzzle(state):
 		
 	elif(url_is_valid(url)):	
 		newState = copy_state(state)
-		
-		from PRIMEDesigner15VisForBrython import camanTranslator
-		
-
-		
 		newPuzzle = Puzzle(url)
 		newState["Puzzles"].append(newPuzzle)
 		newState["Selected_Puzzle"] = len(newState["Puzzles"]) - 1
@@ -374,7 +369,6 @@ def set_operators(state):
 			lambda state: change_role(role, state))
 		for role in ["Architect", "Image Puzzle", "Music Puzzle", "Rules"]] 			
 	if (state['Role'] == "Architect"):
-		alert("Architect is the role")
 		selection_operators =\
 			[Operator("Switch to room numbered " + str(num + 1) + " for editing.",
 				lambda state: num is not state["Selected_Room"],
@@ -395,7 +389,6 @@ def set_operators(state):
 		OPERATORS = selection_operators	+ door_operators + wallpaper_operators + role_operators
 		
 	elif(state['Role'] == "Image Puzzle"):
-		alert("Image Puzzle is the role in PrimeDesigner15")
 		selection_operators =\
 			[Operator("Switch to puzzle numbered " + str(num + 1) + " for editing.",
 				lambda state: num < len(state["Puzzles"]) and len(state["Puzzles"]) > 1 and num != state["Selected_Puzzle"],

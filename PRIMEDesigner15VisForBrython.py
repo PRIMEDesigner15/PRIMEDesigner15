@@ -20,11 +20,11 @@ GAME_WIDTH = ROOM_SIZE * 3
 GAME_HEIGHT = ROOM_SIZE * 3
 
 
-CamanCommConstructor = JSConstructor(window.CamanComms)
-camanTranslator = CamanCommConstructor("#roleCanvas", "none.jpg")
+CanvasManagerConstructor = JSConstructor(window.CanvasManager)
+canMan = CanvasManagerConstructor("#roleCanvas", "none.jpg")
 
-camanTranslator.CamanFunction("this.render()")
-# Store the selected puzzle to reset CamanJS when it changes
+canMan.setImg()
+# Store the selected puzzle to reset canManJS when it changes
 selected_puzzle = -1
 
 #The canvas and its context will go here when initialized for manipulation
@@ -82,7 +82,6 @@ def render_state_svg_graphics(state):
 	ctx.clearRect(0,0, GAME_WIDTH, GAME_HEIGHT)
 	#alert("canvas was cleared")
 
-	alert(state['Role'])
 	if(state['Role'] == "Architect"):
 		prepareSVG()
 		
@@ -104,10 +103,10 @@ def render_state_svg_graphics(state):
 	elif(state['Role'] == "Image Puzzle"):
 		prepareCanvas()	
 		if(state["Selected_Puzzle"] != selected_puzzle):
-			camanTranslator.resetCamanImage()
+			canMan.resetcanManImage()
 		if(state["Selected_Puzzle"] != -1):
 			puzzle = state["Puzzles"][state["Selected_Puzzle"]]
-			camanTranslator.setURL(puzzle.url)
+			canMan.setURL(puzzle.url)
 			selected_puzzle = state["Selected_Puzzle"]
 			drawPuzzle(puzzle)
 	elif(state['Role'] == "Music Puzzle"):
@@ -295,16 +294,11 @@ def mapCoordsToDIV(x, y):
 	return (newX, newY)
 	
 def drawPuzzle(puzzle):
-	global camanTranslator
-	camanTranslator.setImg()
-	transformations = "this.revert();\n"
+	global canMan
+	canMan.setImg()
 	for transform in puzzle.transformList:
-		if (transform == "darkenImage"):
-			transformations = transformations + "this.brightness(-20);\n"
-		elif (transform == "brightenImage"):
-			transformations = transformations + "this.brightness(20);\n"
-		elif (transform == "rotate180"):
-			#camanTranslator.rotate180()
+		if (transform == "rotate180"):
+			#canMan.rotate180()
 			global ctx, roleCanvas
 			imgData0 = None
 			imgData1 = None
@@ -313,14 +307,11 @@ def drawPuzzle(puzzle):
 			#console.log("before the nested loop")
 			#alert("before the nested loop")
 			for i in range(roleCanvas.width):
-				#console.log(i)
+				console.log("current outer:")
+				console.log(i)
 				for j in range(roleCanvas.height):
 					for k in range(4):
-						console.log(i)
 						imgData1.data[(j * roleCanvas.width) * 4 + i * 4 + k] = imgData0.data[(roleCanvas.height - 1 - j) * roleCanvas.width * 4 + (roleCanvas.width - 1 - i) * 4 + k]
 			ctx.putImageData(imgData1, 0, 0);
 		else:
 			alert("Not supported transform")
-	transformations = transformations + "this.render()"
-	#camanTranslator.CamanFunction(transformations)
-	#alert("finished rendering")
