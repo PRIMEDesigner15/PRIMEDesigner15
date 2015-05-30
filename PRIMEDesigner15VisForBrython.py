@@ -21,7 +21,7 @@ GAME_HEIGHT = ROOM_SIZE * 3
 
 
 CamanCommConstructor = JSConstructor(window.CamanComms)
-camanTranslator = CamanCommConstructor("#roleCanvas", "none.jpg")
+camanTranslator = CamanCommConstructor("#roleCanvas", "wall.jpg")
 
 camanTranslator.CamanFunction("this.render()")
 # Store the selected puzzle to reset CamanJS when it changes
@@ -35,7 +35,7 @@ LAST_STATE = None # cache of current state for use in
 				#refresh of display after selection hiding button click.
 
 print("Hello from PRIMEDesignerVisForBrython!  Starting to process it.")
-LINE_WIDTH = 15
+LINE_WIDTH = 4
 def set_up_gui(opselectdiv, statuslinediv):
 	print("Entering set_up_gui in PRIMEDesignerVisForBrython.")
 	global gui
@@ -61,7 +61,8 @@ def set_up_board_svg_graphics():
 	global APANEL, board
 	board = svg.svg(Id = "svgboard", 
 					style = {"width":GAME_WIDTH, "height":GAME_HEIGHT,
-							"backgroundColor":"#AAAABB"})
+							"backgroundColor":"#AAAABB",})
+	board.elt.style.display = "none"
 	APANEL = svg.g(Id = "panel")
 	
 	board <= APANEL	
@@ -118,16 +119,12 @@ def render_state_svg_graphics(state):
 		
 def prepareSVG():
 	global roleCanvas, board
-	console.log("board: ")
-	console.log(board)
-	alert("Paul's patented debugger")
 	#Hide canvas, make sure svg stuff visible
 	roleCanvas.elt.style.display = "none"
 	board.elt.style.display = "initial"	
 
 def prepareCanvas():
 	global roleCanvas, board
-	alert("Prepare Canvas Called")
 	#Hide svg stuff, make canvas visible
 	board.elt.style.display = "none"
 	roleCanvas.elt.style.display = "initial"
@@ -193,14 +190,12 @@ def drawWallpaper(wall,x3,y3,x4,y4,room_num):
 	# Create a pattern for image represntation.
 	pattern = svg.pattern(id="wallpaper" + str(room_num) + wall.loc,height="100",width = "50")
 	img = svg.image(xlink_href=wall.wallpaper.url, x="0",y="0", width="100", height="100", transform = transform)
-	
 	# Append
 	pattern <= img
 	APANEL <= pattern
-	
 	WallpaperDiv = create_polygon(wall.x1, wall.y1, wall.x2, wall.y2, x3, y3, x4, y4,
 								  fill="url(#wallpaper" + str(room_num) + wall.loc  + ")", id = wall.loc)
-					
+	#fill="url(#wallpaper" + str(room_num) + wall.loc  + ")"				
 	# Append polygon to svg panel
 	APANEL <= WallpaperDiv
 
@@ -273,6 +268,7 @@ def drawDoor(wall,x3,y3,x4,y4):
 
 # returns an svg polygon at the given 4 points.
 def create_polygon(x1,y1,x2,y2,x3,y3,x4,y4, fill = "black", stroke = "black", transform = "rotate(0)", id = "polygon"):
+	global LINE_WIDTH
 	
 	# Maps points to Div
 	(X1,Y1) = mapCoordsToDIV(x1,y1)
@@ -284,9 +280,8 @@ def create_polygon(x1,y1,x2,y2,x3,y3,x4,y4, fill = "black", stroke = "black", tr
 	Points = str(X1) + "," + str(Y1) + " " + str(X2) + "," + str(Y2) + " " + str(X3) + "," + str(Y3) + " " + str(X4) + "," + str(Y4)
 	
 	# Create polygon
-	poly = svg.polygon(id=id,style = {"fill" : fill},stroke=stroke,stroke_width=LINE_WIDTH,
-					points=Points, transform=transform)
-					
+	poly = svg.polygon(id=id,fill = fill, stroke = stroke, stroke_width = LINE_WIDTH,
+					points=Points, transform=transform)				
 	# return polygon
 	return poly
 	
@@ -315,17 +310,14 @@ def drawPuzzle(puzzle):
 			imgData1 = None
 			imgData0 = ctx.getImageData(0,0,roleCanvas.width,roleCanvas.height)
 			imgData1 = ctx.getImageData(0,0,roleCanvas.width,roleCanvas.height)
-			alert(roleCanvas.width)
 			#console.log("before the nested loop")
 			#alert("before the nested loop")
 			for i in range(roleCanvas.width):
 				#console.log(i)
-				#alert(i)
 				for j in range(roleCanvas.height):
 					for k in range(4):
-						pass
-						#imgData1.data[(j * roleCanvas.width) * 4 + i * 4 + k] = imgData0.data[(roleCanvas.height - 1 - j) * roleCanvas.width * 4 + (roleCanvas.width - 1 - i) * 4 + k]
-			#console.log("outside of the nested loop")
+						console.log(i)
+						imgData1.data[(j * roleCanvas.width) * 4 + i * 4 + k] = imgData0.data[(roleCanvas.height - 1 - j) * roleCanvas.width * 4 + (roleCanvas.width - 1 - i) * 4 + k]
 			ctx.putImageData(imgData1, 0, 0);
 		else:
 			alert("Not supported transform")

@@ -13,6 +13,7 @@ STATE_STACK = []
 RESET_BUTTON = None
 BACKTRACK_BUTTON = None
 
+
 if not 'PROBLEM_NAME' in globals():
 	PROBLEM_NAME = "Problems"
   
@@ -27,7 +28,6 @@ def set_up_operators_interface():
 	OPSELECT = html.SELECT(Id="theoptselect")
 	for i, elt in enumerate(OPERATORS):
 		OPSELECT <= html.OPTION(elt.name, value = i)
-	console.log(OPSELECT)
 	applybutton = html.BUTTON(Id="applyButtonID")
 	applybutton.text = "Apply selected operator"
 	applybutton.bind('click',handleApplyButtonClick)
@@ -165,5 +165,4 @@ statuslinediv <= reset_and_backtrack_div
 if not 'GOAL_TEST' in globals():
 	def GOAL_TEST(s): return False # Default goal-testing function-can be overridden.
 
-  
 initialize()
