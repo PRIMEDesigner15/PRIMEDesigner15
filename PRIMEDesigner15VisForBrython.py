@@ -298,5 +298,7 @@ def drawPuzzle(puzzle):
 	for transform in puzzle.transformList:
 		if (transform == "rotate180"):
 			canMan.rotate180()
+		elif (transform == "horizFlip"):
+			canMan.horizFlip()
 		else:
 			alert("Not supported transform")
