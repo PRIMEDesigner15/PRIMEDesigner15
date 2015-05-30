@@ -399,17 +399,6 @@ def set_operators(state):
 			Operator("Create a new puzzle.",
 				lambda state: True,
 				lambda state: create_puzzle(state))
-				
-		darken_test =\
-			Operator("Darken the image.",
-				lambda state: state["Selected_Puzzle"] > -1,
-				lambda state: addTransformation("darkenImage", state))
-				
-		brighten_test =\
-			Operator("Brighten the image.",
-				lambda state: state["Selected_Puzzle"] > -1,
-				lambda state: addTransformation("brightenImage", state))
-				
 		rotate_180 =\
 			Operator("Rotate the image 180 degrees.",
 				lambda state: state["Selected_Puzzle"] > -1,

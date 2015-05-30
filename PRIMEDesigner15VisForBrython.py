@@ -102,8 +102,6 @@ def render_state_svg_graphics(state):
 		APANEL <= outline
 	elif(state['Role'] == "Image Puzzle"):
 		prepareCanvas()	
-		if(state["Selected_Puzzle"] != selected_puzzle):
-			canMan.resetcanManImage()
 		if(state["Selected_Puzzle"] != -1):
 			puzzle = state["Puzzles"][state["Selected_Puzzle"]]
 			canMan.setURL(puzzle.url)
@@ -297,8 +295,6 @@ def drawPuzzle(puzzle):
 	global canMan
 	canMan.setImg()
 	
-	camanTranslator.setImg()
-	transformations = "this.revert();\n"
 	for transform in puzzle.transformList:
 		if (transform == "rotate180"):
 			canMan.rotate180()
