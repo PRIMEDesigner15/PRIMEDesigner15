@@ -81,7 +81,7 @@ def render_state_svg_graphics(state):
 	ctx.clearRect(0,0, GAME_WIDTH, GAME_HEIGHT)
 	#alert("canvas was cleared")
 
-	
+	alert(state['Role'])
 	if(state['Role'] == "Architect"):
 		prepareSVG()
 		
@@ -118,16 +118,19 @@ def render_state_svg_graphics(state):
 		
 def prepareSVG():
 	global roleCanvas, board
+	console.log("board: ")
+	console.log(board)
+	alert("Paul's patented debugger")
 	#Hide canvas, make sure svg stuff visible
-	roleCanvas.style.display = "none"
-	board.style.display = "initial"	
+	roleCanvas.elt.style.display = "none"
+	board.elt.style.display = "initial"	
 
 def prepareCanvas():
 	global roleCanvas, board
 	alert("Prepare Canvas Called")
 	#Hide svg stuff, make canvas visible
-	#board.style.display = "none"
-	roleCanvas.style.display = "initial"
+	board.elt.style.display = "none"
+	roleCanvas.elt.style.display = "initial"
 	
 # draws a room.		
 def drawRoom(room,room_num):
@@ -317,7 +320,7 @@ def drawPuzzle(puzzle):
 			#alert("before the nested loop")
 			for i in range(roleCanvas.width):
 				#console.log(i)
-				alert(i)
+				#alert(i)
 				for j in range(roleCanvas.height):
 					for k in range(4):
 						pass

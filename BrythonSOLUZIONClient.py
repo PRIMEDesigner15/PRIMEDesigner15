@@ -2,7 +2,7 @@
 # Ver 0.9, June 23, 2014.
 # (C) S. Tanimoto, 2014
 
-from browser import doc, alert, html
+from browser import doc, alert, html, console
 from PRIMEDesigner15VisForBrython import set_up_gui as set_up_user_interface
 from PRIMEDesigner15VisForBrython import render_state_svg_graphics as render_state
 from PRIMEDesigner15 import OPERATORS, INITIAL_STATE
@@ -25,11 +25,9 @@ def set_up_operators_interface():
 	opselectdiv = html.DIV(Id="spselectdivid", style={"backgroundColor":"#AAFFFF"})
 	opselectdiv <= html.I("Operator selection:")
 	OPSELECT = html.SELECT(Id="theoptselect")
-	alert(OPERATORS)
 	for i, elt in enumerate(OPERATORS):
 		OPSELECT <= html.OPTION(elt.name, value = i)
-		alert(i)
-	alert("Size of OPSelect = " + str(OPSELECT.size))
+	console.log(OPSELECT)
 	applybutton = html.BUTTON(Id="applyButtonID")
 	applybutton.text = "Apply selected operator"
 	applybutton.bind('click',handleApplyButtonClick)
@@ -53,9 +51,16 @@ def find_applicable_op_indexes(OPERATORS, current_state):
 	return res
 
 def repopulate_operator_choices(choices):
+	global OPSELECT
+	console.log("choices passed to repopulate operator:")
+	console.log(*choices)
 	got_one_selected = False
 	for item in OPSELECT:
-		if item in choices:
+		#console.log(int(item.value))
+		if int(item.value) in (choices):
+			console.log("considered valid:")
+			console.log(item.value)
+			console.log(item)
 			item.disabled = False
 			if not got_one_selected:
 				item.selected = True
@@ -143,7 +148,7 @@ def set_up_reset_and_backtrack_div():
 def initialize():
 	global CURRENT_STATE, STATE_STACK
 	global RESET_BUTTON, BACKTRACK_BUTTON
-
+	console.log(OPERATORS)
 	CURRENT_STATE = INITIAL_STATE # comes from the problem template file.
 	STATE_STACK = [INITIAL_STATE]
 	render_state(CURRENT_STATE)
