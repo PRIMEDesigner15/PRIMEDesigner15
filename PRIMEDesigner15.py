@@ -372,9 +372,9 @@ def set_operators(state):
 		[Operator("Change Role to " + role + ".",
 			lambda state: state['Role'] is not role,
 			lambda state: change_role(role, state))
-		for role in ["Architect", "Image Puzzle", "Music Puzzle", "Rules"]] 	
-			
+		for role in ["Architect", "Image Puzzle", "Music Puzzle", "Rules"]] 			
 	if (state['Role'] == "Architect"):
+		alert("Architect is the role")
 		selection_operators =\
 			[Operator("Switch to room numbered " + str(num + 1) + " for editing.",
 				lambda state: num is not state["Selected_Room"],
@@ -395,7 +395,7 @@ def set_operators(state):
 		OPERATORS = selection_operators	+ door_operators + wallpaper_operators + role_operators
 		
 	elif(state['Role'] == "Image Puzzle"):
-		
+		alert("Image Puzzle is the role in PrimeDesigner15")
 		selection_operators =\
 			[Operator("Switch to puzzle numbered " + str(num + 1) + " for editing.",
 				lambda state: num < len(state["Puzzles"]) and len(state["Puzzles"]) > 1 and num != state["Selected_Puzzle"],
@@ -441,7 +441,7 @@ INITIAL_STATE['Doors'] = []
 INITIAL_STATE['Puzzles'] = []
 INITIAL_STATE['Selected_Room'] = 0
 INITIAL_STATE['Selected_Puzzle'] = -1
-INITIAL_STATE['Role'] = "Architect"
+INITIAL_STATE['Role'] = "Image Puzzle"
 
 
 # Create 9 rooms, add them to the list.

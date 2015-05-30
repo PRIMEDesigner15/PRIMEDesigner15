@@ -119,14 +119,15 @@ def render_state_svg_graphics(state):
 		
 def prepareSVG():
 	global roleCanvas, board
+	alert("prepareSVG called")
 	#Hide canvas, make sure svg stuff visible
-	roleCanvas.elt.style.display = "none"
-	board.elt.style.display = "initial"	
+	#roleCanvas.elt.style.display = "none"
+	#board.elt.style.display = "initial"	
 
 def prepareCanvas():
 	global roleCanvas, board
 	#Hide svg stuff, make canvas visible
-	board.style.display = "none"
+	board.elt.style.display = "none"
 	roleCanvas.style.display = "initial"
 	
 # draws a room.		
