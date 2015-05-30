@@ -21,7 +21,7 @@ GAME_HEIGHT = ROOM_SIZE * 3
 
 
 CamanCommConstructor = JSConstructor(window.CamanComms)
-camanTranslator = CamanCommConstructor("#roleCanvas", "wall.jpg")
+camanTranslator = CamanCommConstructor("#roleCanvas", "none.jpg")
 
 camanTranslator.CamanFunction("this.render()")
 # Store the selected puzzle to reset CamanJS when it changes
