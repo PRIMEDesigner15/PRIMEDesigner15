@@ -441,7 +441,7 @@ INITIAL_STATE['Doors'] = []
 INITIAL_STATE['Puzzles'] = []
 INITIAL_STATE['Selected_Room'] = 0
 INITIAL_STATE['Selected_Puzzle'] = -1
-INITIAL_STATE['Role'] = "Image Puzzle"
+INITIAL_STATE['Role'] = "Architect"
 
 
 # Create 9 rooms, add them to the list.

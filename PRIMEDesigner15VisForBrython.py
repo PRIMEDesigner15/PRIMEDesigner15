@@ -35,7 +35,7 @@ LAST_STATE = None # cache of current state for use in
 				#refresh of display after selection hiding button click.
 
 print("Hello from PRIMEDesignerVisForBrython!  Starting to process it.")
-LINE_WIDTH = 15
+LINE_WIDTH = 1
 def set_up_gui(opselectdiv, statuslinediv):
 	print("Entering set_up_gui in PRIMEDesignerVisForBrython.")
 	global gui
@@ -61,7 +61,8 @@ def set_up_board_svg_graphics():
 	global APANEL, board
 	board = svg.svg(Id = "svgboard", 
 					style = {"width":GAME_WIDTH, "height":GAME_HEIGHT,
-							"backgroundColor":"#AAAABB"})
+							"backgroundColor":"#AAAABB",})
+	board.elt.style.display = "none"
 	APANEL = svg.g(Id = "panel")
 	
 	board <= APANEL	
@@ -119,13 +120,13 @@ def render_state_svg_graphics(state):
 def prepareSVG():
 	global roleCanvas, board
 	#Hide canvas, make sure svg stuff visible
-	roleCanvas.style.display = "none"
-	board.style.display = "initial"	
+	roleCanvas.elt.style.display = "none"
+	board.elt.style.display = "initial"	
 
 def prepareCanvas():
 	global roleCanvas, board
 	#Hide svg stuff, make canvas visible
-	#board.style.display = "none"
+	board.style.display = "none"
 	roleCanvas.style.display = "initial"
 	
 # draws a room.		
@@ -189,14 +190,12 @@ def drawWallpaper(wall,x3,y3,x4,y4,room_num):
 	# Create a pattern for image represntation.
 	pattern = svg.pattern(id="wallpaper" + str(room_num) + wall.loc,height="100",width = "50")
 	img = svg.image(xlink_href=wall.wallpaper.url, x="0",y="0", width="100", height="100", transform = transform)
-	
 	# Append
 	pattern <= img
 	APANEL <= pattern
-	
 	WallpaperDiv = create_polygon(wall.x1, wall.y1, wall.x2, wall.y2, x3, y3, x4, y4,
 								  fill="url(#wallpaper" + str(room_num) + wall.loc  + ")", id = wall.loc)
-					
+	#fill="url(#wallpaper" + str(room_num) + wall.loc  + ")"				
 	# Append polygon to svg panel
 	APANEL <= WallpaperDiv
 
@@ -268,8 +267,9 @@ def drawDoor(wall,x3,y3,x4,y4):
 	APANEL <= doorDiv
 
 # returns an svg polygon at the given 4 points.
-def create_polygon(x1,y1,x2,y2,x3,y3,x4,y4, fill = "black", stroke = "black", transform = "rotate(0)", id = "polygon"):
+def create_polygon(x1,y1,x2,y2,x3,y3,x4,y4, fill = "black", stroke = "red", transform = "rotate(0)", id = "polygon"):
 	
+	alert(fill)
 	# Maps points to Div
 	(X1,Y1) = mapCoordsToDIV(x1,y1)
 	(X2,Y2) = mapCoordsToDIV(x2,y2)
@@ -280,9 +280,8 @@ def create_polygon(x1,y1,x2,y2,x3,y3,x4,y4, fill = "black", stroke = "black", tr
 	Points = str(X1) + "," + str(Y1) + " " + str(X2) + "," + str(Y2) + " " + str(X3) + "," + str(Y3) + " " + str(X4) + "," + str(Y4)
 	
 	# Create polygon
-	poly = svg.polygon(id=id,style = {"fill" : fill},stroke=stroke,stroke_width=LINE_WIDTH,
-					points=Points, transform=transform)
-					
+	poly = svg.polygon(id=id,fill = fill,stroke_width=LINE_WIDTH,
+					points=Points, transform=transform)				
 	# return polygon
 	return poly
 	
