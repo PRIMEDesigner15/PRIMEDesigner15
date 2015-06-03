@@ -7,7 +7,7 @@ the PRIMEDesigner template in the Brython environment.
 from browser import window, document, html, alert, svg, console
 from javascript import JSConstructor
 
-
+canMan = None
 gui = None
 #is this saying that all of these are now 'None'?
 board = None
@@ -19,11 +19,6 @@ ROOM_SIZE = 100
 GAME_WIDTH = ROOM_SIZE * 3
 GAME_HEIGHT = ROOM_SIZE * 3
 
-
-CanvasManagerConstructor = JSConstructor(window.CanvasManager)
-canMan = CanvasManagerConstructor("#roleCanvas", "none.jpg")
-
-canMan.setImg()
 # Store the selected puzzle to reset canManJS when it changes
 selected_puzzle = -1
 
@@ -69,6 +64,14 @@ def set_up_board_svg_graphics():
 	boarddiv <= board
 	boarddiv <= roleCanvas
 	gui <= boarddiv
+	
+	setCanvasManager()
+
+def setCanvasManager():
+	global canMan
+	CanvasManagerConstructor = JSConstructor(window.CanvasManager)
+	canMan = CanvasManagerConstructor(roleCanvas, "none.jpg")
+	canMan.setImg()
 		
 # draws the game
 def render_state_svg_graphics(state):
@@ -101,8 +104,9 @@ def render_state_svg_graphics(state):
 		prepareCanvas()	
 		if(state["Selected_Puzzle"] != -1):
 			puzzle = state["Puzzles"][state["Selected_Puzzle"]]
-			canMan.setURL(puzzle.url)
-			selected_puzzle = state["Selected_Puzzle"]
+			if(selected_puzzle != state["Selected_Puzzle"]):
+				canMan.setURL(puzzle.url)
+				selected_puzzle = state["Selected_Puzzle"]
 			drawPuzzle(puzzle)
 	elif(state['Role'] == "Music Puzzle"):
 		prepareCanvas()
@@ -300,12 +304,14 @@ def mapNumToDiv(x):
 	
 def drawPuzzle(puzzle):
 	global canMan
-	canMan.setImg()
 	
-	for transform in puzzle.transformList:
-		if (transform == "rotate180"):
-			canMan.rotate180()
-		elif (transform == "horizFlip"):
-			canMan.horizFlip()
-		else:
-			alert("Not supported transform")
+	def done():
+		for transform in puzzle.transformList:
+			if (transform == "vertFlip"):
+				canMan.vertFlip()
+			elif (transform == "horizFlip"):
+				canMan.horizFlip()
+			else:
+				alert("Not supported transform")
+
+	canMan.setImg(done)

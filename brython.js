@@ -7424,7 +7424,7 @@ $xmlhttp.onerror=function(){res=_b_.FileNotFoundError("No module named '"+module
 $xmlhttp.onreadystatechange=function(){if($xmlhttp.readyState==4){window.clearTimeout(timer)
 if($xmlhttp.status==200 ||$xmlhttp.status==0){res=$xmlhttp.responseText}
 else{
-console.log('Error '+$xmlhttp.status+' means that Python module '+module+' was not found at url '+url)
+//console.log('Error '+$xmlhttp.status+' means that Python module '+module+' was not found at url '+url)
 res=_b_.FileNotFoundError("No module named '"+module+"'")
 }}}}
 if('overrideMimeType' in $xmlhttp){$xmlhttp.overrideMimeType("text/plain")}

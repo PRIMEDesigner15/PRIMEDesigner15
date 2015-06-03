@@ -2,17 +2,17 @@
 # Ver 0.9, June 23, 2014.
 # (C) S. Tanimoto, 2014
 
-from browser import doc, alert, html, console, alert
+from browser import doc, alert, html, console
 from PRIMEDesigner15VisForBrython import set_up_gui as set_up_user_interface
 from PRIMEDesigner15VisForBrython import render_state_svg_graphics as render_state
 from PRIMEDesigner15 import INITIAL_STATE
 
 
-OPSELECT = None
+opSelect = None
 STATE_STACK = []
 RESET_BUTTON = None
 BACKTRACK_BUTTON = None
-OPERATORS = INITIAL_STATE["Operators"]
+Operators = INITIAL_STATE["Operators"]
 
 
 if not 'PROBLEM_NAME' in globals():
@@ -22,49 +22,33 @@ if not 'PROBLEM_NAME' in globals():
 #sdoc['pagetitle'].text = "Solving "+PROBLEM_NAME+\
 #" in the Brython SOLUZION Client"'''
 
-def set_up_operators_interface():
-	global OPSELECT # make available for interaction.
-	opselectdiv = html.DIV(Id="spselectdivid", style={"backgroundColor":"#AAFFFF"})
-	opselectdiv <= html.I("Operator selection:")
-	OPSELECT = html.SELECT(Id="theoptselect")
-	for i, elt in enumerate(OPERATORS):
-		OPSELECT <= html.OPTION(elt.name, value = i)
+def set_up_Operators_interface():
+	global opSelect # make available for interaction.
+	opSelectdiv = html.DIV(Id="spselectdivid", style={"backgroundColor":"#AAFFFF"})
+	opSelectdiv <= html.I("Operator selection:")
+	opSelect = html.SELECT(Id="theoptselect")
+	for i, elt in enumerate(Operators):
+		opSelect <= html.OPTION(elt.name, value = i)
 	applybutton = html.BUTTON(Id="applyButtonID")
 	applybutton.text = "Apply selected operator"
 	applybutton.bind('click',handleApplyButtonClick)
-	opselectdiv <= OPSELECT
-	opselectdiv <= applybutton
-	return opselectdiv  # A container to be inserted into the GUI.
+	opSelectdiv <= opSelect
+	opSelectdiv <= applybutton
+	return opSelectdiv  # A container to be inserted into the GUI.
 
-def find_applicable_op_indexes(OPERATORS, current_state):
-	res = []
-	for idx, op in enumerate(OPERATORS):
-		try:
-			pre = op.precond
-		except:
-			alert("No precondition for operator: "+str(op))
-			return
-		try:
-			if pre(current_state):
-				res = res + [idx]
-		except (Exception) as e:
-			alert("Bad state or bad precondition with operator "+op.name+" and current state.")
-	return res
-
-def repopulate_operator_choices(choices, CURRENT_STATE):
-	global OPSELECT, OPERATORS
+def repopulate_operator_choices(current_state):
+	global opSelect, Operators
 	got_one_selected = False
+
+	Operators = current_state["Operators"]
 	
-	#OPERATORS = CURRENT_STATE["Operators"]
-	#alert(OPERATORS)
+	opSelect.innerHTML = ''
+	for i, elt in enumerate(Operators):
+		opSelect <= html.OPTION(elt.name, value = i)
 	
-	# Refill OPSELECT
-	#OPSELECT.options.length = 0
-	#for i, elt in enumerate(OPERATORS):
-	#	OPSELECT <= html.OPTION(elt.name, value = i)
-	
-	for item in OPSELECT:
-		if int(item.value) in (choices):
+	#magic ziperino
+	for item in opSelect:
+		if Operators[int(item.value)].precond(current_state):
 			item.disabled = False
 			if not got_one_selected:
 				item.selected = True
@@ -75,30 +59,26 @@ def repopulate_operator_choices(choices, CURRENT_STATE):
 
 def handleApplyButtonClick(evt):
 	# get selected operator.
-	global OPSELECT, CURRENT_STATE, STATE_STACK
+	global Operators, opSelect, current_state, STATE_STACK
 	global BACKTRACK_BUTTON, RESET_BUTTON
 
-	# Get operators
-	i = OPSELECT.selectedIndex
-	op = OPERATORS[i]
-	console.log(op.name)
+	# Get Operators
+	i = opSelect.selectedIndex
+	op = Operators[i]
 	try:
-		new_state = op.state_transf(CURRENT_STATE)
-		alert("past")
-		CURRENT_STATE = new_state
-		
-		render_state(CURRENT_STATE)
-		alert("rendered")
+		new_state = op.state_transf(current_state)
+		current_state = new_state
+		render_state(current_state)
 		STATE_STACK.append(new_state) # Push.
 		BACKTRACK_BUTTON.disabled = False
 		RESET_BUTTON.disabled = False
-		if GOAL_TEST(CURRENT_STATE):
+		if GOAL_TEST(current_state):
 			# If the current state is a goal state, issue a message.
 			# The message may be provided by the template.
 			# Otherwise, we use a default message.
 			global statusline
 			if 'GOAL_MESSAGE_FUNCTION' in globals():
-				mes = GOAL_MESSAGE_FUNCTION(CURRENT_STATE)
+				mes = GOAL_MESSAGE_FUNCTION(current_state)
 				statusline.text = mes
 				alert(mes)
 			else:
@@ -107,11 +87,11 @@ def handleApplyButtonClick(evt):
 				alert("You have achieved a goal state!")
 		else:
 			statusline.text = "Solving is in progress."
-			repopulate_operator_choices(find_applicable_op_indexes(OPERATORS, CURRENT_STATE))
+			repopulate_operator_choices(current_state)
 	except (Exception) as e:
 		alert("An error occured when applying this operator. Error: "+str(e))
 
-opselectdiv = set_up_operators_interface()
+opSelectdiv = set_up_Operators_interface()
 
 def set_up_status_line():
 	global gui, statusline
@@ -127,13 +107,13 @@ def handleresetbuttonclick(e):
 	initialize()
 
 def handlebacktrackbuttonclick(e):
-	global CURRENT_STATE, STATE_STACK
+	global current_state, STATE_STACK
 	global RESET_BUTTON, BACKTRACK_BUTTON
 	if len(STATE_STACK) > 2:
 		STATE_STACK.pop()
-		CURRENT_STATE = STATE_STACK[-1]
-		render_state(CURRENT_STATE)
-		repopulate_operator_choices(find_applicable_op_indexes(OPERATORS, CURRENT_STATE))
+		current_state = STATE_STACK[-1]
+		render_state(current_state)
+		repopulate_operator_choices(current_state)
 	else: 
 		initialize()
 
@@ -156,18 +136,17 @@ def set_up_reset_and_backtrack_div():
 	return reset_and_backtrack_div
 
 def initialize():
-	global CURRENT_STATE, STATE_STACK
+	global current_state, STATE_STACK
 	global RESET_BUTTON, BACKTRACK_BUTTON
-	CURRENT_STATE = INITIAL_STATE # comes from the problem template file.
+	current_state = INITIAL_STATE # comes from the problem template file.
 	STATE_STACK = [INITIAL_STATE]
-	render_state(CURRENT_STATE)
-	choices = find_applicable_op_indexes(OPERATORS, CURRENT_STATE)
-	repopulate_operator_choices(choices, CURRENT_STATE)
+	render_state(current_state)
+	repopulate_operator_choices(current_state)
 	RESET_BUTTON.disabled = True
 	BACKTRACK_BUTTON.disabled = True
 
 statuslinediv = set_up_status_line()
-set_up_user_interface(opselectdiv, statuslinediv) # Handled in separate Python file.
+set_up_user_interface(opSelectdiv, statuslinediv) # Handled in separate Python file.
 reset_and_backtrack_div = set_up_reset_and_backtrack_div()
 statuslinediv <= reset_and_backtrack_div
 

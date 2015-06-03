@@ -56,7 +56,6 @@ def copy_state(state):
 	newState["Selected_Puzzle"] = state["Selected_Puzzle"]
 	newState["Role"] = state["Role"]
 	newState["Operators"] = state["Operators"]
-		
 	# Add in doors to the walls in the rooms.
 	door_index = 0
 	for room_num in range(9):
@@ -124,8 +123,6 @@ class Room:
 			newRoom.music = self.music.copy()
 		
 		return newRoom
-				
-	
 		
 """ A wall could contain a door or a wallpaper """	
 class Wall:
@@ -185,10 +182,11 @@ class Door:
 class Puzzle:
 	def __init__(self, url, transformList = []):
 		self.url = url
-		self.transformList = transformList
+		# shallow copying a new list
+		self.transformList = transformList[:]
 	
 	def add_transform(self, transform):
-		self.transformList = self.transformList + transform
+		self.transformList.append(transform)
 	
 	def copy(self):
 		return Puzzle(self.url, self.transformList)
@@ -338,7 +336,7 @@ def create_puzzle(state):
 	if(url == "cancel"):
 		newState = copy_state(state)
 		
-	elif(url_is_valid(url)):	
+	elif(url_is_valid(url)):
 		newState = copy_state(state)
 		newPuzzle = Puzzle(url)
 		newState["Puzzles"].append(newPuzzle)
@@ -405,13 +403,13 @@ def set_operators(state):
 			Operator("Flip the image horizontally.",
 				lambda state: state["Selected_Puzzle"] > -1,
 				lambda state: addTransformation("horizFlip", state))
-		rotate_180 =\
-			Operator("Rotate the image 180 degrees.",
+		vert_flip =\
+			Operator("Flip the image vertically.",
 				lambda state: state["Selected_Puzzle"] > -1,
-				lambda state: addTransformation("rotate180", state))
+				lambda state: addTransformation("vertFlip", state))
 		
 				
-		OPERATORS = selection_operators + role_operators + horiz_flip + create_new_puzzle + rotate_180
+		OPERATORS = selection_operators + role_operators + create_new_puzzle + horiz_flip + vert_flip
 		
 	elif(state['Role'] == "Music Puzzle"):
 		OPERATORS = role_operators
@@ -431,7 +429,7 @@ INITIAL_STATE['Doors'] = []
 INITIAL_STATE['Puzzles'] = []
 INITIAL_STATE['Selected_Room'] = 0
 INITIAL_STATE['Selected_Puzzle'] = -1
-INITIAL_STATE['Role'] = "Architect"
+INITIAL_STATE['Role'] = "Image Puzzle"
 INITIAL_STATE['Operators'] = set_operators(INITIAL_STATE)	
 
 
