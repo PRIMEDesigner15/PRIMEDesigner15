@@ -5,13 +5,14 @@
 from browser import doc, alert, html, console, alert
 from PRIMEDesigner15VisForBrython import set_up_gui as set_up_user_interface
 from PRIMEDesigner15VisForBrython import render_state_svg_graphics as render_state
-from PRIMEDesigner15 import OPERATORS, INITIAL_STATE
+from PRIMEDesigner15 import INITIAL_STATE
 
 
 OPSELECT = None
 STATE_STACK = []
 RESET_BUTTON = None
 BACKTRACK_BUTTON = None
+OPERATORS = INITIAL_STATE["Operators"]
 
 
 if not 'PROBLEM_NAME' in globals():
@@ -76,10 +77,11 @@ def handleApplyButtonClick(evt):
 	# get selected operator.
 	global OPSELECT, CURRENT_STATE, STATE_STACK
 	global BACKTRACK_BUTTON, RESET_BUTTON
+	# Get operators
+	i = OPSELECT.selectedIndex
+	op = OPERATORS[i]
+	console.log(op.name)
 	try:
-		# Get operators
-		i = OPSELECT.selectedIndex
-		op = OPERATORS[i]
 		new_state = op.state_transf(CURRENT_STATE)
 		
 		CURRENT_STATE = new_state
@@ -87,10 +89,10 @@ def handleApplyButtonClick(evt):
 		#alert(OPERATORS)
 		
 		# Reassign Operators if operators are dynamicly stored in the state
-		if(CURRENT_STATE["Operators"] is not None):
-			alert(OPERATORS)
-			OPERATORS = CURRENT_STATE["Operators"]
-			alert(OPERATORS)
+		#if(CURRENT_STATE["Operators"] is not None):
+		#	console.log(CURRENT_STATE["Operators"])
+			#OPERATORS = CURRENT_STATE["Operators"]
+			#alert(OPERATORS)
 			
 		render_state(CURRENT_STATE)
 		STATE_STACK.append(new_state) # Push.
@@ -163,7 +165,6 @@ def initialize():
 	global CURRENT_STATE, STATE_STACK
 	global RESET_BUTTON, BACKTRACK_BUTTON
 	CURRENT_STATE = INITIAL_STATE # comes from the problem template file.
-	console.log(CURRENT_STATE)
 	STATE_STACK = [INITIAL_STATE]
 	render_state(CURRENT_STATE)
 	choices = find_applicable_op_indexes(OPERATORS, CURRENT_STATE)

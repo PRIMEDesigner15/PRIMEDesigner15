@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<script type="text/javascript" src="brython.js"></script>
+		<script type="text/python">
+			BRYTHON = True
+		</script>
+	</head>
+	
+	<body onload="brython()">
+	<script type="text/python">
+	from browser import console
+	
+	myList =\
+		[lambda n = num: console.log(n), for num in range(9)]
+
+	for i in range(9):
+		myList[i]()
+	</script>
+	</body>
+	
+	
+</html>

@@ -28,7 +28,7 @@ print("Hello from PRIMEDesigner15.py (after METADATA)")
 
 #<COMMON_CODE>
 
-from browser import document, window, alert
+from browser import document, window, alert, console
 from javascript import JSObject, JSConstructor
 import browser
 
@@ -78,7 +78,7 @@ def describe_state(state):
 #  window.IS_JSON = json_encode(INITIAL_STATE)
   #alert("Inside of the template Mondrian.py, the INITIAL_STATE JSON is "+window.IS_JSON)
   #print(INITIAL_STATE)
-#except Exception as e:
+#except Exception as e:dsa
 #  print("There was an exception when trying to communicate back from Python to Javascript.")
 #  print(e)
 
@@ -312,6 +312,7 @@ def url_is_valid(url):
 		return False
 	
 def change_room_selection(room_num, state):
+	alert("changing room to " + str(room_num))
 	newState = copy_state(state)
 	newState["Selected_Room"] = room_num
 	return newState
@@ -322,9 +323,10 @@ def change_puzzle_selection(puzzle_num, state):
 	return newState
 	
 def change_role(role, state):
-	global OPERATORS
 	newState = copy_state(state)
+	alert("changing role to " + role)
 	newState['Role'] = role
+	
 	# reset the operators
 	newState['Operators'] = set_operators(newState)
 	
@@ -369,9 +371,10 @@ def set_operators(state):
 			lambda state: change_role(role, state))
 		for role in ["Architect", "Image Puzzle", "Music Puzzle", "Rules"]] 			
 	if (state['Role'] == "Architect"):
+		alert(state["Selected_Room"])
 		selection_operators =\
 			[Operator("Switch to room numbered " + str(num + 1) + " for editing.",
-				lambda state: num is not state["Selected_Room"],
+				lambda state: num + 1 is not state["Selected_Room"],
 				lambda state: change_room_selection(num, state))
 			for num in range(9)]
 
@@ -419,6 +422,7 @@ def set_operators(state):
 		alert("unsupported role")
 	
 	return OPERATORS
+	
 #</OPERATORS>
 	
 #<INITIAL_STATE> The game is a list of 9 rooms stored a list.
@@ -428,7 +432,7 @@ INITIAL_STATE['Doors'] = []
 INITIAL_STATE['Puzzles'] = []
 INITIAL_STATE['Selected_Room'] = 0
 INITIAL_STATE['Selected_Puzzle'] = -1
-INITIAL_STATE['Role'] = "Image Puzzle"
+INITIAL_STATE['Role'] = "Architect"
 INITIAL_STATE['Operators'] = set_operators(INITIAL_STATE)	
 
 
