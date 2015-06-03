@@ -73,11 +73,13 @@ def set_up_board_svg_graphics():
 # draws the game
 def render_state_svg_graphics(state):
 	global roleCanvas, ctx, APANEL, selected_puzzle
-	
+	alert("in here")
 	# Clear svg panel
-	while APANEL.lastChild:
+	while APANEL.lastChild is not None:
+		alert("triggered")
+		alert(APANEL.lastChild)
 		APANEL.removeChild(APANEL.lastChild)
-	
+	alert("past the svg clearing")
 	# Clear the roleCanvas
 	ctx.clearRect(0,0, GAME_WIDTH, GAME_HEIGHT)
 	#alert("canvas was cleared")

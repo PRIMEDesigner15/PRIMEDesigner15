@@ -234,13 +234,13 @@ def add_door_to_room(room_num, side, state, newDoor = Door()):
 		alert("Error: Invalid direction passed to add_door")
 	DOORS.append(newDoor)
 	
-def add_door_operator(room_num, side, state):
+def add_door_operator(state, room_num, side):
 	
 	newState = copy_state(state)
 	add_door_to_room(room_num, side, newState)
 	return newState
 	
-def doors_is_valid(side, state):
+def doors_is_valid(state, side):
 	
 	ROOMS = state["Rooms"]
 	DOORS = state["Doors"]
@@ -285,7 +285,7 @@ def create_image_puzzle(state):
 	url = prompt("Enter a complete URL for a puzzle image. Say 'cancel' to cancel.", "wall.jpg")
 		
 # takes a room num from 0 to 8 and prompts the user for a url for the wallpaper
-def add_wallpaper_to_room(room_num, state):
+def add_wallpaper_to_room(state, room_num):
 	url = window.prompt("Enter a complete URL for a wallpaper. Say 'cancel' to cancel.", "wall.jpg")
 
 	if(url == "cancel"):
@@ -311,18 +311,30 @@ def url_is_valid(url):
 	except OSError:
 		return False
 	
+<<<<<<< HEAD
 def change_room_selection(room_num, state):
 	alert("changing room to " + str(room_num))
+=======
+def change_room_selection(state, room_num):
+	#alert("test")
+>>>>>>> origin/master
 	newState = copy_state(state)
+	#alert("after newstate")
 	newState["Selected_Room"] = room_num
+	#alert("before returning")
 	return newState
 
-def change_puzzle_selection(puzzle_num, state):
+def change_puzzle_selection(state, puzzle_num):
 	newState = copy_state(state)
 	newState["Selected_Puzzle"] = puzzle_num
 	return newState
 	
+<<<<<<< HEAD
 def change_role(role, state):
+=======
+def change_role(state, role):
+	global OPERATORS
+>>>>>>> origin/master
 	newState = copy_state(state)
 	alert("changing role to " + role)
 	newState['Role'] = role
@@ -367,35 +379,40 @@ def set_operators(state):
 #of the current Role given the current State
 	role_operators =\
 		[Operator("Change Role to " + role + ".",
-			lambda state: state['Role'] is not role,
-			lambda state: change_role(role, state))
+			lambda state, r = role: state['Role'] is not r,
+			lambda state, r = role: change_role(state, r))
 		for role in ["Architect", "Image Puzzle", "Music Puzzle", "Rules"]] 			
 	if (state['Role'] == "Architect"):
 		alert(state["Selected_Room"])
 		selection_operators =\
 			[Operator("Switch to room numbered " + str(num + 1) + " for editing.",
+<<<<<<< HEAD
 				lambda state: num + 1 is not state["Selected_Room"],
 				lambda state: change_room_selection(num, state))
+=======
+				lambda state, n = num: n is not state["Selected_Room"],
+				lambda state, n = num: change_room_selection(state, n))
+>>>>>>> origin/master
 			for num in range(9)]
 
 		door_operators =\
 			[Operator("Add door to current room on " + cardinal + " wall.",
-				lambda state: doors_is_valid(cardinal, state),
-				lambda state: add_door_operator(state["Selected_Room"], cardinal, state))
+				lambda state, c = cardinal: doors_is_valid(state, c),
+				lambda state, c = cardinal: add_door_operator(state, state["Selected_Room"], c))
 			for cardinal in ['N', 'S', 'E', 'W']]		
 
 		wallpaper_operators =\
 			Operator("Add wallpaper to current room.",
 				lambda state: True,
-				lambda state: add_wallpaper_to_room(state["Selected_Room"], state))
+				lambda state: add_wallpaper_to_room(state, state["Selected_Room"]))
 					
 		OPERATORS = selection_operators	+ door_operators + wallpaper_operators + role_operators
 		
 	elif(state['Role'] == "Image Puzzle"):
 		selection_operators =\
 			[Operator("Switch to puzzle numbered " + str(num + 1) + " for editing.",
-				lambda state: num < len(state["Puzzles"]) and len(state["Puzzles"]) > 1 and num != state["Selected_Puzzle"],
-				lambda state: change_puzzle_selection(num,state))
+				lambda state, n = num: n < len(state["Puzzles"]) and len(state["Puzzles"]) > 1 and n != state["Selected_Puzzle"],
+				lambda state, n = num: change_puzzle_selection(n, state))
 			for num in range(9)]
 	
 		create_new_puzzle =\
