@@ -77,31 +77,16 @@ def handleApplyButtonClick(evt):
 	# get selected operator.
 	global OPSELECT, CURRENT_STATE, STATE_STACK
 	global BACKTRACK_BUTTON, RESET_BUTTON
-<<<<<<< HEAD
+
 	# Get operators
 	i = OPSELECT.selectedIndex
 	op = OPERATORS[i]
 	console.log(op.name)
-=======
-	i = OPSELECT.selectedIndex
-	op = OPERATORS[i]
->>>>>>> origin/master
 	try:
 		new_state = op.state_transf(CURRENT_STATE)
 		alert("past")
 		CURRENT_STATE = new_state
 		
-<<<<<<< HEAD
-		#alert(OPERATORS)
-		
-		# Reassign Operators if operators are dynamicly stored in the state
-		#if(CURRENT_STATE["Operators"] is not None):
-		#	console.log(CURRENT_STATE["Operators"])
-			#OPERATORS = CURRENT_STATE["Operators"]
-			#alert(OPERATORS)
-			
-=======
->>>>>>> origin/master
 		render_state(CURRENT_STATE)
 		alert("rendered")
 		STATE_STACK.append(new_state) # Push.

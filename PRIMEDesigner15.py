@@ -311,17 +311,9 @@ def url_is_valid(url):
 	except OSError:
 		return False
 	
-<<<<<<< HEAD
-def change_room_selection(room_num, state):
-	alert("changing room to " + str(room_num))
-=======
 def change_room_selection(state, room_num):
-	#alert("test")
->>>>>>> origin/master
 	newState = copy_state(state)
-	#alert("after newstate")
 	newState["Selected_Room"] = room_num
-	#alert("before returning")
 	return newState
 
 def change_puzzle_selection(state, puzzle_num):
@@ -329,12 +321,8 @@ def change_puzzle_selection(state, puzzle_num):
 	newState["Selected_Puzzle"] = puzzle_num
 	return newState
 	
-<<<<<<< HEAD
-def change_role(role, state):
-=======
 def change_role(state, role):
 	global OPERATORS
->>>>>>> origin/master
 	newState = copy_state(state)
 	alert("changing role to " + role)
 	newState['Role'] = role
@@ -383,16 +371,10 @@ def set_operators(state):
 			lambda state, r = role: change_role(state, r))
 		for role in ["Architect", "Image Puzzle", "Music Puzzle", "Rules"]] 			
 	if (state['Role'] == "Architect"):
-		alert(state["Selected_Room"])
 		selection_operators =\
 			[Operator("Switch to room numbered " + str(num + 1) + " for editing.",
-<<<<<<< HEAD
-				lambda state: num + 1 is not state["Selected_Room"],
-				lambda state: change_room_selection(num, state))
-=======
 				lambda state, n = num: n is not state["Selected_Room"],
 				lambda state, n = num: change_room_selection(state, n))
->>>>>>> origin/master
 			for num in range(9)]
 
 		door_operators =\

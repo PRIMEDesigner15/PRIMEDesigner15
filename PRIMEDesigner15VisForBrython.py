@@ -73,16 +73,11 @@ def set_up_board_svg_graphics():
 # draws the game
 def render_state_svg_graphics(state):
 	global roleCanvas, ctx, APANEL, selected_puzzle
-	alert("in here")
 	# Clear svg panel
 	while APANEL.lastChild is not None:
-		alert("triggered")
-		alert(APANEL.lastChild)
-		APANEL.removeChild(APANEL.lastChild)
-	alert("past the svg clearing")
+		APANEL.removeChild(APANEL.elt.lastChild)
 	# Clear the roleCanvas
 	ctx.clearRect(0,0, GAME_WIDTH, GAME_HEIGHT)
-	#alert("canvas was cleared")
 
 	if(state['Role'] == "Architect"):
 		prepareSVG()
@@ -175,8 +170,13 @@ def drawWall(wall,x3,y3,x4,y4,room_num):
 	
 # draws a wallpaper, requires 2 more points to form trapezoidal 3d shape.	
 def drawWallpaper(wall,x3,y3,x4,y4,room_num):
-	global LINE_WIDTH, APANEL
-
+	global LINE_WIDTH, APANEL, board
+	#height = str(abs(mapNumToDiv(wall.y1-y3)))
+	#width = str(abs(mapNumToDiv(wall.x1-x3)))
+	height = "10"
+	width = "10"
+	#alert("height = " + height)
+	
 	if (wall.loc == 'S'):
 		transform = "rotate(180, 50, 50)"
 	elif (wall.loc == 'E'):
@@ -187,8 +187,8 @@ def drawWallpaper(wall,x3,y3,x4,y4,room_num):
 		transform = "rotate(0)"
 	
 	# Create a pattern for image represntation.
-	pattern = svg.pattern(id="wallpaper" + str(room_num) + wall.loc,height="100",width = "50")
-	img = svg.image(xlink_href=wall.wallpaper.url, x="0",y="0", width="100", height="100", transform = transform)
+	pattern = svg.pattern(id="wallpaper" + str(room_num) + wall.loc,width = width,height = height)
+	img = svg.image(xlink_href=wall.wallpaper.url, x= "0" ,y = "0", width = width, height = height, transform = transform)
 	# Append
 	pattern <= img
 	APANEL <= pattern
@@ -197,6 +197,7 @@ def drawWallpaper(wall,x3,y3,x4,y4,room_num):
 	#fill="url(#wallpaper" + str(room_num) + wall.loc  + ")"				
 	# Append polygon to svg panel
 	APANEL <= WallpaperDiv
+	#board <= WallpaperDiv
 
 # Draws a door frame on a wall with the given wall coordinates.
 # and then draws a door on that frame.
@@ -289,9 +290,13 @@ def create_polygon(x1,y1,x2,y2,x3,y3,x4,y4, fill = "black", stroke = "black", tr
 # range [0,GAME_HEIGHT].
 def mapCoordsToDIV(x, y):
 	global GAME_WIDTH, GAME_HEIGHT
-	newX = int( (x * GAME_WIDTH)/3) 
-	newY = int( (y * GAME_HEIGHT)/3) 
+	newX = mapNumToDiv(x) 
+	newY = mapNumToDiv(y)
 	return (newX, newY)
+	
+def mapNumToDiv(x):
+	global GAME_WIDTH, GAME_HEIGHT
+	return int( (x * GAME_WIDTH)/3)
 	
 def drawPuzzle(puzzle):
 	global canMan
