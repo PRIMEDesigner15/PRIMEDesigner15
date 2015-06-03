@@ -76,23 +76,15 @@ def handleApplyButtonClick(evt):
 	# get selected operator.
 	global OPSELECT, CURRENT_STATE, STATE_STACK
 	global BACKTRACK_BUTTON, RESET_BUTTON
+	i = OPSELECT.selectedIndex
+	op = OPERATORS[i]
 	try:
-		# Get operators
-		i = OPSELECT.selectedIndex
-		op = OPERATORS[i]
 		new_state = op.state_transf(CURRENT_STATE)
-		
+		alert("past")
 		CURRENT_STATE = new_state
 		
-		#alert(OPERATORS)
-		
-		# Reassign Operators if operators are dynamicly stored in the state
-		if(CURRENT_STATE["Operators"] is not None):
-			alert(OPERATORS)
-			OPERATORS = CURRENT_STATE["Operators"]
-			alert(OPERATORS)
-			
 		render_state(CURRENT_STATE)
+		alert("rendered")
 		STATE_STACK.append(new_state) # Push.
 		BACKTRACK_BUTTON.disabled = False
 		RESET_BUTTON.disabled = False
