@@ -314,7 +314,7 @@ def change_room_selection(state, room_num):
 	newState["Selected_Room"] = room_num
 	return newState
 
-def change_puzzle_selection(state, puzzle_num):
+def change_puzzle_selection(puzzle_num, state):
 	newState = copy_state(state)
 	newState["Selected_Puzzle"] = puzzle_num
 	return newState
@@ -322,7 +322,6 @@ def change_puzzle_selection(state, puzzle_num):
 def change_role(state, role):
 	global OPERATORS
 	newState = copy_state(state)
-	alert("changing role to " + role)
 	newState['Role'] = role
 	
 	# reset the operators
@@ -407,9 +406,20 @@ def set_operators(state):
 			Operator("Flip the image vertically.",
 				lambda state: state["Selected_Puzzle"] > -1,
 				lambda state: addTransformation("vertFlip", state))
-		
+		shuff_rows =\
+			Operator("Shuffle the rows of the image.",
+				lambda state: state["Selected_Puzzle"] > -1,
+				lambda state: addTransformation("shuffleRows", state))
+		invs_shuff_rows =\
+			Operator("Invert Row shuffling",
+				lambda state: state["Selected_Puzzle"] > -1,
+				lambda state: addTransformation("shuffleRowsInverse", state))
+		shuff_cols =\
+			Operator("Shuffle the columns of the image.",
+				lambda state: state["Selected_Puzzle"] > -1,
+				lambda state: addTransformation("shuffleColumns", state))
 				
-		OPERATORS = selection_operators + role_operators + create_new_puzzle + horiz_flip + vert_flip
+		OPERATORS = selection_operators + role_operators + create_new_puzzle + horiz_flip + vert_flip + shuff_rows + invs_shuff_rows + shuff_cols
 		
 	elif(state['Role'] == "Music Puzzle"):
 		OPERATORS = role_operators

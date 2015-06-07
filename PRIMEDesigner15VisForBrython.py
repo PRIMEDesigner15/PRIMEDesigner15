@@ -104,8 +104,8 @@ def render_state_svg_graphics(state):
 		prepareCanvas()	
 		if(state["Selected_Puzzle"] != -1):
 			puzzle = state["Puzzles"][state["Selected_Puzzle"]]
+			canMan.setURL(puzzle.url)
 			if(selected_puzzle != state["Selected_Puzzle"]):
-				canMan.setURL(puzzle.url)
 				selected_puzzle = state["Selected_Puzzle"]
 			drawPuzzle(puzzle)
 	elif(state['Role'] == "Music Puzzle"):
@@ -126,6 +126,7 @@ def prepareCanvas():
 	#Hide svg stuff, make canvas visible
 	board.elt.style.display = "none"
 	roleCanvas.elt.style.display = "initial"
+	setCanvasManager()
 	
 # draws a room.		
 def drawRoom(room,room_num):
@@ -311,6 +312,12 @@ def drawPuzzle(puzzle):
 				canMan.vertFlip()
 			elif (transform == "horizFlip"):
 				canMan.horizFlip()
+			elif (transform == "shuffleRows"):
+				canMan.shuffleRows()
+			elif (transform == "shuffleRowsInverse"):
+				canMan.shuffleRowsInverse()
+			elif (transform == "shuffleColumns"):
+				canMan.shuffleColumns()
 			else:
 				alert("Not supported transform")
 
