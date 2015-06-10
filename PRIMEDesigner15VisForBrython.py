@@ -176,24 +176,23 @@ def drawWall(wall,x3,y3,x4,y4,room_num):
 # draws a wallpaper, requires 2 more points to form trapezoidal 3d shape.	
 def drawWallpaper(wall,x3,y3,x4,y4,room_num):
 	global LINE_WIDTH, APANEL, board
-	#height = str(abs(mapNumToDiv(wall.y1-y3)))
-	#width = str(abs(mapNumToDiv(wall.x1-x3)))
-	height = "10"
-	width = "10"
-	#alert("height = " + height)
 	
 	if (wall.loc == 'S'):
-		transform = "rotate(180, 50, 50)"
+		transform = "translate(1,1),rotate(180)"
 	elif (wall.loc == 'E'):
-		transform = "rotate(90, 50, 50)"
+		transform = "translate(1,0),rotate(90)"
 	elif (wall.loc == 'W'):
-		transform = "rotate(270, 50, 50)"
+		transform = "translate(0,1),rotate(-90)"
 	else:
 		transform = "rotate(0)"
 	
-	# Create a pattern for image represntation.
-	pattern = svg.pattern(id="wallpaper" + str(room_num) + wall.loc,width = width,height = height)
-	img = svg.image(xlink_href=wall.wallpaper.url, x= "0" ,y = "0", width = width, height = height, transform = transform)
+	# Create a pattern for image representation.
+	pattern = svg.pattern(id="wallpaper" + str(room_num) + wall.loc,width = "100%",height = "100%")
+	window.addAttribute(pattern,"patternContentUnits","objectBoundingBox")
+	
+	img = svg.image(xlink_href=wall.wallpaper.url, x= "0" ,y = "0", width = '1', height = '1', transform = transform)
+	window.addAttribute(img,"preserveAspectRatio","none")
+	
 	# Append
 	pattern <= img
 	APANEL <= pattern
@@ -261,8 +260,13 @@ def drawDoor(wall,x3,y3,x4,y4):
 	doorDiv = create_polygon(dx1,dy1,dx2,dy2,dx3,dy3,dx4,dy4, fill = "url(#door)") #fill = "#c9731e"	
 	
 	defs = svg.defs()
-	pattern = svg.pattern(id="door",height="100",width = "100")
-	img = svg.image(xlink_href=wall.door.url, x="0",y="0", height="100", width="100")
+	
+	pattern = svg.pattern(id="door",height="100%",width = "100%")
+	window.addAttribute(pattern,"patternContentUnits","objectBoundingBox")
+	
+	img = svg.image(xlink_href=wall.door.url, x="0",y="0", height="1", width="1")
+	window.addAttribute(img,"preserveAspectRatio","none")
+	
 	pattern <= img
 	defs <= pattern
 		
