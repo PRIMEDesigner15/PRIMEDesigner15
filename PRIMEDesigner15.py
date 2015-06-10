@@ -157,7 +157,7 @@ class Wall:
 # Test url is stripes.jpg for transformation testing.
 class Wallpaper:
 	
-	def __init__(self, url = "force.jpg"):
+	def __init__(self, url = "wall.jpg"):
 		self.url = url
 	
 	# Returns a copy of itself.

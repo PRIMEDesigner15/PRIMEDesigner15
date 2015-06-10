@@ -132,7 +132,7 @@ def prepareCanvas():
 # draws a room.		
 def drawRoom(room,room_num):
 	# thickness of a room's walls.
-	THICKNESS = .2
+	THICKNESS = .3
 	
 	#(x3,y3) and (x4,y4) make up the shorter end of the trapezoid
 	# draws north wall
@@ -208,26 +208,27 @@ def drawWallpaper(wall,x3,y3,x4,y4,room_num):
 # and then draws a door on that frame.
 def drawDoor(wall,x3,y3,x4,y4):
 
-	# Caution: Sensitive variable, keep it around 3 for a good sized door.
-	DOOR_SIZE = 1
+	# Caution: Sensitive variable, keep it around 2 for a good sized door.
+	DOOR_SIZE = 1.2
 
 	# map (f)rame coords to wall coords before translation
 	(fx1,fy1,fx2,fy2,fx3,fy3,fx4,fy4) = (wall.x1,wall.y1,wall.x2,wall.y2,x3,y3,x4,y4)
 	
 	# fit the door (f)rame into a smaller trapezoid
 	if (wall.loc == 'E' or wall.loc == 'W'):
-		fy1 += 1/DOOR_SIZE * (1/3)
-		fy2 -= 1/DOOR_SIZE * (1/3)
+		fy1 += 1/DOOR_SIZE * (3/8)
+		fy2 -= 1/DOOR_SIZE * (3/8)
 		fy3 -= 1/DOOR_SIZE * (4/15)
 		fy4 += 1/DOOR_SIZE * (4/15)
 		
 	elif (wall.loc == 'N' or wall.loc == 'S'):
-		fx1 += 1/DOOR_SIZE * (1/3)
-		fx2 -= 1/DOOR_SIZE * (1/3)
+		fx1 += 1/DOOR_SIZE * (3/8)
+		fx2 -= 1/DOOR_SIZE * (3/8)
 		fx3 -= 1/DOOR_SIZE * (4/15)
 		fx4 += 1/DOOR_SIZE * (4/15)
 	else:
 		alert("drawDoor wall location check broke")
+		
 	# Map default (d)oor coords to (f)rame coords. 
 	(dx1,dy1,dx2,dy2,dx3,dy3,dx4,dy4) = (fx1,fy1,fx2,fy2,fx3,fy3,fx4,fy4)
 	
@@ -256,6 +257,7 @@ def drawDoor(wall,x3,y3,x4,y4):
 			dx4 = fx3
 		else:
 			alert("wall door isOpen location broke")
+			
 	# Create frame and door polygons
 	frameDiv = create_polygon(fx1,fy1,fx2,fy2,fx3,fy3,fx4,fy4, fill = "black")
 	doorDiv = create_polygon(dx1,dy1,dx2,dy2,dx3,dy3,dx4,dy4, fill = "url(#door)") #fill = "#c9731e"	
