@@ -6,6 +6,7 @@ the PRIMEDesigner template in the Brython environment.
 
 from browser import window, document, html, alert, svg, console
 from javascript import JSConstructor
+#from PRIMEDesigner15MusicForBrython.py import
 
 canMan = None
 gui = None
