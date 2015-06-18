@@ -158,7 +158,7 @@ class Wall:
 # Test url is stripes.jpg for transformation testing.
 class Wallpaper:
 	
-	def __init__(self, url = "wall.jpg"):
+	def __init__(self, url = "images/wall.jpg"):
 		self.url = url
 	
 	# Returns a copy of itself.
@@ -167,7 +167,7 @@ class Wallpaper:
 
 class Door:
 	
-	def __init__(self, isOpen = True, url="door.jpg"):
+	def __init__(self, isOpen = True, url="images/door.jpg"):
 		self.isOpen = isOpen
 		self.url = url
 		
@@ -287,11 +287,11 @@ def doors_is_valid(state, side):
 		return False
 
 def create_image_puzzle(state):
-	url = prompt("Enter a complete URL for a puzzle image. Say 'cancel' to cancel.", "wall.jpg")
+	url = prompt("Enter a complete URL for a puzzle image. Say 'cancel' to cancel.", "images/wall.jpg")
 		
 # takes a room num from 0 to 8 and prompts the user for a url for the wallpaper
 def add_wallpaper_to_room(state, room_num):
-	url = window.prompt("Enter a complete URL for a wallpaper. Say 'cancel' to cancel.", "wall.jpg")
+	url = window.prompt("Enter a complete URL for a wallpaper. Say 'cancel' to cancel.", "images/wall.jpg")
 
 	if(url is None):
 		newState = copy_state(state)
@@ -315,7 +315,8 @@ def url_is_valid(url):
 		return True
 	except OSError:
 		return False
-	
+
+# Duplicated code makes me sad		
 def change_room_selection(state, room_num):
 	newState = copy_state(state)
 	newState["Selected_Room"] = room_num
@@ -337,7 +338,7 @@ def change_role(state, role):
 	return newState
 
 def create_puzzle(state):
-	url = window.prompt("Enter a complete URL for a picture. Say 'cancel' to cancel.", "metalfencing.jpg")
+	url = window.prompt("Enter a complete URL for a picture. Say 'cancel' to cancel.", "images/metalfencing.jpg")
 
 	if(url == "cancel"):
 		newState = copy_state(state)
@@ -436,7 +437,7 @@ def set_operators(state):
 		alert("unsupported role")
 	
 	return OPERATORS
-	
+
 #</OPERATORS>
 	
 #<INITIAL_STATE> The game is a list of 9 rooms stored a list.

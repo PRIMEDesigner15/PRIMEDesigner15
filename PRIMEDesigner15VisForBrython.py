@@ -71,7 +71,7 @@ def set_up_board_svg_graphics():
 def setCanvasManager():
 	global canMan
 	CanvasManagerConstructor = JSConstructor(window.CanvasManager)
-	canMan = CanvasManagerConstructor(roleCanvas, "none.jpg")
+	canMan = CanvasManagerConstructor(roleCanvas, "images/none.jpg")
 	canMan.setImg()
 		
 # draws the game
