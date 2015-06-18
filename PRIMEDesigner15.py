@@ -56,6 +56,7 @@ def copy_state(state):
 	newState["Selected_Puzzle"] = state["Selected_Puzzle"]
 	newState["Role"] = state["Role"]
 	newState["Operators"] = state["Operators"]
+	
 	# Add in doors to the walls in the rooms.
 	door_index = 0
 	for room_num in range(9):
@@ -124,7 +125,7 @@ class Room:
 		
 		return newRoom
 		
-""" A wall could contain a door or a wallpaper """	
+""" A wall could contain a door and a wallpaper """	
 class Wall:
 
 	def __init__(self, x1, y1, x2, y2, loc): 
@@ -180,6 +181,7 @@ class Door:
 		return Door(self.isOpen, self.url)
 
 class Puzzle:
+	# REMOVE?
 	def __init__(self, url, transformList = []):
 		self.url = url
 		# shallow copying a new list
@@ -230,8 +232,11 @@ def add_door_to_room(room_num, side, state, newDoor = Door()):
 		ROOMS[room_num - 1].walls['E'].door = newDoor
 	else:
 		alert("Error: Invalid direction passed to add_door")
+	
 	DOORS.append(newDoor)
 	
+# Make function to determine index?
+
 def add_door_operator(state, room_num, side):
 	
 	newState = copy_state(state)
@@ -239,6 +244,8 @@ def add_door_operator(state, room_num, side):
 	return newState
 	
 def doors_is_valid(state, side):
+	
+	# Reduce magic constants.
 	
 	ROOMS = state["Rooms"]
 	DOORS = state["Doors"]
@@ -286,7 +293,7 @@ def create_image_puzzle(state):
 def add_wallpaper_to_room(state, room_num):
 	url = window.prompt("Enter a complete URL for a wallpaper. Say 'cancel' to cancel.", "wall.jpg")
 
-	if(url == "cancel"):
+	if(url is None):
 		newState = copy_state(state)
 		
 	elif(url_is_valid(url)):	

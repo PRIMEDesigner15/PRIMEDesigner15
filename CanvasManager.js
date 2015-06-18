@@ -57,11 +57,12 @@ function CanvasManager(canvas, imagePath) {
 		for (var i = 0; i < w; i++) {
 			i0 = 2 * i;
 			if (i >= w / 2) {
-				i0 = w - 1 - (2 * (w - 1 - i0));
+				i0 = w - 1 - (2 * (w - 1 - i));
 			}
 			for (var j = 0; j < h; j++) {
 				for (var k = 0; k < 4; k++) {
-					imgData1.data[(j * w) * 4 + i * 4 + k] = imgData0.data[(j * w) * 4 + i0 * 4 + k];
+					imgData1.data[(j * w) * 4 + i * 4 + k] =
+					imgData0.data[(j * w) * 4 + i0 * 4 + k];
 				}
 			}
 		}
@@ -76,7 +77,7 @@ function CanvasManager(canvas, imagePath) {
 		for (var j = 0; j < h; j++) {
 			j0 = 2 * j;
 			if (j >= h / 2) {
-				j0 = h - 1 - (2 * (h - 1 - j0));
+				j0 = h - 1 - (2 * (h - 1 - j));
 			}
 			for (var i = 0; i < w; i++) {
 				for (var k = 0; k < 4; k++) {
