@@ -103,11 +103,11 @@ def render_state_svg_graphics(state):
 		APANEL <= outline
 	elif(state['Role'] == "Image Puzzle"):
 		prepareCanvas()	
-		if(state["Selected_Puzzle"] != -1):
-			puzzle = state["Puzzles"][state["Selected_Puzzle"]]
+		if(state["Selected_Image"] != -1):
+			puzzle = state["Puzzles"][state["Selected_Image"]]
 			canMan.setURL(puzzle.url)
-			if(selected_puzzle != state["Selected_Puzzle"]):
-				selected_puzzle = state["Selected_Puzzle"]
+			if(selected_puzzle != state["Selected_Image"]):
+				selected_puzzle = state["Selected_Image"]
 			drawPuzzle(puzzle)
 	elif(state['Role'] == "Music Puzzle"):
 		prepareCanvas()

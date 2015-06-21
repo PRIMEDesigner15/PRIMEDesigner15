@@ -179,7 +179,7 @@ var Wad = (function(){
             arg.filter.forEach(function(filterArg){
                 var thisFilter = {
                     type : filterArg.filter.type || 'lowpass',
-                    frequency : filterArg.filter.frequency || 600,
+                    frequency : filterArg.filter.frequency || 440,
                     q : filterArg.filter.q || 1
                 }
                 constructFilter(that, { filter : filterArg })
@@ -357,7 +357,7 @@ Check out http://www.voxengo.com/impulses/ for free impulse responses. **/
         this.volume        = valueOrDefault(arg.volume, 1); // peak volume. min:0, max:1 (actually max is infinite, but ...just keep it at or below 1)
         this.defaultVolume = this.volume;
         this.playable      = 1; // if this is less than 1, this Wad is still waiting for a file to download before it can play
-        this.pitch         = Wad.pitches[arg.pitch] || arg.pitch || 440;
+        this.pitch         = Wad.pitches[arg.pitch] || arg.pitch || 900;
         this.detune        = arg.detune || 0 // In Cents.
         this.globalReverb  = arg.globalReverb || false;
         this.gain          = [];
@@ -716,7 +716,7 @@ then finally play the sound by calling playEnv() **/
 				setUpOscillator(this, arg);
             }
 
-            else {
+            else { // I think this is if there is a url
                 this.soundSource = context.createBufferSource();
                 this.soundSource.buffer = this.decodedBuffer;
                 if ( this.source === 'noise' || this.loop || arg.loop ) {

@@ -355,7 +355,7 @@ def create_puzzle(state):
 	
 	return newState
 	
-def addTransformation(transformation, state):
+def addImageTransformation(transformation, state):
 	newState = copy_state(state)
 	
 	# Add transform to newState list
@@ -409,27 +409,31 @@ def set_operators(state):
 		horiz_flip =\
 			Operator("Flip the image horizontally.",
 				lambda state: state["Selected_Puzzle"] > -1,
-				lambda state: addTransformation("horizFlip", state))
+				lambda state: addImageTransformation("horizFlip", state))
 		vert_flip =\
 			Operator("Flip the image vertically.",
 				lambda state: state["Selected_Puzzle"] > -1,
-				lambda state: addTransformation("vertFlip", state))
+				lambda state: addImageTransformation("vertFlip", state))
 		shuff_rows =\
 			Operator("Shuffle the rows of the image.",
 				lambda state: state["Selected_Puzzle"] > -1,
-				lambda state: addTransformation("shuffleRows", state))
+				lambda state: addImageTransformation("shuffleRows", state))
 		invs_shuff_rows =\
 			Operator("Invert Row shuffling",
 				lambda state: state["Selected_Puzzle"] > -1,
-				lambda state: addTransformation("shuffleRowsInverse", state))
+				lambda state: addImageTransformation("shuffleRowsInverse", state))
 		shuff_cols =\
 			Operator("Shuffle the columns of the image.",
 				lambda state: state["Selected_Puzzle"] > -1,
-				lambda state: addTransformation("shuffleColumns", state))
+				lambda state: addImageTransformation("shuffleColumns", state))
 				
 		OPERATORS = selection_operators + role_operators + create_new_puzzle + horiz_flip + vert_flip + shuff_rows + invs_shuff_rows + shuff_cols
 		
 	elif(state['Role'] == "Music Puzzle"):
+		
+		#increase_pitch =\
+			#Operator("Increase pitch of the song",
+				#lambda state: state["Selected_Music]
 		OPERATORS = role_operators
 	elif(state['Role'] == "Rules"):
 		OPERATORS = role_operators
