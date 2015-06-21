@@ -20,8 +20,8 @@ ROOM_SIZE = 100
 GAME_WIDTH = ROOM_SIZE * 3
 GAME_HEIGHT = ROOM_SIZE * 3
 
-# Store the selected puzzle to reset canManJS when it changes
-selected_puzzle = -1
+# Store the selected image puzzle to reset canManJS when it changes
+selected_image = -1
 
 #The canvas and its context will go here when initialized for manipulation
 roleCanvas = None
@@ -76,7 +76,7 @@ def setCanvasManager():
 		
 # draws the game
 def render_state_svg_graphics(state):
-	global roleCanvas, ctx, APANEL, selected_puzzle
+	global roleCanvas, ctx, APANEL, selected_image
 	# Clear svg panel
 	while APANEL.lastChild is not None:
 		APANEL.removeChild(APANEL.elt.lastChild)
@@ -104,10 +104,10 @@ def render_state_svg_graphics(state):
 	elif(state['Role'] == "Image Puzzle"):
 		prepareCanvas()	
 		if(state["Selected_Image"] != -1):
-			puzzle = state["Puzzles"][state["Selected_Image"]]
+			puzzle = state["Image_Puzzles"][state["Selected_Image"]]
 			canMan.setURL(puzzle.url)
-			if(selected_puzzle != state["Selected_Image"]):
-				selected_puzzle = state["Selected_Image"]
+			if(selected_image != state["Selected_Image"]):
+				selected_image = state["Selected_Image"]
 			drawPuzzle(puzzle)
 	elif(state['Role'] == "Music Puzzle"):
 		prepareCanvas()

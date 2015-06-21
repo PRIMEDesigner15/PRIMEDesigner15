@@ -39,21 +39,21 @@ def copy_state(state):
 	newState = {"Rooms": [], "Doors": []}
 	newRooms = []
 	newDoors = []
-	newPuzzles = []
+	newImage_Puzzles = []
 
 	# Copy the rooms (without doors in their walls) and doors into the newState's dictionary.
 	for room in state["Rooms"]:
 		newRooms.append(room.copy())
 	for door in state["Doors"]:
 		newDoors.append(door.copy())
-	for puzzle in state["Puzzles"]:
-		newPuzzles.append(puzzle.copy())
+	for puzzle in state["Image_Puzzles"]:
+		newImage_Puzzles.append(puzzle.copy())
 		
 	newState["Rooms"] = newRooms
-	newState["Puzzles"] = newPuzzles
+	newState["Image_Puzzles"] = newImage_Puzzles
 	newState["Doors"] = newDoors
 	newState["Selected_Room"] = state["Selected_Room"]	
-	newState["Selected_Puzzle"] = state["Selected_Puzzle"]
+	newState["Selected_Image"] = state["Selected_Image"]
 	newState["Role"] = state["Role"]
 	newState["Operators"] = state["Operators"]
 	
@@ -324,7 +324,7 @@ def change_room_selection(state, room_num):
 
 def change_puzzle_selection(puzzle_num, state):
 	newState = copy_state(state)
-	newState["Selected_Puzzle"] = puzzle_num
+	newState["Selected_Image"] = puzzle_num
 	return newState
 	
 def change_role(state, role):
@@ -346,8 +346,8 @@ def create_puzzle(state):
 	elif(url_is_valid(url)):
 		newState = copy_state(state)
 		newPuzzle = Puzzle(url)
-		newState["Puzzles"].append(newPuzzle)
-		newState["Selected_Puzzle"] = len(newState["Puzzles"]) - 1
+		newState["Image_Puzzles"].append(newPuzzle)
+		newState["Selected_Image"] = len(newState["Image_Puzzles"]) - 1
 
 	else:
 		alert("URL was not valid. Try again.")
@@ -359,7 +359,7 @@ def addImageTransformation(transformation, state):
 	newState = copy_state(state)
 	
 	# Add transform to newState list
-	newState["Puzzles"][newState["Selected_Puzzle"]].add_transform(transformation)
+	newState["Image_Puzzles"][newState["Selected_Image"]].add_transform(transformation)
 
 	return newState
 #</COMMON_CODE>		
@@ -398,7 +398,7 @@ def set_operators(state):
 	elif(state['Role'] == "Image Puzzle"):
 		selection_operators =\
 			[Operator("Switch to puzzle numbered " + str(num + 1) + " for editing.",
-				lambda state, n = num: n < len(state["Puzzles"]) and len(state["Puzzles"]) > 1 and n != state["Selected_Puzzle"],
+				lambda state, n = num: n < len(state["Image_Puzzles"]) and len(state["Image_Puzzles"]) > 1 and n != state["Selected_Image"],
 				lambda state, n = num: change_puzzle_selection(n, state))
 			for num in range(9)]
 	
@@ -408,23 +408,23 @@ def set_operators(state):
 				lambda state: create_puzzle(state))
 		horiz_flip =\
 			Operator("Flip the image horizontally.",
-				lambda state: state["Selected_Puzzle"] > -1,
+				lambda state: state["Selected_Image"] > -1,
 				lambda state: addImageTransformation("horizFlip", state))
 		vert_flip =\
 			Operator("Flip the image vertically.",
-				lambda state: state["Selected_Puzzle"] > -1,
+				lambda state: state["Selected_Image"] > -1,
 				lambda state: addImageTransformation("vertFlip", state))
 		shuff_rows =\
 			Operator("Shuffle the rows of the image.",
-				lambda state: state["Selected_Puzzle"] > -1,
+				lambda state: state["Selected_Image"] > -1,
 				lambda state: addImageTransformation("shuffleRows", state))
 		invs_shuff_rows =\
 			Operator("Invert Row shuffling",
-				lambda state: state["Selected_Puzzle"] > -1,
+				lambda state: state["Selected_Image"] > -1,
 				lambda state: addImageTransformation("shuffleRowsInverse", state))
 		shuff_cols =\
 			Operator("Shuffle the columns of the image.",
-				lambda state: state["Selected_Puzzle"] > -1,
+				lambda state: state["Selected_Image"] > -1,
 				lambda state: addImageTransformation("shuffleColumns", state))
 				
 		OPERATORS = selection_operators + role_operators + create_new_puzzle + horiz_flip + vert_flip + shuff_rows + invs_shuff_rows + shuff_cols
@@ -448,9 +448,9 @@ def set_operators(state):
 INITIAL_STATE = {}
 INITIAL_STATE['Rooms'] = []
 INITIAL_STATE['Doors'] = []
-INITIAL_STATE['Puzzles'] = []
+INITIAL_STATE['Image_Puzzles'] = []
 INITIAL_STATE['Selected_Room'] = 0
-INITIAL_STATE['Selected_Puzzle'] = -1
+INITIAL_STATE['Selected_Image'] = -1
 INITIAL_STATE['Role'] = "Image Puzzle"
 INITIAL_STATE['Operators'] = set_operators(INITIAL_STATE)	
 
