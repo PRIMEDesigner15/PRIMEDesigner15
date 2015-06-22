@@ -39,19 +39,23 @@ def copy_state(state):
 	newState = {"Rooms": [], "Doors": []}
 	newRooms = []
 	newDoors = []
-	newImage_Puzzles = []
+	newImagePuzzles = []
+	newMusicPuzzles = []
 
 	# Copy the rooms (without doors in their walls) and doors into the newState's dictionary.
 	for room in state["Rooms"]:
 		newRooms.append(room.copy())
 	for door in state["Doors"]:
 		newDoors.append(door.copy())
-	for puzzle in state["Image_Puzzles"]:
-		newImage_Puzzles.append(puzzle.copy())
+	for imagePuzzle in state["Image_Puzzles"]:
+		newImagePuzzles.append(imagePuzzle.copy())
+	for musicPuzzle in state["Music_Puzzles"]:
+		newMusicPuzzles.append(musicPuzzle.copy())
 		
 	newState["Rooms"] = newRooms
-	newState["Image_Puzzles"] = newImage_Puzzles
 	newState["Doors"] = newDoors
+	newState["Image_Puzzles"] = newImagePuzzles
+	newState["Music_Puzzles"] = newMusicPuzzles
 	newState["Selected_Room"] = state["Selected_Room"]	
 	newState["Selected_Image"] = state["Selected_Image"]
 	newState["Role"] = state["Role"]
@@ -181,8 +185,8 @@ class Door:
 		return Door(self.isOpen, self.url)
 
 class Puzzle:
-	# REMOVE?
-	def __init__(self, url, transformList = []):
+
+	def __init__(self, url):
 		self.url = url
 		# shallow copying a new list
 		self.transformList = transformList[:]
@@ -285,9 +289,6 @@ def doors_is_valid(state, side):
 			return True
 	else:
 		return False
-
-def create_image_puzzle(state):
-	url = prompt("Enter a complete URL for a puzzle image. Say 'cancel' to cancel.", "images/wall.jpg")
 		
 # takes a room num from 0 to 8 and prompts the user for a url for the wallpaper
 def add_wallpaper_to_room(state, room_num):
@@ -337,7 +338,7 @@ def change_role(state, role):
 	
 	return newState
 
-def create_puzzle(state):
+def create_image_puzzle(state):
 	url = window.prompt("Enter a complete URL for a picture. Say 'cancel' to cancel.", "images/metalfencing.jpg")
 
 	if(url == "cancel"):
@@ -351,7 +352,7 @@ def create_puzzle(state):
 
 	else:
 		alert("URL was not valid. Try again.")
-		return create_puzzle(state)
+		return create_image_puzzle(state)
 	
 	return newState
 	
@@ -362,6 +363,8 @@ def addImageTransformation(transformation, state):
 	newState["Image_Puzzles"][newState["Selected_Image"]].add_transform(transformation)
 
 	return newState
+	
+
 #</COMMON_CODE>		
 	
 print("Hello from PRIMEDesigner15.py (after COMMON_CODE)")
@@ -405,7 +408,7 @@ def set_operators(state):
 		create_new_puzzle =\
 			Operator("Create a new puzzle.",
 				lambda state: True,
-				lambda state: create_puzzle(state))
+				lambda state: create_image_puzzle(state))
 		horiz_flip =\
 			Operator("Flip the image horizontally.",
 				lambda state: state["Selected_Image"] > -1,
@@ -449,6 +452,7 @@ INITIAL_STATE = {}
 INITIAL_STATE['Rooms'] = []
 INITIAL_STATE['Doors'] = []
 INITIAL_STATE['Image_Puzzles'] = []
+INITIAL_STATE['Music_Puzzles'] = []
 INITIAL_STATE['Selected_Room'] = 0
 INITIAL_STATE['Selected_Image'] = -1
 INITIAL_STATE['Role'] = "Image Puzzle"

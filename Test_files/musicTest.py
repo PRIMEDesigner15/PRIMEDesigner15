@@ -121,9 +121,7 @@ def playAudio():
 		}
 	})
 	
-	audio.play({
-		'pitch' : 900
-	})
+	audio.play()
 
 
 	
