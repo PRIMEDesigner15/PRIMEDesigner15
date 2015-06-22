@@ -51,14 +51,20 @@ def copy_state(state):
 		newImagePuzzles.append(imagePuzzle.copy())
 	for musicPuzzle in state["Music_Puzzles"]:
 		newMusicPuzzles.append(musicPuzzle.copy())
-		
+	
+	# Put the new lists into the new state's lists.
 	newState["Rooms"] = newRooms
 	newState["Doors"] = newDoors
 	newState["Image_Puzzles"] = newImagePuzzles
 	newState["Music_Puzzles"] = newMusicPuzzles
+	
+	# Primitives and operators do not need to be deep copied.
 	newState["Selected_Room"] = state["Selected_Room"]	
 	newState["Selected_Image"] = state["Selected_Image"]
+	newState["Selected_Music"] = state["Selected_Music"]
 	newState["Role"] = state["Role"]
+	
+	# Operators is updated in set_operators.
 	newState["Operators"] = state["Operators"]
 	
 	# Add in doors to the walls in the rooms.
@@ -349,12 +355,28 @@ def create_image_puzzle(state):
 		newPuzzle = Puzzle(url)
 		newState["Image_Puzzles"].append(newPuzzle)
 		newState["Selected_Image"] = len(newState["Image_Puzzles"]) - 1
-
 	else:
 		alert("URL was not valid. Try again.")
 		return create_image_puzzle(state)
 	
 	return newState
+
+def create_music_puzzle(state):
+	url = window.prompt("Enter a complete URL for a music text file. Say 'cancel' to cancel.", "music/testMusic.txt")
+	
+	if(url == "cancel"):
+		newState = copy_state(state)
+	elif(url_is_valid(url)):
+		newState = copy_state(state)
+		newPuzzle = Puzzle(url)
+		newState["Music_Puzzles"].append(newPuzzle)
+		newState["Selected_Music"] = len(newState["Music_Puzzles"]) - 1
+	else:
+		alert("URL was not valid. Try again.")
+		return create_music_puzzle(state)
+	
+	return newState
+
 	
 def addImageTransformation(transformation, state):
 	newState = copy_state(state)
@@ -363,6 +385,12 @@ def addImageTransformation(transformation, state):
 	newState["Image_Puzzles"][newState["Selected_Image"]].add_transform(transformation)
 
 	return newState
+	
+def addMusicTransformation(transformation,state):
+	newState = copy_state(state)
+	
+	# Add transform to newState list
+	newState["Music_Puzzles"][newState["Selected_Puzzle"]].add_transform(transformation)
 	
 
 #</COMMON_CODE>		
@@ -435,8 +463,9 @@ def set_operators(state):
 	elif(state['Role'] == "Music Puzzle"):
 		
 		#increase_pitch =\
-			#Operator("Increase pitch of the song",
-				#lambda state: state["Selected_Music]
+		#	Operator("Increase pitch of the song",
+		#		lambda state: True,
+		#		lambda state: addMusicTransformation
 		OPERATORS = role_operators
 	elif(state['Role'] == "Rules"):
 		OPERATORS = role_operators
@@ -455,11 +484,12 @@ INITIAL_STATE['Image_Puzzles'] = []
 INITIAL_STATE['Music_Puzzles'] = []
 INITIAL_STATE['Selected_Room'] = 0
 INITIAL_STATE['Selected_Image'] = -1
+INITIAL_STATE['Selected_Music'] = -1
 INITIAL_STATE['Role'] = "Image Puzzle"
 INITIAL_STATE['Operators'] = set_operators(INITIAL_STATE)	
 
 
-# Create 9 rooms, add them to the list.
+# Create 9 rooms, add them to the the state.
 for j in range(3):
 	for i in range(3):
 		INITIAL_STATE['Rooms'].append( Room(i, j, i + 1, j + 1) )	
