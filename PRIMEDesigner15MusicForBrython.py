@@ -13,7 +13,9 @@ from javascript import JSObject, JSConstructor
 def recieveFile(req):
 	alert("hello?")
 	if req.status == 200 or req.status == 0:
-		console.log(req.text)
+		console.log(req.name)
+		sheetMusic = req.text
+		
 	else:
 		console.log("error" + req.text)
 
@@ -30,10 +32,8 @@ def createSong(url):
 	req.set_timeout(timeout,err_msg)
 	req.open('GET',url,True)
 	req.send()
-
-
-string = 'testMusic.txt?foo=%s'
-loadMusicFile('testMusic.txt')
+	
+createSong('testMusic.txt')
 
 
 		
