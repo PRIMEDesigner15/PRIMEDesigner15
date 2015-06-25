@@ -124,7 +124,7 @@ def render_state_svg_graphics(state):
 			drawPuzzle(puzzle)
 	elif(state['Role'] == "Music Puzzle"):
 		prepareMusicDisplay()
-		
+		puzzle_num = state["Selected_Music"]
 		
 		
 		

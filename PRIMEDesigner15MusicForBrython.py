@@ -56,8 +56,7 @@ def recieveFile(req):
 		
 		# Split up the sheet music.
 		sheetMusic = [name] + req.text.split("\n")
-		console.log(sheetMusic)
-		songs.append(sheetMusic)
+		return sheetMusic
 		
 	else:
 		console.log("error" + req.text)
@@ -68,12 +67,12 @@ def err_msg():
 timeout = 4 
 
 # Creates a series of wad.js oscillators out of the contents of the text file.
-def createSong(url):
+def createSheetMusic(url):
 	
 	req = ajax.ajax()
 	req.bind("complete",recieveFile)
 	req.set_timeout(timeout,err_msg)
-	req.open('GET',url,False)
+	req.open('GET',url,True)
 	req.send()
 	
 #createSong('testMusic.txt')
@@ -105,6 +104,10 @@ def playSong(music_num):
 			filter : { 'q' : 15 } 
 		})
 
+# Stops whatever song is currently playing
+def stopSong():		
+	piano.stop()
+	
 createSong('testMusic.txt')
 playSong(0)
 
