@@ -205,11 +205,16 @@ class Puzzle:
 		
 class Music:
 
-	def __init__(self):
-		pass# nothing happens right now
+	def __init__(self, sheetMusic, transformList = []):
+		self.sheetMusic = sheetMusic
+		# shallow copying a new list
+		self.transformList = transformList[:]
+	
+	def add_transform(self, transform):
+		self.transformList.append(transform)
 	
 	def copy(self):
-		return Music() # nothing happens right now
+		return Music(self.sheetMusic, self.transformList)
 	
 class Operator:
   
