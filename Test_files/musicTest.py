@@ -55,7 +55,7 @@ def recieveFile(req):
 				name = url[slashIndex+1:i]
 		
 		# Split up the sheet music.
-		sheetMusic = req.text.split("\n")
+		sheetMusic = [name] + req.text.split("\n")
 		console.log(sheetMusic)
 		songs.append(sheetMusic)
 		
@@ -80,10 +80,16 @@ def createSong(url):
 
 def playSong(music_num):
 	console.log(songs[music_num])
-	song = songs[music_num]
+	sheetMusic = songs[music_num]
 	wait = 0
-	#console.log("playing song: " + song[0])
+	
 	# The first "note" is the name of the song
+	console.log("playing song: " + sheetMusic[0])
+	
+	# Thus skip the first note when playing the song
+	song = iter(sheetMusic)
+	next(song)
+	
 	for note in song:
 		values = note.split(" ")
 		console.log(values)

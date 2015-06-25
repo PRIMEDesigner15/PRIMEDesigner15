@@ -192,7 +192,7 @@ class Door:
 
 class Puzzle:
 
-	def __init__(self, url):
+	def __init__(self, url, transformList = []):
 		self.url = url
 		# shallow copying a new list
 		self.transformList = transformList[:]
@@ -317,21 +317,29 @@ def add_wallpaper_to_room(state, room_num):
 	return newState
 	
 def url_is_valid(url):	
+	# Note: Only works with Brython Implemented
+	# if not, only returns true
 	try:
 		fileContents = open(url)
 		return True
 	except OSError:
 		return False
-
+	else:
+		return False
 # Duplicated code makes me sad		
 def change_room_selection(state, room_num):
 	newState = copy_state(state)
 	newState["Selected_Room"] = room_num
 	return newState
 
-def change_puzzle_selection(puzzle_num, state):
+def change_image_puzzle_selection(puzzle_num, state):
 	newState = copy_state(state)
 	newState["Selected_Image"] = puzzle_num
+	return newState
+
+def change_music_puzzle_selection(puzzle_num, state):
+	newState = copy_state(state)
+	newState["Selected_Music"] = puzzle_num
 	return newState
 	
 def change_role(state, role):
@@ -430,7 +438,7 @@ def set_operators(state):
 		selection_operators =\
 			[Operator("Switch to puzzle numbered " + str(num + 1) + " for editing.",
 				lambda state, n = num: n < len(state["Image_Puzzles"]) and len(state["Image_Puzzles"]) > 1 and n != state["Selected_Image"],
-				lambda state, n = num: change_puzzle_selection(n, state))
+				lambda state, n = num: change_image_puzzle_selection(n, state))
 			for num in range(9)]
 	
 		create_new_puzzle =\
@@ -499,6 +507,6 @@ OPERATORS = INITIAL_STATE['Operators']
 
 if "BRYTHON" in globals():
 	from PRIMEDesigner15VisForBrython import set_up_gui as set_up_user_interface
-	from PRIMEDesigner15VisForBrython import render_state_svg_graphics as render_state
+
 
 

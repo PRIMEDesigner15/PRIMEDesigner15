@@ -10,8 +10,8 @@ from javascript import JSConstructor
 
 canMan = None
 gui = None
-#is this saying that all of these are now 'None'?
-board = None
+
+
 statusline = None
 opselect = None
 APANEL = None
@@ -20,12 +20,15 @@ ROOM_SIZE = 100
 GAME_WIDTH = ROOM_SIZE * 3
 GAME_HEIGHT = ROOM_SIZE * 3
 
-# Store the selected image puzzle to reset canManJS when it changes
-selected_image = -1
+# The svg element used for the archetect role
+board = None
 
-#The canvas and its context will go here when initialized for manipulation
+# The canvas and its context will go here when initialized for manipulation
 roleCanvas = None
 ctx = None
+
+# The display div used for the music role display
+musicDisplay = None
 
 LAST_STATE = None # cache of current state for use in 
 				#refresh of display after selection hiding button click.
@@ -36,36 +39,46 @@ def set_up_gui(opselectdiv, statuslinediv):
 	print("Entering set_up_gui in PRIMEDesignerVisForBrython.")
 	global gui
 	gui = html.DIV(Id = "thegui")
-	set_up_board_svg_graphics()
+	render_state()
 	gui <= opselectdiv
 	gui <= statuslinediv
 	document <= gui
 	print("Leaving set_up_gui in PRIMEDesignerVisForBrython.")
 
-def set_up_board_svg_graphics():
-	#SHOW_SELECTION_Button isn't initialized before this call.
-	#Does this mean that with the global keyword, you can either 
-	#refer to a global variable or initialize a new one?
+def render_state():
+	
 	boarddiv = html.DIV(Id = "boarddivid", style = {"backgroundColor":"#CCFFCC"})
 	boarddiv <= html.I("Puzzle state:")
-	#what is APANEL intended to be
 	
+	# Create canvas
 	global ctx, roleCanvas
 	roleCanvas = html.CANVAS(id = "roleCanvas", width = GAME_WIDTH, height = GAME_HEIGHT)
 	ctx = roleCanvas.getContext("2d")
 	
+	# Create svg board
 	global APANEL, board
 	board = svg.svg(Id = "svgboard", 
 					style = {"width":GAME_WIDTH, "height":GAME_HEIGHT,
-							"backgroundColor":"#AAAABB",})
+							"backgroundColor":"#AAAABB"})
 	board.elt.style.display = "none"
 	APANEL = svg.g(Id = "panel")
+	
+	# Create music divs
+	global musicDisplay
+	musicDisplay = html.DIV(id ="musicDisplay")
+	musicDisplay.style = { 'width' : str(GAME_WIDTH) + "px", 
+							'height' : str(GAME_HEIGHT) + "px",
+							"backgroundColor":"black",
+							'display' : 'none'}
+	
 	
 	board <= APANEL	
 	boarddiv <= board
 	boarddiv <= roleCanvas
+	boarddiv <= musicDisplay
 	gui <= boarddiv
 	
+	# Javascript that manages canvas.
 	setCanvasManager()
 
 def setCanvasManager():
@@ -110,7 +123,10 @@ def render_state_svg_graphics(state):
 				selected_image = state["Selected_Image"]
 			drawPuzzle(puzzle)
 	elif(state['Role'] == "Music Puzzle"):
-		prepareCanvas()
+		prepareMusicDisplay()
+		
+		
+		
 		
 	elif(state['Role'] == "Rules"):
 		prepareSVG()
@@ -118,17 +134,36 @@ def render_state_svg_graphics(state):
 		pass
 		
 def prepareSVG():
-	global roleCanvas, board
-	#Hide canvas, make sure svg stuff visible
+	global roleCanvas, board, musicDisplay
+	
+	# Hide canvas, musicDisplay
 	roleCanvas.elt.style.display = "none"
-	board.elt.style.display = "initial"	
+	musicDisplay.elt.style.display = "none" 
+	
+	# Make sure svg stuff visible
+	board.elt.style.display = "block"	
 
 def prepareCanvas():
-	global roleCanvas, board
-	#Hide svg stuff, make canvas visible
+	global roleCanvas, board, musicDisplay
+	
+	# Hide svg, musicDisplay
 	board.elt.style.display = "none"
-	roleCanvas.elt.style.display = "initial"
+	musicDisplay.elt.style.display = "none"
+	
+	# Make canvas visible, call its JavaScript manager
+	roleCanvas.elt.style.display = "block"
 	setCanvasManager()
+	
+def prepareMusicDisplay():
+	global roleCanvas, board, musicDisplay
+	
+	# Hide svg, roleCanvas
+	board.elt.style.display = "none"
+	roleCanvas.elt.style.display = "none"
+	
+	# Make musicDisplay visible
+	musicDisplay.style.display = "block"
+	
 	
 # draws a room.		
 def drawRoom(room,room_num):
