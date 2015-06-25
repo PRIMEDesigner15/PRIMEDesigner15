@@ -111,6 +111,7 @@ def render_state_svg_graphics(state):
 			drawPuzzle(puzzle)
 	elif(state['Role'] == "Music Puzzle"):
 		prepareCanvas()
+		
 	elif(state['Role'] == "Rules"):
 		prepareSVG()
 	else:
