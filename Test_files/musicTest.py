@@ -18,7 +18,7 @@ piano = Wad({
         'attack' : .01, 
         'decay' : .005, 
         'sustain' : .2, 
-        'hold' : .015, 
+        'hold' : 0.15, 
         'release' : .3
     }, 
     filter : {
@@ -32,6 +32,11 @@ piano = Wad({
     }
 })
 
+def note(pitch, wait, hold):
+	this.pitch = pitch
+	this.wait = wait
+	this. hold = hold
+
 # Loads in a text file containing notes and seconds in between.
 def recieveFile(req):
 	if req.status == 200 or req.status == 0:
@@ -39,6 +44,7 @@ def recieveFile(req):
 		# Get the name of the file from the response url
 		url = req.responseURL
 		sheetMusic = req.text
+		console.log(sheetMusic)
 		name = 'unknown'
 		slashIndex = 0
 		for i in range(len(url)):
@@ -49,7 +55,7 @@ def recieveFile(req):
 				name = url[slashIndex+1:i]
 		
 		# Split up the sheet music.
-		sheetMusic = [name] + req.text.split(" ")
+		sheetMusic = req.text.split("\n")
 		console.log(sheetMusic)
 		songs.append(sheetMusic)
 		
@@ -76,12 +82,22 @@ def playSong(music_num):
 	console.log(songs[music_num])
 	song = songs[music_num]
 	wait = 0
-	console.log("playing song" + song[0])
-	for i in range(1,len(song),2):
+	#console.log("playing song: " + song[0])
+	# The first "note" is the name of the song
+	for note in song:
+		values = note.split(" ")
+		console.log(values)
+		wait = wait + float(values[0])
+		pitch = values[1]
+		hold = values[2]
+		
+		#console.log(wait + " " + pitch + " " + sustain)
 		piano.play({
-		'wait' : wait + int(song[i]),
-		'pitch' : song[i+1], 
-		filter : { 'q' : 15 } })
+			'wait' : wait,
+			'pitch' : pitch,
+			'env' : {'hold' : float(hold)},
+			filter : { 'q' : 15 } 
+		})
 
 createSong('testMusic.txt')
 playSong(0)
