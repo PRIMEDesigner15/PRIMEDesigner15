@@ -7,6 +7,73 @@ from browser import document, window, alert, console, ajax
 import time
 from javascript import JSObject, JSConstructor
 
+class Saying:
+	def __init__(self, text):
+		self.text = text
+
+Sayings = []
+recieve = False
+def get():
+	saying = Saying("not modified")
+	def requestSuccess(saying):
+		def processSuccess(req):
+			saying.text = "modified"
+		return processSuccess
+		
+	req = ajax.ajax()
+	req.bind("complete",requestSuccess(saying, requestSuccess(saying)))
+	#req.set_timeout(timeout,requestFailure)
+	req.open('GET',"testMusic.txt",True)
+	#console.log(req.readyState)
+	req.send()
+	
+#def sayingHasChanged(saying):
+#	Sayings.append(saying)
+
+#def getSaying():
+#	get()
+#	saying = Sayings[0]
+#	Sayings[:] = []
+#	return saying
+
+saying = get()
+console.log(saying)
+#saying = getSaying()
+#console.log(saying)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # Array of time between notes followed by notes
 songs = []
 
@@ -31,16 +98,10 @@ piano = Wad({
         }
     }
 })
-
-def note(pitch, wait, hold):
-	this.pitch = pitch
-	this.wait = wait
-	this. hold = hold
-
+	
 # Loads in a text file containing notes and seconds in between.
 def recieveFile(req):
 	if req.status == 200 or req.status == 0:
-
 		# Get the name of the file from the response url
 		url = req.responseURL
 		sheetMusic = req.text
@@ -56,7 +117,7 @@ def recieveFile(req):
 		
 		# Split up the sheet music.
 		sheetMusic = [name] + req.text.split("\n")
-		return sheetMusic
+		songs.append(sheetMusic)
 		
 	else:
 		console.log("error" + req.text)
@@ -66,16 +127,24 @@ def err_msg():
 
 timeout = 4 
 
+def mySuccess(param1, param2):
+	alert("hello")
+	def regularSuccess(rec):
+		console.log(rec.text)
+		console.log(param1)
+		console.log(param2)
+		
+	return regularSuccess	
+
 # Creates a series of wad.js oscillators out of the contents of the text file.
-def createSheetMusic(url):
+def requestFile(url):
 	
 	req = ajax.ajax()
-	req.bind("complete",recieveFile)
+	req.bind("complete",mySuccess("hello","goodbye"))
 	req.set_timeout(timeout,err_msg)
 	req.open('GET',url,True)
 	req.send()
 	
-#createSong('testMusic.txt')
 
 def playSong(music_num):
 	console.log(songs[music_num])
@@ -107,9 +176,3 @@ def playSong(music_num):
 # Stops whatever song is currently playing
 def stopSong():		
 	piano.stop()
-	
-createSong('testMusic.txt')
-playSong(0)
-
-#piano.play({ 'pitch' : 'A2' })
-#piano.play({ 'pitch' : 'A4', 'env' : { 'release' : .2 } })

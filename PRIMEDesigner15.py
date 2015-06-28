@@ -28,9 +28,11 @@ print("Hello from PRIMEDesigner15.py (after METADATA)")
 
 #<COMMON_CODE>
 
-from browser import document, window, alert, console
+from browser import document, window, alert, console, ajax
 from javascript import JSObject, JSConstructor
-import browser
+import time
+
+
 
 
 
@@ -41,7 +43,9 @@ def copy_state(state):
 	newDoors = []
 	newImagePuzzles = []
 	newMusicPuzzles = []
-
+	
+	
+	
 	# Copy the rooms (without doors in their walls) and doors into the newState's dictionary.
 	for room in state["Rooms"]:
 		newRooms.append(room.copy())
@@ -51,6 +55,7 @@ def copy_state(state):
 		newImagePuzzles.append(imagePuzzle.copy())
 	for musicPuzzle in state["Music_Puzzles"]:
 		newMusicPuzzles.append(musicPuzzle.copy())
+	
 	
 	# Put the new lists into the new state's lists.
 	newState["Rooms"] = newRooms
@@ -74,6 +79,7 @@ def copy_state(state):
 			if(state["Rooms"][room_num].walls[direction].door is not None and newState["Rooms"][room_num].walls[direction].door is None):
 				add_door_to_room(room_num, direction, newState, state["Doors"][door_index])
 				door_index += 1
+
 	
 	return newState
 		
@@ -122,7 +128,7 @@ class Room:
 		self.walls['E'] = Wall(x2 ,y1 ,x2 ,y2, 'E') #right
 	
 		# Possible ambient soundtrack.
-		self.music = Music()
+		self.music = Music("0 A4 1")
 		
 	def copy(self):
 		newRoom = Room(self.x1, self.y1, self.x2, self.y2)
@@ -207,6 +213,7 @@ class Music:
 
 	def __init__(self, sheetMusic, transformList = []):
 		self.sheetMusic = sheetMusic
+		
 		# shallow copying a new list
 		self.transformList = transformList[:]
 	
@@ -358,6 +365,7 @@ def change_role(state, role):
 	return newState
 
 def create_image_puzzle(state):
+
 	url = window.prompt("Enter a complete URL for a picture. Say 'cancel' to cancel.", "images/metalfencing.jpg")
 
 	if(url == "cancel"):
@@ -373,24 +381,61 @@ def create_image_puzzle(state):
 		return create_image_puzzle(state)
 	
 	return newState
+'''
+def requestMusicFile(url,state,music_num):
+	newState = copy_state(state)
+	req = ajax.ajax()
+	req.bind("complete",requestSuccess(newState,music_num))
+	
+def requestSuccess(newState, music_num):
+	def loadSheetMusic(req):
+		console.log(music_num)
+		console.log(newState)
+		console.log(req.text)
+	
+	return loadSheetMusic	
 
-def create_music_puzzle(state):
-	url = window.prompt("Enter a complete URL for a music text file. Say 'cancel' to cancel.", "music/testMusic.txt")
+def get(state,url,music_num):
+	def requestSuccess(newstate,music_num):
+		def loadSheetMusic(req):
+			console.log(music_num)
+			console.log(newState)
+			console.log(req.text)
+			if (req.status == 200):
+				resolve(newState)
+			else:
+				reject(Error(req.statusText))
+				
+	def resolveReject(resolve,reject):
+		req = ajax.ajax()
+		req.bind("complete",requestSuccess(newState,music_num))
+		alert("got here")
+		req.set_timeout(timeout,requestFailure)
+		req.open('GET',url,True)
+		req.send()
+		
+	return Promise(resolevReject)
+'''	
+def getMusicFile(state,url):
+	url = "music/testMusic.txt"
+	music_num = 1
+	return get(url,state,music_num)
+
+def get(url,state,music_num):
+	Saying = "nothing"
+	def requestSucess(newState,music_num):
+		saying = "hello, hello"
+	req = ajax.ajax()
+	req.bind("complete",requestSuccess)
+	alert("got here")
+	req.set_timeout(timeout,requestFailure)
+	req.open('GET',url,False)
+	req.send()
 	
-	if(url == "cancel"):
-		newState = copy_state(state)
-	elif(url_is_valid(url)):
-		newState = copy_state(state)
-		newPuzzle = Puzzle(url)
-		newState["Music_Puzzles"].append(newPuzzle)
-		newState["Selected_Music"] = len(newState["Music_Puzzles"]) - 1
-	else:
-		alert("URL was not valid. Try again.")
-		return create_music_puzzle(state)
-	
-	return newState
+	return saying
 
 	
+
 def addImageTransformation(transformation, state):
 	newState = copy_state(state)
 	
@@ -447,7 +492,7 @@ def set_operators(state):
 			for num in range(9)]
 	
 		create_new_puzzle =\
-			Operator("Create a new puzzle.",
+			Operator("Create a new image puzzle.",
 				lambda state: True,
 				lambda state: create_image_puzzle(state))
 		horiz_flip =\
@@ -475,11 +520,12 @@ def set_operators(state):
 		
 	elif(state['Role'] == "Music Puzzle"):
 		
-		#increase_pitch =\
-		#	Operator("Increase pitch of the song",
-		#		lambda state: True,
-		#		lambda state: addMusicTransformation
-		OPERATORS = role_operators
+		create_new_puzzle =\
+			Operator("Create a new music puzzle.",
+				lambda state: True,
+				lambda state: getMusicFile(state))
+				
+		OPERATORS = role_operators + create_new_puzzle
 	elif(state['Role'] == "Rules"):
 		OPERATORS = role_operators
 	else:
@@ -498,7 +544,7 @@ INITIAL_STATE['Music_Puzzles'] = []
 INITIAL_STATE['Selected_Room'] = 0
 INITIAL_STATE['Selected_Image'] = -1
 INITIAL_STATE['Selected_Music'] = -1
-INITIAL_STATE['Role'] = "Image Puzzle"
+INITIAL_STATE['Role'] = "Music Puzzle"
 INITIAL_STATE['Operators'] = set_operators(INITIAL_STATE)	
 
 
@@ -512,6 +558,7 @@ OPERATORS = INITIAL_STATE['Operators']
 
 if "BRYTHON" in globals():
 	from PRIMEDesigner15VisForBrython import set_up_gui as set_up_user_interface
+
 
 
 

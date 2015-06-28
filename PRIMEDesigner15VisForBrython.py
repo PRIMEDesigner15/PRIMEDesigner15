@@ -119,12 +119,11 @@ def render_state_svg_graphics(state):
 		if(state["Selected_Image"] != -1):
 			puzzle = state["Image_Puzzles"][state["Selected_Image"]]
 			canMan.setURL(puzzle.url)
-			if(selected_image != state["Selected_Image"]):
-				selected_image = state["Selected_Image"]
 			drawPuzzle(puzzle)
 	elif(state['Role'] == "Music Puzzle"):
 		prepareMusicDisplay()
 		puzzle_num = state["Selected_Music"]
+		
 		
 		
 		

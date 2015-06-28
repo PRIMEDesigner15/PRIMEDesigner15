@@ -1,7 +1,7 @@
 '''PRIMEDesigner15MusicForBrython
 
 	Handle PRIME music stuff
-'''
+
 
 from browser import document, window, alert, console, ajax
 import time
@@ -107,9 +107,7 @@ def playSong(music_num):
 # Stops whatever song is currently playing
 def stopSong():		
 	piano.stop()
-	
-createSong('testMusic.txt')
-playSong(0)
 
 #piano.play({ 'pitch' : 'A2' })
 #piano.play({ 'pitch' : 'A4', 'env' : { 'release' : .2 } })
+'''
