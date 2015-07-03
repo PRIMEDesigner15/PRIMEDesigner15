@@ -393,7 +393,6 @@ def create_music_puzzle(args):
 		return request
 		
 	else:
-		console.log("processing")
 		
 		request = args.pop()
 		state = args.pop()

@@ -6,7 +6,8 @@ the PRIMEDesigner template in the Brython environment.
 
 from browser import window, document, html, alert, svg, console
 from javascript import JSConstructor
-#from PRIMEDesigner15MusicForBrython.py import
+#from PRIMEDesigner15MusicForBrython import handlePlayButtonClick
+
 
 canMan = None
 gui = None
@@ -109,6 +110,8 @@ def hide_loading():
 	loadingDiv.style.display = "none"
 	blackOverlay.style.display = "none"
 
+
+	
 # renders the state
 def render_state():
 	
@@ -134,13 +137,36 @@ def render_state():
 	musicDisplay.style = { 'width' : str(GAME_WIDTH) + "px", 
 							'height' : str(GAME_HEIGHT) + "px",
 							"backgroundColor":"black",
-							'display' : 'none'}
+							'display' : 'none',
+							'color' : 'white',
+							'text-align' : 'center', 
+							'font-weight' : 'bold',
+							'font-size' : '28pt'}
+							
+	playButton = html.BUTTON(id = "playButton", type = "button")
+	playButton.style = {'width' : str( 1/4 *GAME_WIDTH) + "px",
+						'height' : str( 1/5 * GAME_HEIGHT) + "px",
+						'position' : 'absolute',
+						'top' : str(GAME_HEIGHT + 10) + "px",
+						'left' : "28px"
+						}
+	playButton.innerHTML = "Play Song"
+	#playButton.bind('click',handlePlayButtonClick)
 	
 	
+	songSelected = html.P(id = "songSelected")
+	songSelected.style = {'margin' : 0}
+	songSelected.innerHTML = "No Song Selected"
+	
+		
 	board <= APANEL	
 	boarddiv <= board
 	boarddiv <= roleCanvas
+	musicDisplay <= songSelected
+	musicDisplay <= playButton
+	
 	boarddiv <= musicDisplay
+	
 	gui <= boarddiv
 	
 	# Javascript that manages canvas.
@@ -189,7 +215,16 @@ def render_state_svg_graphics(state):
 		prepareMusicDisplay()
 		puzzle_num = state["Selected_Music"]
 		console.log("Selected Music " + str(state["Selected_Music"]))
-		musicDisplay.innerHTML = "Music Number + " + str(puzzle_num)
+		
+		songSelected = document.getElementById("songSelected")
+		playButton = document.getElementById("playButton")
+		
+		if(puzzle_num > -1):
+			songSelected.innerHTML = "Song Number " + str(puzzle_num + 1) + " Selected"
+			playButton.disabled = False
+		else:
+			songSelected.innerHTML = "No Song Selected"
+			playButton.disabled = True
 		
 		
 		

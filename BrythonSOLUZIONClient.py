@@ -9,6 +9,7 @@ from PRIMEDESIGNER15VisForBrython import set_up_loading_div, show_loading, hide_
 from PRIMEDesigner15 import INITIAL_STATE
 import time
 
+current_state = None
 opSelect = None
 STATE_STACK = []
 RESET_BUTTON = None
@@ -61,10 +62,6 @@ def repopulate_operator_choices(current_state):
 			item.disabled = True
 			item.selected = False
 
-# Should be called after loading screen backtrack button disabled
-def handleAsyncOperator():
-	two = 2
-	console.log("two = " + str(two))
 			
 def handleApplyButtonClick(evt):
 	# get selected operator.
@@ -97,6 +94,8 @@ def handleApplyButtonClick(evt):
 			def requestSuccess(state,music_num):
 				def requestSuccess2(req):
 					global current_state
+					
+					hide_loading()
 					if(req.status == 200 or req.status == 0):
 						sheetMusic = req.responseText
 						new_state = op.state_transf({current_state,req})
@@ -121,6 +120,7 @@ def handleApplyButtonClick(evt):
 			
 			
 			request.send()
+			show_loading()
 	
 	except (Exception) as e:
 		alert("An error occured when applying this operator. Error: "+str(e))

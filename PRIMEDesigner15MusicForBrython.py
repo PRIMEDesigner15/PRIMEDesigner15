@@ -1,17 +1,18 @@
 '''PRIMEDesigner15MusicForBrython
 
-	Handle PRIME music stuff
+	Handles PRIME music role
 
+'''
 
 from browser import document, window, alert, console, ajax
 import time
 from javascript import JSObject, JSConstructor
 
-# Array of time between notes followed by notes
-songs = []
+
+console.log(globals())
 
 #Wad object used for playing sounds.
-Wad = JSConstructor(window.Wad)
+Wad = JSConstructor(window.wad)
 piano = Wad({
     'source' : 'square', 
     'env' : {
@@ -32,62 +33,15 @@ piano = Wad({
     }
 })
 
-def note(pitch, wait, hold):
-	this.pitch = pitch
-	this.wait = wait
-	this. hold = hold
+def handlePlayButtonClick(evt):
+	index = current_state["Selected_Music"]
+	puzzle = current_state["Music_Puzzles"][index]
+	playSong(puzzle.sheetMusic)
 
-# Loads in a text file containing notes and seconds in between.
-def recieveFile(req):
-	if req.status == 200 or req.status == 0:
-
-		# Get the name of the file from the response url
-		url = req.responseURL
-		sheetMusic = req.text
-		console.log(sheetMusic)
-		name = 'unknown'
-		slashIndex = 0
-		for i in range(len(url)):
-			char = url[i]
-			if (char == '/'):
-				slashIndex = i
-			elif (char == '.'):
-				name = url[slashIndex+1:i]
-		
-		# Split up the sheet music.
-		sheetMusic = [name] + req.text.split("\n")
-		return sheetMusic
-		
-	else:
-		console.log("error" + req.text)
-
-def err_msg():
-	alert("file couldn't be opened after %s seconds" %timeout)
-
-timeout = 4 
-
-# Creates a series of wad.js oscillators out of the contents of the text file.
-def createSheetMusic(url):
+# Plays a song given some sheetMusic
+def playSong(sheetMusic):
 	
-	req = ajax.ajax()
-	req.bind("complete",recieveFile)
-	req.set_timeout(timeout,err_msg)
-	req.open('GET',url,True)
-	req.send()
-	
-#createSong('testMusic.txt')
-
-def playSong(music_num):
-	console.log(songs[music_num])
-	sheetMusic = songs[music_num]
-	wait = 0
-	
-	# The first "note" is the name of the song
-	console.log("playing song: " + sheetMusic[0])
-	
-	# Thus skip the first note when playing the song
-	song = iter(sheetMusic)
-	next(song)
+	song = sheetMusic.split("\n")
 	
 	for note in song:
 		values = note.split(" ")
@@ -107,7 +61,3 @@ def playSong(music_num):
 # Stops whatever song is currently playing
 def stopSong():		
 	piano.stop()
-
-#piano.play({ 'pitch' : 'A2' })
-#piano.play({ 'pitch' : 'A4', 'env' : { 'release' : .2 } })
-'''
