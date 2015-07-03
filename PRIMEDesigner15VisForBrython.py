@@ -6,7 +6,9 @@ the PRIMEDesigner template in the Brython environment.
 
 from browser import window, document, html, alert, svg, console
 from javascript import JSConstructor
-#from PRIMEDesigner15MusicForBrython import handlePlayButtonClick
+
+# Used for play button
+from PRIMEDesigner15MusicForBrython import handlePlayButtonClick
 
 
 canMan = None
@@ -97,7 +99,6 @@ def set_up_loading_div():
 def show_loading():
 	loadingDiv = document.getElementById("loadingDiv")
 	blackOverlay = document.getElementById("blackOverlay")
-	alert("showing loading")
 	
 	loadingDiv.style.display = "initial"
 	blackOverlay.style.display = "initial"
@@ -105,13 +106,11 @@ def show_loading():
 def hide_loading():
 	loadingDiv = document.getElementById("loadingDiv")
 	blackOverlay = document.getElementById("blackOverlay")
-	alert("ending loading")
 	
 	loadingDiv.style.display = "none"
 	blackOverlay.style.display = "none"
 
 
-	
 # renders the state
 def render_state():
 	
@@ -151,7 +150,7 @@ def render_state():
 						'left' : "28px"
 						}
 	playButton.innerHTML = "Play Song"
-	#playButton.bind('click',handlePlayButtonClick)
+	playButton.bind('click',handlePlayButtonClick)
 	
 	
 	songSelected = html.P(id = "songSelected")
@@ -221,6 +220,7 @@ def render_state_svg_graphics(state):
 		
 		if(puzzle_num > -1):
 			songSelected.innerHTML = "Song Number " + str(puzzle_num + 1) + " Selected"
+			playButton.bind('click', handlePlayButtonClick(state))
 			playButton.disabled = False
 		else:
 			songSelected.innerHTML = "No Song Selected"

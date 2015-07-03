@@ -377,15 +377,14 @@ def create_image_puzzle(state):
 	
 	return newState
 
-# Requires a list of args. As sometimes it returns a request
-# and if given a request and a state will return a new state
+# Requires a list of args. Given a state it will return an ajax
+# request. Given an ajax request it will return a new state.
 def create_music_puzzle(args):
 
 	length = len(args)
 		
 	if(length == 1):
-
-		url = "music/testMusic.txt"
+		url = window.prompt("Enter a complete URL for a sheetMusic file. Say 'cancel' to cancel.", "music/twinkletwinkle.txt")
 		
 		request = ajax.ajax()
 		request.open('GET',url,True)

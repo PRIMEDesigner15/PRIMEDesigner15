@@ -4,15 +4,13 @@
 
 '''
 
-from browser import document, window, alert, console, ajax
+from browser import document, window, alert, console, ajax, timer
 import time
 from javascript import JSObject, JSConstructor
 
 
-console.log(globals())
-
 #Wad object used for playing sounds.
-Wad = JSConstructor(window.wad)
+Wad = JSConstructor(window.Wad)
 piano = Wad({
     'source' : 'square', 
     'env' : {
@@ -33,19 +31,22 @@ piano = Wad({
     }
 })
 
-def handlePlayButtonClick(evt):
-	index = current_state["Selected_Music"]
-	puzzle = current_state["Music_Puzzles"][index]
-	playSong(puzzle.sheetMusic)
-
+def handlePlayButtonClick(state):
+	def handlePlayButtonClick2(evt):
+		
+		index = state["Selected_Music"]
+		puzzle = state["Music_Puzzles"][index]
+		playSong(puzzle.sheetMusic)
+		
+	return handlePlayButtonClick2
+	
 # Plays a song given some sheetMusic
 def playSong(sheetMusic):
 	
 	song = sheetMusic.split("\n")
-	
+	wait = 0
 	for note in song:
 		values = note.split(" ")
-		console.log(values)
 		wait = wait + float(values[0])
 		pitch = values[1]
 		hold = values[2]
@@ -57,7 +58,13 @@ def playSong(sheetMusic):
 			'env' : {'hold' : float(hold)},
 			filter : { 'q' : 15 } 
 		})
+	
+	playButton = document.getElementById("playButton")
+	if(playButton is not None):
+		playButton.disabled = True
+		timer = timer.set_timeout(allowPlay,(wait+1) * 1000)
 
-# Stops whatever song is currently playing
-def stopSong():		
-	piano.stop()
+
+def allowPlay():
+	playButton = document.getElementById("playButton")
+	playButton.disabled = False
