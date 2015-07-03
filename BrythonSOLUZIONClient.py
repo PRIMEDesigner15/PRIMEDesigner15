@@ -17,6 +17,14 @@ overlayWindow = None
 Operators = None
 #Operators = INITIAL_STATE["Operators"]
 
+def getRoles(state_stack):
+	if (len(state_stack) > 0 ):
+		i = 0
+		print("--------")
+		for state in state_stack:
+			print(str(i) + " " + state["Role"])
+			i = i + 1
+		print("--------")
 
 def set_up_Operators_interface():
 	global opSelect # make available for interaction.
@@ -57,7 +65,7 @@ def repopulate_operator_choices(current_state):
 def handleAsyncOperator():
 	two = 2
 	console.log("two = " + str(two))
-				
+			
 def handleApplyButtonClick(evt):
 	# get selected operator.
 	global Operators, opSelect, current_state, STATE_STACK
@@ -69,35 +77,52 @@ def handleApplyButtonClick(evt):
 	try:
 
 		if(op.async == False):
-		
+			
 			new_state = op.state_transf(current_state)
 			current_state = new_state
 			render_state(current_state)
+			
 			STATE_STACK.append(new_state) # Push.
+			print("getting roles")
+			getRoles(STATE_STACK)
+			
 			BACKTRACK_BUTTON.disabled = False
 			RESET_BUTTON.disabled = False
-		
-		
-			if GOAL_TEST(current_state):
-				# If the current state is a goal state, issue a message.
-				# The message may be provided by the template.
-				# Otherwise, we use a default message.
-				global statusline
-				if 'GOAL_MESSAGE_FUNCTION' in globals():
-					mes = GOAL_MESSAGE_FUNCTION(current_state)
-					statusline.text = mes
-					alert(mes)
-				else:
-					mes = "Congratulations! You have reached a goal state."
-					statusline.text = mes
-					alert("You have achieved a goal state!")
-			else:
-				statusline.text = "Solving is in progress."
-				repopulate_operator_choices(current_state)
-		else:
-			op.state_transf(current_state)
-
+			repopulate_operator_choices(current_state)
 			
+		else:
+			music_num = 1
+			request = op.state_transf({current_state})
+			
+			def requestSuccess(state,music_num):
+				def requestSuccess2(req):
+					global current_state
+					if(req.status == 200 or req.status == 0):
+						sheetMusic = req.responseText
+						new_state = op.state_transf({current_state,req})
+						current_state = new_state
+						console.log(new_state["Selected_Music"])
+						
+						render_state(current_state)
+						
+						STATE_STACK.append(current_state) # Push.
+						getRoles(STATE_STACK)
+						
+						BACKTRACK_BUTTON.disabled = False
+						RESET_BUTTON.disabled = False
+						repopulate_operator_choices(current_state)
+						
+					else:
+						print("request failure")
+				
+				return requestSuccess2
+		
+			request.bind("complete",requestSuccess(current_state, music_num, 
+				requestSuccess(current_state,music_num)))
+			
+			
+			request.send()
+	
 	except (Exception) as e:
 		alert("An error occured when applying this operator. Error: "+str(e))
 
@@ -126,7 +151,9 @@ def handlebacktrackbuttonclick(e):
 		repopulate_operator_choices(current_state)
 	else: 
 		initialize()
-
+	getRoles(STATE_STACK)
+		
+		
 def set_up_reset_and_backtrack_div():
 	global gui, reset_and_backtrack_div
 	global RESET_BUTTON, BACKTRACK_BUTTON
@@ -147,17 +174,8 @@ def set_up_reset_and_backtrack_div():
 
 def initialize():
 
-	global current_state, STATE_STACK, Operators
+	global current_state, STATE_STACK
 	global RESET_BUTTON, BACKTRACK_BUTTON
-	
-	# Operators
-	Operators = INITIAL_STATE["Operators"]
-	opSelectdiv = set_up_Operators_interface()
-	statuslinediv = set_up_status_line()
-	set_up_user_interface(opSelectdiv, statuslinediv) # Handled in separate Python file.
-	set_up_loading_div()
-	reset_and_backtrack_div = set_up_reset_and_backtrack_div()
-	statuslinediv <= reset_and_backtrack_div
 	
 	current_state = INITIAL_STATE # comes from the problem template file.
 	STATE_STACK = [INITIAL_STATE]
@@ -166,14 +184,13 @@ def initialize():
 	RESET_BUTTON.disabled = True
 	BACKTRACK_BUTTON.disabled = True
 
-'''
+# Operators
+Operators = INITIAL_STATE["Operators"]
 opSelectdiv = set_up_Operators_interface()
 statuslinediv = set_up_status_line()
 set_up_user_interface(opSelectdiv, statuslinediv) # Handled in separate Python file.
 set_up_loading_div()
-
 reset_and_backtrack_div = set_up_reset_and_backtrack_div()
 statuslinediv <= reset_and_backtrack_div
-'''
-
+	
 initialize()

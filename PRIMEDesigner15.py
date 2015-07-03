@@ -21,8 +21,6 @@ PROBLEM_DESC=\
     being used in the Brython SOLUZION client."""
 #</METADATA>
 
-print("Hello from PRIMEDesigner15.py (after METADATA)")
-
 #<COMMON_DATA>
 #</COMMON_DATA>
 
@@ -31,7 +29,6 @@ print("Hello from PRIMEDesigner15.py (after METADATA)")
 from browser import document, window, alert, console, ajax
 from javascript import JSObject, JSConstructor
 import time
-
 
 
 # Preforms a deep copy of the given state. 
@@ -96,7 +93,6 @@ def describe_state(state):
 #  print("There was an exception when trying to communicate back from Python to Javascript.")
 #  print(e)
 
-print("Hello from Mondrian.py (after INITIAL_STATE)")
 
 """ A note on the coordinate system used: 
 	Each room is of size 1. The game is thus of width 3 and height 3"""
@@ -381,48 +377,35 @@ def create_image_puzzle(state):
 	
 	return newState
 
-def create_music_puzzle(state):
-	
-	#from visualizer for asynchronous calls
-	from PRIMEDesigner15VisForBrython import show_loading, hide_loading
-	alert(hide_loading)
-	url = "music/testMusic.txt"
-	music_num = 1
-	
-	def requestFailure(req):
-		print("request failure")
-		da = 1
+# Requires a list of args. As sometimes it returns a request
+# and if given a request and a state will return a new state
+def create_music_puzzle(args):
+
+	length = len(args)
 		
-	def requestSuccess(state,music_num,hide_loading):
-		def requestSuccess2(req):
-			if(req.status == 200 or req.status == 0):
-				#from client for asynchronous calls
-				alert("called async function")
-				#newState = copy_state(state)
-				#hide_loading()
-				#sheetMusic = req.responseText
-				#newPuzzle = Music(sheetMusic)
-				#newState["Music_Puzzles"].append(newPuzzle)
-				#alert("why doesn't this work?")
-				#newState["Selected_Music"] = len(newState["Music_Puzzles"]) - 1
-			else:
-				print("request failure")
-			
-		return requestSuccess2
+	if(length == 1):
 
-	req = ajax.ajax()
+		url = "music/testMusic.txt"
+		
+		request = ajax.ajax()
+		request.open('GET',url,True)
+		
+		return request
+		
+	else:
+		console.log("processing")
+		
+		request = args.pop()
+		state = args.pop()
+		
+		newState = copy_state(state)
+		newPuzzle = Music(request.responseText)
+		newState["Music_Puzzles"].append(newPuzzle)
+		console.log(len(newState["Image_Puzzles"]))
+		newState["Selected_Music"] = len(newState["Image_Puzzles"]) - 1
+		
+		return newState
 	
-	req.bind("complete",requestSuccess(state, music_num, hide_loading, 
-			requestSuccess(state,music_num,hide_loading)))
-	
-	req.open('GET',url,True)
-
-	
-	# Display the loading symbol, function obtained from visualization
-	#show_loading()
-	req.send()
-	
-
 	
 
 def addImageTransformation(transformation, state):
@@ -441,8 +424,6 @@ def addMusicTransformation(transformation,state):
 	
 
 #</COMMON_CODE>		
-	
-print("Hello from PRIMEDesigner15.py (after COMMON_CODE)")
 
 #<OPERATORS>
 def set_operators(state):

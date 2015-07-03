@@ -33,7 +33,6 @@ musicDisplay = None
 LAST_STATE = None # cache of current state for use in 
 				#refresh of display after selection hiding button click.
 
-print("Hello from PRIMEDesignerVisForBrython!  Starting to process it.")
 LINE_WIDTH = 4
 
 # Sets up the gui
@@ -109,7 +108,8 @@ def hide_loading():
 	
 	loadingDiv.style.display = "none"
 	blackOverlay.style.display = "none"
-	
+
+# renders the state
 def render_state():
 	
 	boarddiv = html.DIV(Id = "boarddivid", style = {"backgroundColor":"#CCFFCC"})
@@ -154,7 +154,7 @@ def setCanvasManager():
 		
 # draws the game
 def render_state_svg_graphics(state):
-	global roleCanvas, ctx, APANEL, selected_image
+	global roleCanvas, ctx, APANEL, selected_image, musicDisplay
 	# Clear svg panel
 	while APANEL.lastChild is not None:
 		APANEL.removeChild(APANEL.elt.lastChild)
@@ -188,7 +188,8 @@ def render_state_svg_graphics(state):
 	elif(state['Role'] == "Music Puzzle"):
 		prepareMusicDisplay()
 		puzzle_num = state["Selected_Music"]
-		
+		#console.log(state["Selected_Music"])
+		musicDisplay.innerHTML = "Music Number + " + str(puzzle_num)
 		
 		
 		
