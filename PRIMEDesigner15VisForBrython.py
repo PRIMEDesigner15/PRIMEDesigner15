@@ -213,13 +213,15 @@ def render_state_svg_graphics(state):
 	elif(state['Role'] == "Music Puzzle"):
 		prepareMusicDisplay()
 		puzzle_num = state["Selected_Music"]
-		console.log("Selected Music " + str(state["Selected_Music"]))
 		
 		songSelected = document.getElementById("songSelected")
 		playButton = document.getElementById("playButton")
 		
 		if(puzzle_num > -1):
 			songSelected.innerHTML = "Song Number " + str(puzzle_num + 1) + " Selected"
+			
+			# Bind the correct play song button to the button.
+			playButton.unbind('click')
 			playButton.bind('click', handlePlayButtonClick(state))
 			playButton.disabled = False
 		else:

@@ -40,7 +40,6 @@ def copy_state(state):
 	newMusicPuzzles = []
 	
 	
-	
 	# Copy the rooms (without doors in their walls) and doors into the newState's dictionary.
 	for room in state["Rooms"]:
 		newRooms.append(room.copy())
@@ -75,7 +74,6 @@ def copy_state(state):
 				add_door_to_room(room_num, direction, newState, state["Doors"][door_index])
 				door_index += 1
 
-	
 	return newState
 		
 def describe_state(state):
@@ -193,7 +191,9 @@ class Door:
 class Puzzle:
 
 	def __init__(self, url, transformList = []):
+		
 		self.url = url
+		
 		# shallow copying a new list
 		self.transformList = transformList[:]
 	
@@ -206,6 +206,7 @@ class Puzzle:
 class Music:
 
 	def __init__(self, sheetMusic, transformList = []):
+		
 		self.sheetMusic = sheetMusic
 		
 		# shallow copying a new list
@@ -417,9 +418,9 @@ def addMusicTransformation(transformation,state):
 	newState = copy_state(state)
 	
 	# Add transform to newState list
-	newState["Music_Puzzles"][newState["Selected_Puzzle"]].add_transform(transformation)
+	newState["Music_Puzzles"][newState["Selected_Music"]].add_transform(transformation)
+	return newState
 	
-
 #</COMMON_CODE>		
 
 #<OPERATORS>
@@ -487,13 +488,30 @@ def set_operators(state):
 		
 	elif(state['Role'] == "Music Puzzle"):
 		
+		selection_operators =\
+			[Operator("Switch to puzzle numbered " + str(num + 1) + " for editing.",
+				lambda state, n = num: n < len(state["Music_Puzzles"]) and len(state["Music_Puzzles"]) > 1 and n != state["Selected_Music"],
+				lambda state, n = num: change_music_puzzle_selection(n, state))
+			for num in range(9)]
+		
 		create_new_puzzle =\
 			Operator("Create a new music puzzle.",
 				lambda state: True,
 				lambda state: create_music_puzzle(state),
 				async = True)
-				
-		OPERATORS = role_operators + create_new_puzzle
+		
+		increase_tempo =\
+			Operator("Increase tempo of song",
+				lambda state: state["Selected_Music"] > -1,
+				lambda state: addMusicTransformation("increaseTempo", state))
+		
+		decrease_tempo =\
+			Operator("Decrease tempo of song",
+				lambda state: state["Selected_Music"] > -1,
+				lambda state: addMusicTransformation("decreaseTempo", state))
+
+		
+		OPERATORS = role_operators + selection_operators + create_new_puzzle + increase_tempo + decrease_tempo
 	elif(state['Role'] == "Rules"):
 		OPERATORS = role_operators
 	else:

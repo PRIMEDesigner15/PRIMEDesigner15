@@ -79,14 +79,15 @@ def handleApplyButtonClick(evt):
 			current_state = new_state
 			render_state(current_state)
 			
+			
 			STATE_STACK.append(new_state) # Push.
-			print("getting roles")
+			
+			# Print out state stack for debugging
 			getRoles(STATE_STACK)
 			
 			BACKTRACK_BUTTON.disabled = False
 			RESET_BUTTON.disabled = False
 			repopulate_operator_choices(current_state)
-			
 		else:
 			music_num = 1
 			request = op.state_transf({current_state})
