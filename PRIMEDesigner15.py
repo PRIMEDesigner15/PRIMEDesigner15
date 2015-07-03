@@ -34,8 +34,6 @@ import time
 
 
 
-
-
 # Preforms a deep copy of the given state. 
 def copy_state(state):
 	newState = {"Rooms": [], "Doors": []}
@@ -225,10 +223,11 @@ class Music:
 	
 class Operator:
   
-	def __init__(self, name, precond, state_transf):
+	def __init__(self, name, precond, state_transf, async = False):
 		self.name = name
 		self.precond = precond
 		self.state_transf = state_transf
+		self.async = async
 
 	def is_applicable(self, state):
 		return self.precond(state)
@@ -381,58 +380,48 @@ def create_image_puzzle(state):
 		return create_image_puzzle(state)
 	
 	return newState
-'''
-def requestMusicFile(url,state,music_num):
-	newState = copy_state(state)
-	req = ajax.ajax()
-	req.bind("complete",requestSuccess(newState,music_num))
-	
-def requestSuccess(newState, music_num):
-	def loadSheetMusic(req):
-		console.log(music_num)
-		console.log(newState)
-		console.log(req.text)
-	
-	return loadSheetMusic	
 
-def get(state,url,music_num):
-	def requestSuccess(newstate,music_num):
-		def loadSheetMusic(req):
-			console.log(music_num)
-			console.log(newState)
-			console.log(req.text)
-			if (req.status == 200):
-				resolve(newState)
-			else:
-				reject(Error(req.statusText))
-				
-	def resolveReject(resolve,reject):
-		req = ajax.ajax()
-		req.bind("complete",requestSuccess(newState,music_num))
-		alert("got here")
-		req.set_timeout(timeout,requestFailure)
-		req.open('GET',url,True)
-		req.send()
-		
-	return Promise(resolevReject)
-'''	
-def getMusicFile(state,url):
+def create_music_puzzle(state):
+	
+	#from visualizer for asynchronous calls
+	from PRIMEDesigner15VisForBrython import show_loading, hide_loading
+	alert(hide_loading)
 	url = "music/testMusic.txt"
 	music_num = 1
-	return get(url,state,music_num)
+	
+	def requestFailure(req):
+		print("request failure")
+		da = 1
+		
+	def requestSuccess(state,music_num,hide_loading):
+		def requestSuccess2(req):
+			if(req.status == 200 or req.status == 0):
+				#from client for asynchronous calls
+				alert("called async function")
+				#newState = copy_state(state)
+				#hide_loading()
+				#sheetMusic = req.responseText
+				#newPuzzle = Music(sheetMusic)
+				#newState["Music_Puzzles"].append(newPuzzle)
+				#alert("why doesn't this work?")
+				#newState["Selected_Music"] = len(newState["Music_Puzzles"]) - 1
+			else:
+				print("request failure")
+			
+		return requestSuccess2
 
-def get(url,state,music_num):
-	Saying = "nothing"
-	def requestSucess(newState,music_num):
-		saying = "hello, hello"
 	req = ajax.ajax()
-	req.bind("complete",requestSuccess)
-	alert("got here")
-	req.set_timeout(timeout,requestFailure)
-	req.open('GET',url,False)
+	
+	req.bind("complete",requestSuccess(state, music_num, hide_loading, 
+			requestSuccess(state,music_num,hide_loading)))
+	
+	req.open('GET',url,True)
+
+	
+	# Display the loading symbol, function obtained from visualization
+	#show_loading()
 	req.send()
 	
-	return saying
 
 	
 
@@ -523,7 +512,8 @@ def set_operators(state):
 		create_new_puzzle =\
 			Operator("Create a new music puzzle.",
 				lambda state: True,
-				lambda state: getMusicFile(state))
+				lambda state: create_music_puzzle(state),
+				async = True)
 				
 		OPERATORS = role_operators + create_new_puzzle
 	elif(state['Role'] == "Rules"):
@@ -555,9 +545,6 @@ for j in range(3):
 # Now initialize operators.
 OPERATORS = INITIAL_STATE['Operators']
 #</INITIAL_STATE>
-
-if "BRYTHON" in globals():
-	from PRIMEDesigner15VisForBrython import set_up_gui as set_up_user_interface
 
 
 

@@ -164,7 +164,6 @@ INITIAL_STATE =\
 # The following is some extra stuff for trying to make the template
 # work with Javascript.
 
-
 try:
   from browser import window, alert
   window.SOLUZION_INITIAL_STATE = INITIAL_STATE
@@ -178,7 +177,6 @@ except Exception as e:
 #</INITIAL_STATE>
 
 print("Hello from Mondrian.py (after INITIAL_STATE)")
-
 
 #<OPERATORS>
 available_fractions = [0.25, 0.3333, 0.5, 0.6667, 0.75]

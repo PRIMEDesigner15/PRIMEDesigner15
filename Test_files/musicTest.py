@@ -1,5 +1,4 @@
 '''PRIMEDesigner15MusicForBrython
-
 	Handle PRIME music stuff
 '''
 
@@ -17,16 +16,24 @@ def get():
 	saying = Saying("not modified")
 	def requestSuccess(saying):
 		def processSuccess(req):
-			saying.text = "modified"
+			pass
+			#saying.text = req.responseText
+			#print(req.readyState)
 		return processSuccess
 		
+	def loadingFunction(req):
+		time.sleep(10)
+		
 	req = ajax.ajax()
+	req.bind("loading",loadingFunction)
 	req.bind("complete",requestSuccess(saying, requestSuccess(saying)))
 	#req.set_timeout(timeout,requestFailure)
 	req.open('GET',"testMusic.txt",True)
 	#console.log(req.readyState)
 	req.send()
+	return saying
 	
+#console.log(get().text)
 #def sayingHasChanged(saying):
 #	Sayings.append(saying)
 

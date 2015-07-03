@@ -35,16 +35,81 @@ LAST_STATE = None # cache of current state for use in
 
 print("Hello from PRIMEDesignerVisForBrython!  Starting to process it.")
 LINE_WIDTH = 4
+
+# Sets up the gui
 def set_up_gui(opselectdiv, statuslinediv):
-	print("Entering set_up_gui in PRIMEDesignerVisForBrython.")
 	global gui
 	gui = html.DIV(Id = "thegui")
 	render_state()
 	gui <= opselectdiv
 	gui <= statuslinediv
 	document <= gui
-	print("Leaving set_up_gui in PRIMEDesignerVisForBrython.")
 
+# Sets up the loading div for asynchronous calls
+def set_up_loading_div():
+	
+	gui = document.getElementById("thegui")
+	blackOverlay = html.DIV(id = "blackOverlay",
+							style = {
+								'display' : 'none',
+								'position' : 'fixed',
+								'top' : '0%',
+								'left' : '0%',
+								'width' : '100%',
+								'height' : '100%',
+								'background-color' : 'black',
+								'z-index' : '1001',
+								'-moz-opacity' : '0.8',
+								'opacity' : '.80',
+								'filter' : 'alpha(opacity=80)'
+								})
+
+	width = 200
+	height = 100
+	loadingDiv = html.DIV(id = "loadingDiv",
+							style = {
+								'display' : 'none',
+								'position' : 'fixed',
+								'background-image' : 'url(images/loading.gif)',
+								'border-radius' : '10px',
+								'border' : '5px solid grey',
+								'left' : '50%',
+								'top' : '50%',
+								'margin-top' : "-" + str(1/2 * height) + 'px',
+								'margin-left' : "-" + str(1/2 * width) + 'px',
+								'z-index' : '1002',
+								'overflow' : 'auto'
+							})
+	loadingImg = html.IMG(id = "loadingImg", 
+						src = "images/loading.gif", 
+						style = {
+								'display' : 'block',
+								'width' : str(width) + "px",
+								'height' : str(height) + "px",
+								'margin' : 'auto'
+								})
+
+	loadingDiv <= loadingImg						
+	gui <= loadingDiv
+	gui <= blackOverlay
+	
+
+def show_loading():
+	loadingDiv = document.getElementById("loadingDiv")
+	blackOverlay = document.getElementById("blackOverlay")
+	alert("showing loading")
+	
+	loadingDiv.style.display = "initial"
+	blackOverlay.style.display = "initial"
+
+def hide_loading():
+	loadingDiv = document.getElementById("loadingDiv")
+	blackOverlay = document.getElementById("blackOverlay")
+	alert("ending loading")
+	
+	loadingDiv.style.display = "none"
+	blackOverlay.style.display = "none"
+	
 def render_state():
 	
 	boarddiv = html.DIV(Id = "boarddivid", style = {"backgroundColor":"#CCFFCC"})

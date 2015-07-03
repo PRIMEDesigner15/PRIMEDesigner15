@@ -5,22 +5,18 @@
 from browser import doc, alert, html, console
 from PRIMEDesigner15VisForBrython import set_up_gui as set_up_user_interface
 from PRIMEDesigner15VisForBrython import render_state_svg_graphics as render_state
+from PRIMEDESIGNER15VisForBrython import set_up_loading_div, show_loading, hide_loading
 from PRIMEDesigner15 import INITIAL_STATE
-
+import time
 
 opSelect = None
 STATE_STACK = []
 RESET_BUTTON = None
 BACKTRACK_BUTTON = None
-Operators = INITIAL_STATE["Operators"]
+overlayWindow = None
+Operators = None
+#Operators = INITIAL_STATE["Operators"]
 
-
-if not 'PROBLEM_NAME' in globals():
-	PROBLEM_NAME = "Problems"
-  
-
-#sdoc['pagetitle'].text = "Solving "+PROBLEM_NAME+\
-#" in the Brython SOLUZION Client"'''
 
 def set_up_Operators_interface():
 	global opSelect # make available for interaction.
@@ -57,6 +53,11 @@ def repopulate_operator_choices(current_state):
 			item.disabled = True
 			item.selected = False
 
+# Should be called after loading screen backtrack button disabled
+def handleAsyncOperator():
+	two = 2
+	console.log("two = " + str(two))
+				
 def handleApplyButtonClick(evt):
 	# get selected operator.
 	global Operators, opSelect, current_state, STATE_STACK
@@ -66,32 +67,41 @@ def handleApplyButtonClick(evt):
 	i = opSelect.selectedIndex
 	op = Operators[i]
 	try:
-		new_state = op.state_transf(current_state)
-		current_state = new_state
-		render_state(current_state)
-		STATE_STACK.append(new_state) # Push.
-		BACKTRACK_BUTTON.disabled = False
-		RESET_BUTTON.disabled = False
-		if GOAL_TEST(current_state):
-			# If the current state is a goal state, issue a message.
-			# The message may be provided by the template.
-			# Otherwise, we use a default message.
-			global statusline
-			if 'GOAL_MESSAGE_FUNCTION' in globals():
-				mes = GOAL_MESSAGE_FUNCTION(current_state)
-				statusline.text = mes
-				alert(mes)
+
+		if(op.async == False):
+		
+			new_state = op.state_transf(current_state)
+			current_state = new_state
+			render_state(current_state)
+			STATE_STACK.append(new_state) # Push.
+			BACKTRACK_BUTTON.disabled = False
+			RESET_BUTTON.disabled = False
+		
+		
+			if GOAL_TEST(current_state):
+				# If the current state is a goal state, issue a message.
+				# The message may be provided by the template.
+				# Otherwise, we use a default message.
+				global statusline
+				if 'GOAL_MESSAGE_FUNCTION' in globals():
+					mes = GOAL_MESSAGE_FUNCTION(current_state)
+					statusline.text = mes
+					alert(mes)
+				else:
+					mes = "Congratulations! You have reached a goal state."
+					statusline.text = mes
+					alert("You have achieved a goal state!")
 			else:
-				mes = "Congratulations! You have reached a goal state."
-				statusline.text = mes
-				alert("You have achieved a goal state!")
+				statusline.text = "Solving is in progress."
+				repopulate_operator_choices(current_state)
 		else:
-			statusline.text = "Solving is in progress."
-			repopulate_operator_choices(current_state)
+			op.state_transf(current_state)
+
+			
 	except (Exception) as e:
 		alert("An error occured when applying this operator. Error: "+str(e))
 
-opSelectdiv = set_up_Operators_interface()
+#opSelectdiv = set_up_Operators_interface()
 
 def set_up_status_line():
 	global gui, statusline
@@ -136,8 +146,19 @@ def set_up_reset_and_backtrack_div():
 	return reset_and_backtrack_div
 
 def initialize():
-	global current_state, STATE_STACK
+
+	global current_state, STATE_STACK, Operators
 	global RESET_BUTTON, BACKTRACK_BUTTON
+	
+	# Operators
+	Operators = INITIAL_STATE["Operators"]
+	opSelectdiv = set_up_Operators_interface()
+	statuslinediv = set_up_status_line()
+	set_up_user_interface(opSelectdiv, statuslinediv) # Handled in separate Python file.
+	set_up_loading_div()
+	reset_and_backtrack_div = set_up_reset_and_backtrack_div()
+	statuslinediv <= reset_and_backtrack_div
+	
 	current_state = INITIAL_STATE # comes from the problem template file.
 	STATE_STACK = [INITIAL_STATE]
 	render_state(current_state)
@@ -145,12 +166,14 @@ def initialize():
 	RESET_BUTTON.disabled = True
 	BACKTRACK_BUTTON.disabled = True
 
+'''
+opSelectdiv = set_up_Operators_interface()
 statuslinediv = set_up_status_line()
 set_up_user_interface(opSelectdiv, statuslinediv) # Handled in separate Python file.
+set_up_loading_div()
+
 reset_and_backtrack_div = set_up_reset_and_backtrack_div()
 statuslinediv <= reset_and_backtrack_div
-
-if not 'GOAL_TEST' in globals():
-	def GOAL_TEST(s): return False # Default goal-testing function-can be overridden.
+'''
 
 initialize()
