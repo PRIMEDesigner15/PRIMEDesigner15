@@ -20,9 +20,9 @@ Operators = None
 def getRoles(state_stack):
 	if (len(state_stack) > 0 ):
 		i = 0
-		print("--------")
+		print("---STATE STACK---")
 		for state in state_stack:
-			print(str(i) + " " + state["Role"])
+			print(str(i) + ". Role = " + state["Role"])
 			i = i + 1
 		print("--------")
 
@@ -101,7 +101,6 @@ def handleApplyButtonClick(evt):
 						sheetMusic = req.responseText
 						new_state = op.state_transf({current_state,req})
 						current_state = new_state
-						console.log(new_state["Selected_Music"])
 						
 						render_state(current_state)
 						

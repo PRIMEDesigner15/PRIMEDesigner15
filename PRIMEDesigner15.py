@@ -333,7 +333,7 @@ def url_is_valid(url):
 		return False
 	else:
 		return False
-# Duplicated code makes me sad		
+	
 def change_room_selection(state, room_num):
 	newState = copy_state(state)
 	newState["Selected_Room"] = room_num
@@ -401,8 +401,7 @@ def create_music_puzzle(args):
 		newState = copy_state(state)
 		newPuzzle = Music(request.responseText)
 		newState["Music_Puzzles"].append(newPuzzle)
-		console.log(len(newState["Image_Puzzles"]))
-		newState["Selected_Music"] = len(newState["Image_Puzzles"]) - 1
+		newState["Selected_Music"] = len(newState["Music_Puzzles"]) - 1
 		
 		return newState
 	

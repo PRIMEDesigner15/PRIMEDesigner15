@@ -188,7 +188,7 @@ def render_state_svg_graphics(state):
 	elif(state['Role'] == "Music Puzzle"):
 		prepareMusicDisplay()
 		puzzle_num = state["Selected_Music"]
-		#console.log(state["Selected_Music"])
+		console.log("Selected Music " + str(state["Selected_Music"]))
 		musicDisplay.innerHTML = "Music Number + " + str(puzzle_num)
 		
 		
