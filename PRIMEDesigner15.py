@@ -385,7 +385,7 @@ def create_music_puzzle(args):
 	length = len(args)
 		
 	if(length == 1):
-		url = window.prompt("Enter a complete URL for a sheetMusic file. Say 'cancel' to cancel.", "music/twinkletwinkle.txt")
+		url = window.prompt("Enter a complete URL for a sheetMusic file. Say 'cancel' to cancel.", "music/testMusic.txt")
 		
 		request = ajax.ajax()
 		request.open('GET',url,True)

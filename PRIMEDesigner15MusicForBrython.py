@@ -5,7 +5,7 @@
 '''
 
 from browser import document, window, alert, console, ajax, timer
-import time
+import time, json
 from javascript import JSObject, JSConstructor
 
 
@@ -35,13 +35,16 @@ def allowPlay():
 	playButton = document.getElementById("playButton")
 	playButton.disabled = False
 	
-# Plays a song given some sheetMusic
+# Plays a song given some sheetMusic in JSON format
 def playSong(state):
 	
 	index = state["Selected_Music"]
 	puzzle = state["Music_Puzzles"][index]
 	sheetMusic = puzzle.sheetMusic
 	
+	alert("hello?")
+	
+	song = json.loads(sheetMusic)
 	
 	# Music Settings
 	tempo = 1.0
@@ -54,25 +57,21 @@ def playSong(state):
 		if(transform == "decreaseTempo"):
 			tempo = tempo + 0.5
 	
-	#timeLimit = 10
-	song = sheetMusic.split("\n")
 	wait = 0
-	for note in song:
-		values = note.split(" ")
-		wait = wait + float(values[0]) * tempo
-		pitch = values[1]
-		hold = values[2]
-		
-		
+	for note in song["notes"]:
+		wait = (note["wait"] + wait ) * tempo
+		pitch = note["pitch"]
+		hold = float(note["hold"]) 
+
 		piano.play({
 			'wait' : wait,
 			'pitch' : pitch,
-			'env' : {'hold' : float(hold)},
+			'env' : {'hold' : hold},
 			filter : { 'q' : 15 } 
 		})
-	
+	'''
 	# Trying to get this to work		
-	'''if(wait > timeLimit):
+	if(wait > timeLimit):
 	
 		alert("Song cannot be more than " + str(timeLimit) + " seconds long.")
 		if(playButton is not None):
@@ -82,7 +81,8 @@ def playSong(state):
 		if(playButton is not None):
 			playButton.disabled = True
 			timer = timer.set_timeout(allowPlay,(wait+1) * 1000)
-	'''	
+	'''
+	
 def handlePlayButtonClick(state):
 	def handlePlayButtonClick2(evt):
 		
