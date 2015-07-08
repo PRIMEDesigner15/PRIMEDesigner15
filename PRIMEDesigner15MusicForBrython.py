@@ -42,8 +42,6 @@ def playSong(state):
 	puzzle = state["Music_Puzzles"][index]
 	sheetMusic = puzzle.sheetMusic
 	
-	alert("hello?")
-	
 	song = json.loads(sheetMusic)
 	
 	# Music Settings
@@ -57,9 +55,10 @@ def playSong(state):
 		if(transform == "decreaseTempo"):
 			tempo = tempo + 0.5
 	
+	notes = song["notes"]
 	wait = 0
-	for note in song["notes"]:
-		wait = (note["wait"] + wait ) * tempo
+	for note in notes:
+		wait = note["wait"] * tempo + wait 
 		pitch = note["pitch"]
 		hold = float(note["hold"]) 
 
