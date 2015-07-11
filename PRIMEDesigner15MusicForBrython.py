@@ -34,6 +34,13 @@ piano = Wad({
 #def addBlankNote(notes):
 #	note = new
 
+class Note:
+	
+	def __init__(self,wait = 1, pitch = "A4", hold = "0"):
+		self.wait = wait
+		self.pitch = pitch
+		self.hold = hold
+
 # Debug tool
 def printNotes(notes2):
 	for chord in notes2:
@@ -61,7 +68,6 @@ def playSong(state):
 	notes2 = []
 	
 	# Apply transformations
-	console.log(puzzle.transformList)
 	for transform in puzzle.transformList:
 		if(transform == "increaseTempo"):
 			tempo = tempo - 0.5
@@ -101,9 +107,11 @@ def playSong(state):
 			
 			# Shuffle chords/notes of notes2
 			temp = []
-			
-			for j in range(n):
-				temp.append(notes2[(2*j)%n])
+			#if(n%2==0):
+			#	notes2.append([])
+			#	alert("appending")
+			for j in range(n-1):
+				temp.append(notes2[(2*j)%(n-1)])
 			print("-----------------------------")
 			printNotes(temp)
 			
@@ -119,7 +127,8 @@ def playSong(state):
 				for note in chord:
 					notes.append(note)
 			
-	
+		else:
+			printNotes(notes)
 	# Play transformed notes
 	wait = 0
 	for note in notes:
