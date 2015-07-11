@@ -20,7 +20,7 @@ overlayWindow = None
 Operators = None
 #Operators = INITIAL_STATE["Operators"]
 
-def getRoles(state_stack):
+def printStack(state_stack):
 	if (len(state_stack) > 0 ):
 		i = 0
 		print("---STATE STACK---")
@@ -85,7 +85,7 @@ def handleApplyButtonClick(evt):
 			STATE_STACK.append(new_state) # Push.
 			
 			# Print out state stack for debugging
-			getRoles(STATE_STACK)
+			#printStack(STATE_STACK)
 			
 			BACKTRACK_BUTTON.disabled = False
 			RESET_BUTTON.disabled = False
@@ -107,7 +107,6 @@ def handleApplyButtonClick(evt):
 						render_state(current_state)
 						
 						STATE_STACK.append(current_state) # Push.
-						getRoles(STATE_STACK)
 						
 						BACKTRACK_BUTTON.disabled = False
 						RESET_BUTTON.disabled = False
@@ -153,7 +152,6 @@ def handlebacktrackbuttonclick(e):
 		repopulate_operator_choices(current_state)
 	else: 
 		initialize()
-	getRoles(STATE_STACK)
 		
 		
 def set_up_reset_and_backtrack_div():

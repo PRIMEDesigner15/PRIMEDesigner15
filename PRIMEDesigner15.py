@@ -510,8 +510,12 @@ def set_operators(state):
 				lambda state: state["Selected_Music"] > -1,
 				lambda state: addMusicTransformation("decreaseTempo", state))
 
+		shuffle_notes =\
+			Operator("Shuffle notes of song",
+				lambda state: state["Selected_Music"] > -1,
+				lambda state: addMusicTransformation("shuffleNotes", state))		
 		
-		OPERATORS = role_operators + selection_operators + create_new_puzzle + increase_tempo + decrease_tempo
+		OPERATORS = role_operators + selection_operators + create_new_puzzle + increase_tempo + decrease_tempo + shuffle_notes
 	elif(state['Role'] == "Rules"):
 		OPERATORS = role_operators
 	else:

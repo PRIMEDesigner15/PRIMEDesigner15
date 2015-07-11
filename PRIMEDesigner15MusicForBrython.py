@@ -31,6 +31,14 @@ piano = Wad({
     }
 })
 
+#def addBlankNote(notes):
+#	note = new
+
+# Debug tool
+def printNotes(notes2):
+	for chord in notes2:
+		print(chord)
+
 def allowPlay():
 	playButton = document.getElementById("playButton")
 	playButton.disabled = False
@@ -47,6 +55,11 @@ def playSong(state):
 	# Music Settings
 	tempo = 1.0
 	
+	notes = song["notes"]
+	
+	# Secondary list of notes for permutation based transformations.
+	notes2 = []
+	
 	# Apply transformations
 	console.log(puzzle.transformList)
 	for transform in puzzle.transformList:
@@ -54,8 +67,60 @@ def playSong(state):
 			tempo = tempo - 0.5
 		if(transform == "decreaseTempo"):
 			tempo = tempo + 0.5
+		if(transform == "shuffleNotes"):
+			
+			# Group the notes into chords so shuffling doesn't break up chords
+			i = 0
+			n = len(notes2)
+		
+			# Edge case
+			notes2.append([])
+			notes2[0].append(notes[0])
+			n = n + 1
+			
+			iternotes = iter(notes)
+			next(iternotes)
+			
+			for note in iternotes:
+				if(i >= n-1):
+					notes2.append([])
+					n = n + 1
+				if(note["wait"] != 0):
+					i = i + 1
+				
+				notes2[i].append(note)
+			
+			#printNotes(notes2)
+			print("len(notes2) = ")
+			print(len(notes2))
+			
+			print("n = ") 
+			print(n)
+			
+			printNotes(notes2)
+			
+			# Shuffle chords/notes of notes2
+			temp = []
+			
+			for j in range(n):
+				temp.append(notes2[(2*j)%n])
+			print("-----------------------------")
+			printNotes(temp)
+			
+			print("len(temp) = ")
+			print(len(temp))
+			
+			# Clear notes
+			notes = []
+			notes2 = []
+			
+			# Read notes2 back into original notes array
+			for chord in temp:
+				for note in chord:
+					notes.append(note)
+			
 	
-	notes = song["notes"]
+	# Play transformed notes
 	wait = 0
 	for note in notes:
 		wait = note["wait"] * tempo + wait 
