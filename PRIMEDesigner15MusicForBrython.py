@@ -177,7 +177,43 @@ def printNotes(notes2):
 def allowPlay():
 	playButton = document.getElementById("playButton")
 	playButton.disabled = False
+
+# Groups the list of notes into chords	
+def groupIntoChords(notes):
+	notes2 = []
+	i = 0
+	n = 0
+		
+	# Edge case
+	notes2.append([])
+	notes2[0].append(notes[0])
+	n = n + 1
+			
+	iternotes = iter(notes)
+	next(iternotes)
+			
+	for note in iternotes:
+		if(i >= n-1):
+			notes2.append([])
+			n = n + 1
+		if(note["wait"] != 0):
+			i = i + 1
+			
+		notes2[i].append(note)
+			
+	return notes2
 	
+# Reads a chord-organized list of notes and returns a normal list of notes
+def readChords(notes):
+
+	notes2 = []
+	
+	# Read temp back into original notes array
+	for chord in notes:
+		for note in chord:
+			notes2.append(note)
+	
+	return notes2
 	
 # Plays a song given some sheetMusic in JSON format
 def playSong(state):
@@ -201,75 +237,55 @@ def playSong(state):
 	
 	# Apply transformations
 	for transform in puzzle.transformList:
+	
 		if(transform == "increasePitch"):
 			pitchChange = pitchChange + 10.0
+			
 		if(transform == "decreasePitch"):
 			pitchChange = pitchChange - 10.0
+			
 		if(transform == "increaseTempo"):
 			tempo = tempo - 0.5
+			
 		if(transform == "decreaseTempo"):
 			tempo = tempo + 0.5
+			
 		if(transform == "shuffleNotes"):
 			
-			# Group the notes into chords so shuffling doesn't break up chords
-			i = 0
-			n = len(notes2)
-		
-			# Edge case
-			notes2.append([])
-			notes2[0].append(notes[0])
-			n = n + 1
-			
-			iternotes = iter(notes)
-			next(iternotes)
-			
-			for note in iternotes:
-				if(i >= n-1):
-					notes2.append([])
-					n = n + 1
-				if(note["wait"] != 0):
-					i = i + 1
-				
-				notes2[i].append(note)
-			
-			#printNotes(notes2)
-			#print("len(notes2) = ")
-			#print(len(notes2))
-			
-			#print("n = ") 
-			#print(n)
-			
-			
-			# Shuffle chords/notes of notes2
-			temp = []
-			
-			# Pad to next odd number for invertibility
-			if(n%2==0):
-				notes2.append([])
-				n = n + 1
-			for j in range(n):
-				temp.append(notes2[(2*j)%(n)])
-			print("-----------------------------")
-			printNotes(temp)
-			
-			print("len(temp) = ")
-			print(len(temp))
-			
-			# Clear notes
-			notes = []
+			# Temp storage array
 			notes2 = []
 			
-			# Read notes2 back into original notes array
-			for chord in temp:
-				for note in chord:
-					notes.append(note)
+			# Group the notes into chords so shuffling doesn't break up chords
+			notes = groupIntoChords(notes)
+			n = len(notes)
 			
-		else:
-			printNotes(notes)
-	
+			# Shuffle chords/notes of notes2
+			# Pad to next odd number for invertibility
+			if(n%2==0):
+				notes.append([])
+				n = n + 1
+			for j in range(n):
+				notes2.append(notes[(2*j)%(n)])
+			
+			# Read temp back into original notes array
+			notes = readChords(notes2)	
+			
+		if(transform == "reverseNotes"):
+		
+			# Temp storage array
+			notes2 = []
+			
+			notes = groupIntoChords(notes)
+			n = len(notes) - 1
+			
+			for i in range(n,-1,-1):
+				notes2.append(notes[i])
+			
+			# Read notes2 back into original notes
+			notes = readChords(notes2)
+
 	
 	# Play transformed notes
-	
 	wait = 0
 	for note in notes:
 		wait = note["wait"] * tempo + wait 

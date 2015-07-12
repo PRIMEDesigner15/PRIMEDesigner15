@@ -97,13 +97,11 @@ def handleApplyButtonClick(evt):
 			def requestSuccess(state,music_num):
 				def requestSuccess2(req):
 					global current_state
-					
 					hide_loading()
 					if(req.status == 200 or req.status == 0):
 						sheetMusic = req.responseText
 						new_state = op.state_transf({current_state,req})
 						current_state = new_state
-						
 						render_state(current_state)
 						
 						STATE_STACK.append(current_state) # Push.

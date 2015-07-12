@@ -383,9 +383,9 @@ def create_image_puzzle(state):
 def create_music_puzzle(args):
 
 	length = len(args)
-		
+	
 	if(length == 1):
-		url = window.prompt("Enter a complete URL for a sheetMusic file. Say 'cancel' to cancel.", "music/twinkleTwinkle.txt")
+		url = window.prompt("Enter a complete URL for a sheetMusic file. Say 'cancel' to cancel.", "music/twinkleTwinkleChords.txt")
 		
 		request = ajax.ajax()
 		request.open('GET',url,True)
@@ -396,8 +396,8 @@ def create_music_puzzle(args):
 		
 		request = args.pop()
 		state = args.pop()
-		
 		newState = copy_state(state)
+		
 		newPuzzle = Music(request.responseText)
 		newState["Music_Puzzles"].append(newPuzzle)
 		newState["Selected_Music"] = len(newState["Music_Puzzles"]) - 1
@@ -523,9 +523,15 @@ def set_operators(state):
 		shuffle_notes =\
 			Operator("Shuffle notes of song",
 				lambda state: state["Selected_Music"] > -1,
-				lambda state: addMusicTransformation("shuffleNotes", state))		
+				lambda state: addMusicTransformation("shuffleNotes", state))
+
+		reverse_notes =\
+			Operator("Reverse notes of song",
+				lambda state: state["Selected_Music"] > -1,
+				lambda state: addMusicTransformation("reverseNotes",state))
 		
-		OPERATORS = role_operators + selection_operators + increase_pitch + decrease_pitch + create_new_puzzle + increase_tempo + decrease_tempo + shuffle_notes
+		OPERATORS = role_operators + selection_operators + create_new_puzzle + increase_tempo + decrease_tempo + shuffle_notes + increase_pitch + decrease_pitch + reverse_notes        
+	
 	elif(state['Role'] == "Rules"):
 		OPERATORS = role_operators
 	else:
