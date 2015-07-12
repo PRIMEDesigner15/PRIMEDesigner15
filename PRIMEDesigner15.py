@@ -500,6 +500,16 @@ def set_operators(state):
 				lambda state: create_music_puzzle(state),
 				async = True)
 		
+		increase_pitch =\
+			Operator("Increase pitch of song",
+				lambda state: state["Selected_Music"] > -1,
+				lambda state: addMusicTransformation("increasePitch", state))
+		
+		decrease_pitch =\
+			Operator("Decrease pitch of song",
+				lambda state: state["Selected_Music"] > -1,
+				lambda state: addMusicTransformation("decreasePitch", state))
+		
 		increase_tempo =\
 			Operator("Increase tempo of song",
 				lambda state: state["Selected_Music"] > -1,
@@ -515,7 +525,7 @@ def set_operators(state):
 				lambda state: state["Selected_Music"] > -1,
 				lambda state: addMusicTransformation("shuffleNotes", state))		
 		
-		OPERATORS = role_operators + selection_operators + create_new_puzzle + increase_tempo + decrease_tempo + shuffle_notes
+		OPERATORS = role_operators + selection_operators + increase_pitch + decrease_pitch + create_new_puzzle + increase_tempo + decrease_tempo + shuffle_notes
 	elif(state['Role'] == "Rules"):
 		OPERATORS = role_operators
 	else:

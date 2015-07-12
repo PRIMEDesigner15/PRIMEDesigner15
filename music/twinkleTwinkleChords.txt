@@ -1,6 +1,7 @@
 {"name" : "twinkletwinkle", "notes" :[
 
 	{"wait": 0.5, "pitch" : "C3", "hold" : 0.5},
+	{"wait": 0, "pitch" : "C3", "hold" : 0.5},
 	{"wait": 0.5, "pitch" : "C3", "hold" : 0.5},
 	{"wait": 0.5, "pitch" : "G3", "hold" : 0.5},
 	{"wait": 0.5, "pitch" : "G3", "hold" : 0.5},
@@ -13,6 +14,8 @@
 	{"wait": 0.5, "pitch" : "E3", "hold" : 0.5},
 	{"wait": 0.5, "pitch" : "D3", "hold" : 0.5},
 	{"wait": 0.5, "pitch" : "D3", "hold" : 0.5},
+	{"wait": 0, "pitch" : "D3", "hold" : 0.5},
+	{"wait": 0, "pitch" : "D3", "hold" : 0.5},
 	{"wait": 0.5, "pitch" : "C3", "hold" : 1}
 
 
