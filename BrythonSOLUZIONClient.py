@@ -81,15 +81,8 @@ def handleApplyButtonClick(evt):
 			current_state = new_state
 			render_state(current_state)
 			
+			finalize_state(current_state)
 			
-			STATE_STACK.append(new_state) # Push.
-			
-			# Print out state stack for debugging
-			#printStack(STATE_STACK)
-			
-			BACKTRACK_BUTTON.disabled = False
-			RESET_BUTTON.disabled = False
-			repopulate_operator_choices(current_state)
 		else:
 			music_num = 1
 			request = op.state_transf({current_state})
@@ -104,11 +97,7 @@ def handleApplyButtonClick(evt):
 						current_state = new_state
 						render_state(current_state)
 						
-						STATE_STACK.append(current_state) # Push.
-						
-						BACKTRACK_BUTTON.disabled = False
-						RESET_BUTTON.disabled = False
-						repopulate_operator_choices(current_state)
+						finalize_state(current_state)
 						
 					else:
 						print("request failure")
@@ -118,7 +107,6 @@ def handleApplyButtonClick(evt):
 			request.bind("complete",requestSuccess(current_state, music_num, 
 				requestSuccess(current_state,music_num)))
 			
-			
 			request.send()
 			show_loading()
 	
@@ -126,6 +114,16 @@ def handleApplyButtonClick(evt):
 		alert("An error occured when applying this operator. Error: "+str(e))
 
 #opSelectdiv = set_up_Operators_interface()
+
+ #Finalizes the state of the state
+def finalize_state(current_state):
+	global BACKTRACK_BUTTON, RESET_BUTTON, STATE_STACK
+	
+	STATE_STACK.append(current_state) # Push.
+	
+	BACKTRACK_BUTTON.disabled = False
+	RESET_BUTTON.disabled = False
+	repopulate_operator_choices(current_state)
 
 def set_up_status_line():
 	global gui, statusline
