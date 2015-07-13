@@ -90,7 +90,9 @@ def handleApplyButtonClick(evt):
 			BACKTRACK_BUTTON.disabled = False
 			RESET_BUTTON.disabled = False
 			repopulate_operator_choices(current_state)
+			
 		else:
+		
 			music_num = 1
 			request = op.state_transf({current_state})
 			

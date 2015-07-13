@@ -387,10 +387,14 @@ def create_music_puzzle(args):
 	if(length == 1):
 		url = window.prompt("Enter a complete URL for a sheetMusic file. Say 'cancel' to cancel.", "music/twinkleTwinkleChords.txt")
 		
-		request = ajax.ajax()
-		request.open('GET',url,True)
+		if(url_is_valid(url)):
+			request = ajax.ajax()
+			request.open('GET',url,True)
 		
-		return request
+			return request
+		else:
+			alert("URL was not valid. Try again.")
+			return create_music_puzzle(args)
 		
 	else:
 		
