@@ -84,6 +84,7 @@ def handleApplyButtonClick(evt):
 			finalize_state(current_state)
 			
 		else:
+		
 			music_num = 1
 			request = op.state_transf({current_state})
 			
