@@ -28,7 +28,7 @@ PROBLEM_DESC=\
 
 from browser import document, window, alert, console, ajax
 from javascript import JSObject, JSConstructor
-import time
+import time, json
 
 
 # Preforms a deep copy of the given state. 
@@ -120,7 +120,7 @@ class Room:
 		self.walls['E'] = Wall(x2 ,y1 ,x2 ,y2, 'E') #right
 	
 		# Possible ambient soundtrack.
-		self.music = Music("0 A4 1")
+		self.music = None
 		
 	def copy(self):
 		newRoom = Room(self.x1, self.y1, self.x2, self.y2)
@@ -205,18 +205,25 @@ class Puzzle:
 		
 class Music:
 
-	def __init__(self, sheetMusic, transformList = []):
+	def __init__(self, name, notes, transformList = []):
 		
-		self.sheetMusic = sheetMusic
+		self.name = name
+		
+		# shallow copying a new list
+		self.notes = notes[:]
 		
 		# shallow copying a new list
 		self.transformList = transformList[:]
-	
+		
 	def add_transform(self, transform):
 		self.transformList.append(transform)
 	
 	def copy(self):
-		return Music(self.sheetMusic, self.transformList)
+		# Deep copy note list
+		noteCopy = []
+		for note in self.notes:
+			noteCopy.append(note)
+		return Music(self.name, noteCopy, self.transformList)
 	
 class Operator:
   
@@ -250,7 +257,7 @@ def add_door_to_room(room_num, side, state, newDoor = Door()):
 		ROOMS[room_num - 1].walls['E'].door = newDoor
 	else:
 		alert("Error: Invalid direction passed to add_door")
-	
+
 	DOORS.append(newDoor)
 	
 # Make function to determine index?
@@ -303,6 +310,8 @@ def doors_is_valid(state, side):
 			return True
 	else:
 		return False
+		
+#def add_music_puzzle_to_room(state, room_num):
 		
 # takes a room num from 0 to 8 and prompts the user for a url for the wallpaper
 def add_wallpaper_to_room(state, room_num):
@@ -401,14 +410,14 @@ def create_music_puzzle(args):
 		request = args.pop()
 		state = args.pop()
 		newState = copy_state(state)
+		song = json.loads(request.responseText)
+		newPuzzle = Music(song["name"],song["notes"])
+		console.log(newPuzzle)
 		
-		newPuzzle = Music(request.responseText)
 		newState["Music_Puzzles"].append(newPuzzle)
 		newState["Selected_Music"] = len(newState["Music_Puzzles"]) - 1
 		
 		return newState
-	
-	
 
 def addImageTransformation(transformation, state):
 	newState = copy_state(state)

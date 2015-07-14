@@ -218,7 +218,8 @@ def render_state_svg_graphics(state):
 		playButton = document.getElementById("playButton")
 		
 		if(puzzle_num > -1):
-			songSelected.innerHTML = "Song Number " + str(puzzle_num + 1) + " Selected"
+			songName = state["Music_Puzzles"][puzzle_num].name
+			songSelected.innerHTML = "Song Number " + str(puzzle_num + 1) + " Selected \"" + songName + "\""
 			
 			# Bind the correct play song button to the button.
 			playButton.unbind('click')

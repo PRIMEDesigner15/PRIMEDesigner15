@@ -222,15 +222,12 @@ def playSong(state):
 	
 	index = state["Selected_Music"]
 	puzzle = state["Music_Puzzles"][index]
-	sheetMusic = puzzle.sheetMusic
-	
-	song = json.loads(sheetMusic)
 	
 	# Music Settings
 	tempo = 1.0
 	pitchChange = 0.0
 	
-	notes = song["notes"]
+	notes = puzzle.notes
 	
 	# Secondary list of notes for permutation based transformations.
 	notes2 = []
@@ -302,6 +299,7 @@ def playSong(state):
 	
 	timeLimit = 10
 	playButton = document.getElementById("playButton")
+	
 	# Trying to get this to work		
 	if(wait > timeLimit):
 		alert("Song cannot be more than " + str(timeLimit) + " seconds long.")
