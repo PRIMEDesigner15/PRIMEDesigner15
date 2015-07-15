@@ -190,8 +190,9 @@ class Door:
 
 class Puzzle:
 
-	def __init__(self, url, transformList = []):
+	def __init__(self, name, url, transformList = []):
 		
+		self.name = name
 		self.url = url
 		
 		# shallow copying a new list
@@ -201,11 +202,11 @@ class Puzzle:
 		self.transformList.append(transform)
 	
 	def copy(self):
-		return Puzzle(self.url, self.transformList)
+		return Puzzle(self.name,self.url, self.transformList)
 		
 class Music:
 
-	def __init__(self, name, notes, transformList = []):
+	def __init__(self, name = "defaultName", notes, transformList = []):
 		
 		self.name = name
 		
@@ -378,7 +379,8 @@ def create_image_puzzle(state):
 		
 	elif(url_is_valid(url)):
 		newState = copy_state(state)
-		newPuzzle = Puzzle(url)
+		name = getName(url)
+		newPuzzle = Puzzle(name,url)
 		newState["Image_Puzzles"].append(newPuzzle)
 		newState["Selected_Image"] = len(newState["Image_Puzzles"]) - 1
 	else:
@@ -387,6 +389,25 @@ def create_image_puzzle(state):
 	
 	return newState
 
+# gets a name out of a url
+def getName(url):
+	
+	# Get name out of the url
+	name = ""
+	i = 0
+	foundDot = False
+	while foundDot == False:
+		char = url[i]
+		if(char == "/"):
+			name = ""
+		elif(char == "."):
+			foundDot = True
+		else:
+			name = name + char
+		i = i + 1
+	
+	return name
+		
 # Requires a list of args. Given a state it will return an ajax
 # request. Given an ajax request it will return a new state.
 def create_music_puzzle(args):
@@ -466,8 +487,10 @@ def set_operators(state):
 		OPERATORS = selection_operators	+ door_operators + wallpaper_operators + role_operators
 		
 	elif(state['Role'] == "Image Puzzle"):
+		print("state puzzles images = ")
+		print(state["Image_Puzzles"])
 		selection_operators =\
-			[Operator("Switch to puzzle numbered " + str(num + 1) + " for editing.",
+			[Operator("Switch to puzzle numbered " + str(num + 1) + " for editing.", #+ state["Image_Puzzles"][num].name,
 				lambda state, n = num: n < len(state["Image_Puzzles"]) and len(state["Image_Puzzles"]) > 1 and n != state["Selected_Image"],
 				lambda state, n = num: change_image_puzzle_selection(n, state))
 			for num in range(9)]
@@ -502,7 +525,7 @@ def set_operators(state):
 	elif(state['Role'] == "Music Puzzle"):
 		
 		selection_operators =\
-			[Operator("Switch to puzzle numbered " + str(num + 1) + " for editing.",
+			[Operator("Switch to puzzle numbered " + str(num + 1) + " for editing: ", #+ state["Music_Puzzles"][num].name,
 				lambda state, n = num: n < len(state["Music_Puzzles"]) and len(state["Music_Puzzles"]) > 1 and n != state["Selected_Music"],
 				lambda state, n = num: change_music_puzzle_selection(n, state))
 			for num in range(9)]
@@ -563,7 +586,7 @@ INITIAL_STATE['Music_Puzzles'] = []
 INITIAL_STATE['Selected_Room'] = 0
 INITIAL_STATE['Selected_Image'] = -1
 INITIAL_STATE['Selected_Music'] = -1
-INITIAL_STATE['Role'] = "Music Puzzle"
+INITIAL_STATE['Role'] = "Image Puzzle"
 INITIAL_STATE['Operators'] = set_operators(INITIAL_STATE)	
 
 

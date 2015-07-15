@@ -107,10 +107,9 @@ function CanvasManager(canvas, imagePath) {
 		this.ctxM.putImageData(imgData1, 0, 0);
 	}
 	this.shuffleColumnsInverse = function() {
-		
+		alert("Has not been implemented yet")
 	}
 	this.pixelCrossover = function() {
-		
+		alert("Has not been implemented yet")
 	}
 }
-console.log("Big ol' howdy from CanvasManager");

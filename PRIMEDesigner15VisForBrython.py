@@ -209,6 +209,7 @@ def render_state_svg_graphics(state):
 		if(state["Selected_Image"] != -1):
 			puzzle = state["Image_Puzzles"][state["Selected_Image"]]
 			canMan.setURL(puzzle.url)
+			alert("puzzle name = " + puzzle.name)
 			drawPuzzle(puzzle)
 	elif(state['Role'] == "Music Puzzle"):
 		prepareMusicDisplay()
@@ -228,8 +229,6 @@ def render_state_svg_graphics(state):
 		else:
 			songSelected.innerHTML = "No Song Selected"
 			playButton.disabled = True
-		
-		
 		
 	elif(state['Role'] == "Rules"):
 		prepareSVG()
