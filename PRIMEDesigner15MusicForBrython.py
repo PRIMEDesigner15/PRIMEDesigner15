@@ -5,7 +5,7 @@
 '''
 
 from browser import document, window, alert, console, ajax, timer
-import time, json
+import time
 from javascript import JSObject, JSConstructor
 
 #Wad object used for playing sounds.

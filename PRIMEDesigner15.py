@@ -431,9 +431,10 @@ def create_music_puzzle(args):
 		request = args.pop()
 		state = args.pop()
 		newState = copy_state(state)
+		
+		# Assign name of song from json object
 		song = json.loads(request.responseText)
 		newPuzzle = Music(song["name"],song["notes"])
-		console.log(newPuzzle)
 		
 		newState["Music_Puzzles"].append(newPuzzle)
 		newState["Selected_Music"] = len(newState["Music_Puzzles"]) - 1
@@ -487,14 +488,15 @@ def set_operators(state):
 		OPERATORS = selection_operators	+ door_operators + wallpaper_operators + role_operators
 		
 	elif(state['Role'] == "Image Puzzle"):
-		print("state puzzles images = ")
-		print(state["Image_Puzzles"])
+		
+		numOfPuzzles = len(state["Image_Puzzles"])
+			
 		selection_operators =\
-			[Operator("Switch to puzzle numbered " + str(num + 1) + " for editing.", #+ state["Image_Puzzles"][num].name,
+			[Operator("Switch to puzzle " + str(num + 1) + ", \"" + state["Image_Puzzles"][num].name + ",\" for editing",
 				lambda state, n = num: n < len(state["Image_Puzzles"]) and len(state["Image_Puzzles"]) > 1 and n != state["Selected_Image"],
 				lambda state, n = num: change_image_puzzle_selection(n, state))
-			for num in range(9)]
-	
+			for num in range(numOfPuzzles)]
+		
 		create_new_puzzle =\
 			Operator("Create a new image puzzle.",
 				lambda state: True,
@@ -524,11 +526,13 @@ def set_operators(state):
 		
 	elif(state['Role'] == "Music Puzzle"):
 		
+		numOfPuzzles = len(state["Music_Puzzles"])
+		
 		selection_operators =\
-			[Operator("Switch to puzzle numbered " + str(num + 1) + " for editing: ", #+ state["Music_Puzzles"][num].name,
+			[Operator("Switch to puzzle " + str(num + 1) + ", \"" + state["Music_Puzzles"][num].name + "\" for editing.",
 				lambda state, n = num: n < len(state["Music_Puzzles"]) and len(state["Music_Puzzles"]) > 1 and n != state["Selected_Music"],
 				lambda state, n = num: change_music_puzzle_selection(n, state))
-			for num in range(9)]
+			for num in range(numOfPuzzles)]
 		
 		create_new_puzzle =\
 			Operator("Create a new music puzzle.",
@@ -566,7 +570,7 @@ def set_operators(state):
 				lambda state: state["Selected_Music"] > -1,
 				lambda state: addMusicTransformation("reverseNotes",state))
 		
-		OPERATORS = role_operators + selection_operators + create_new_puzzle + increase_tempo + decrease_tempo + shuffle_notes + increase_pitch + decrease_pitch + reverse_notes        
+		OPERATORS = selection_operators + role_operators  + create_new_puzzle + increase_tempo + decrease_tempo + shuffle_notes + increase_pitch + decrease_pitch + reverse_notes        
 	
 	elif(state['Role'] == "Rules"):
 		OPERATORS = role_operators
