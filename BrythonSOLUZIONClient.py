@@ -85,7 +85,6 @@ def handleApplyButtonClick(evt):
 			
 		else:
 		
-			music_num = 1
 			request = op.state_transf({current_state})
 			
 			def requestSuccess(state,music_num):
@@ -105,8 +104,8 @@ def handleApplyButtonClick(evt):
 				
 				return requestSuccess2
 		
-			request.bind("complete",requestSuccess(current_state, music_num, 
-				requestSuccess(current_state,music_num)))
+			request.bind("complete",requestSuccess(current_state, 
+				requestSuccess(current_state)))
 			
 			request.send()
 			show_loading()

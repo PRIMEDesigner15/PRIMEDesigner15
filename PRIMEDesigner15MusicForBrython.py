@@ -30,7 +30,7 @@ piano = Wad({
     }
 })
 
-# This object is a mapping of note names to frequencies. 
+# This object is a mapping of note names to frequencies
 Pitches = {
 	'A0'  : 27.5000,
 	'A#0' : 29.1352,
@@ -284,7 +284,11 @@ def playSong(state):
 	
 	# Play transformed notes
 	wait = 0
-	for note in notes:
+	timeLimit = 10
+	i = 0
+	length = len(notes)
+	while(i < length):
+		note = notes[i]
 		wait = note["wait"] * tempo + wait 
 		pitch = Pitches[note["pitch"]] + pitchChange
 		hold = float(note["hold"]) 
@@ -295,12 +299,16 @@ def playSong(state):
 			'env' : {'hold' : hold},
 			filter : { 'q' : 15 } 
 		})
+		
+		i = i + 1
+		
+		# Stops the song from playing overtime
+		if(wait > timeLimit):
+			piano.stop()
+			i = length
 	
-	
-	timeLimit = 10
 	playButton = document.getElementById("playButton")
-	
-	# Trying to get this to work		
+		
 	if(wait > timeLimit):
 		alert("Song cannot be more than " + str(timeLimit) + " seconds long.")
 		if(playButton is not None):
