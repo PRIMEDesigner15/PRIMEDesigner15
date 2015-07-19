@@ -228,11 +228,11 @@ class Music:
 	
 class Operator:
   
-	def __init__(self, name, precond, state_transf, async = False):
+	def __init__(self, name, precond, state_transf, specialHandler = None):
 		self.name = name
 		self.precond = precond
 		self.state_transf = state_transf
-		self.async = async
+		self.specialHandler = specialHandler
 
 	def is_applicable(self, state):
 		return self.precond(state)
@@ -538,7 +538,7 @@ def set_operators(state):
 			Operator("Create a new music puzzle.",
 				lambda state: True,
 				lambda state: create_music_puzzle(state),
-				async = True)
+				specialHandler = "async")
 		
 		increase_pitch =\
 			Operator("Increase pitch of song",

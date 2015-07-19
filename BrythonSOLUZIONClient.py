@@ -75,7 +75,7 @@ def handleApplyButtonClick(evt):
 	op = Operators[i]
 	try:
 
-		if(op.async == False):
+		if(op.specialHandler is None):
 			
 			new_state = op.state_transf(current_state)
 			current_state = new_state
@@ -84,31 +84,41 @@ def handleApplyButtonClick(evt):
 			finalize_state(current_state)
 			
 		else:
-		
-			request = op.state_transf({current_state})
 			
-			def requestSuccess(state,music_num):
-				def requestSuccess2(req):
-					global current_state
-					hide_loading()
-					if(req.status == 200 or req.status == 0):
-						sheetMusic = req.responseText
-						new_state = op.state_transf({current_state,req})
-						current_state = new_state
-						render_state(current_state)
-						
-						finalize_state(current_state)
-						
-					else:
-						print("request failure")
+			# Special handlers are if the operator needs to apply something asynchronously
+			specialHandler = op.specialHandler
+			
+			# This special handler is for the ajax request to fetch a sheet music Json object from a file.
+			if(specialHandler == "async"):
+			
+				request = op.state_transf({current_state})
 				
-				return requestSuccess2
-		
-			request.bind("complete",requestSuccess(current_state, 
-				requestSuccess(current_state)))
+				def requestSuccess(state,music_num):
+					def requestSuccess2(req):
+						global current_state
+						hide_loading()
+						if(req.status == 200 or req.status == 0):
+							sheetMusic = req.responseText
+							new_state = op.state_transf({current_state,req})
+							current_state = new_state
+							render_state(current_state)
+							
+							finalize_state(current_state)
+							
+						else:
+							print("request failure")
+					
+					return requestSuccess2
 			
-			request.send()
-			show_loading()
+				request.bind("complete",requestSuccess(current_state, 
+					requestSuccess(current_state)))
+				
+				request.send()
+				show_loading()
+				
+			elif(specialHandler == "menu"):
+				alert("menu")
+				pass
 	
 	except (Exception) as e:
 		alert("An error occured when applying this operator. Error: "+str(e))
