@@ -74,67 +74,25 @@ def handleApplyButtonClick(evt):
 	# Get Operators
 	i = opSelect.selectedIndex
 	op = Operators[i]
+	show_loading()
 	try:
 
-		if(op.specialHandler is None):
-		
-			def recieveNewState(state):
+		def recieveNewState(state = None):
+			hide_loading()
+			if(state is not None):
 				#print(state)
 				new_state = state
 				current_state = new_state
 				render_state(current_state)
 				finalize_state(current_state)
 				
-			# Gives the state transfer the new state.
-			# recieve new state is the callback called by 
-			# PRIMEDesigner15 after it executes
-			alert("got here 1")
-			print(recieveNewState)
-			op.state_transf(current_state,recieveNewState)
-			#alert("got here 2")
-			#new_state = op.state_transf(current_state)
-			#current_state = new_state
-			#render_state(current_state)
-			
-			#finalize_state(current_state)
-			
-		else:
-			
-			# Special handlers are if the operator needs to apply something asynchronously
-			specialHandler = op.specialHandler
-			
-			# This special handler is for the ajax request to fetch a sheet music Json object from a file.
-			if(specialHandler == "async"):
-			
-				request = op.state_transf({current_state})
 				
-				def requestSuccess(state,music_num):
-					def requestSuccess2(req):
-						global current_state
-						hide_loading()
-						if(req.status == 200 or req.status == 0):
-							sheetMusic = req.responseText
-							new_state = op.state_transf({current_state,req})
-							current_state = new_state
-							render_state(current_state)
-							
-							finalize_state(current_state)
-							
-						else:
-							print("request failure")
-					
-					return requestSuccess2
-			
-				request.bind("complete",requestSuccess(current_state, 
-					requestSuccess(current_state)))
-				
-				request.send()
-				show_loading()
-				
-			elif(specialHandler == "menu"):
-				alert("menu")
-				pass
-	
+		# Gives the state transfer function the new state.
+		# receiveNewState that you see above
+		# is the callback function called when 
+		# op.state_transf finishes execution.
+		op.state_transf(current_state,recieveNewState)
+		
 	except (Exception) as e:
 		alert("An error occured when applying this operator. Error: "+str(e))
 

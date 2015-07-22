@@ -219,14 +219,14 @@ def render_state_svg_graphics(state):
 		
 		if(puzzle_num > -1):
 			songName = state["Music_Puzzles"][puzzle_num].name
-			songSelected.innerHTML = "Song Number " + str(puzzle_num + 1) + " Selected \"" + songName + "\""
+			songSelected.innerHTML = "Song number " + str(puzzle_num + 1) + " selected \"" + songName + "\""
 			
 			# Bind the correct play song button to the button.
 			playButton.unbind('click')
 			playButton.bind('click', handlePlayButtonClick(state))
 			playButton.disabled = False
 		else:
-			songSelected.innerHTML = "No Song Selected"
+			songSelected.innerHTML = "No song selected"
 			playButton.disabled = True
 		
 	elif(state['Role'] == "Rules"):

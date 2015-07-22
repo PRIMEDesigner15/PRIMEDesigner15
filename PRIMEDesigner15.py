@@ -228,11 +228,10 @@ class Music:
 	
 class Operator:
   
-	def __init__(self, name, precond, state_transf, specialHandler = None):
+	def __init__(self, name, precond, state_transf):
 		self.name = name
 		self.precond = precond
 		self.state_transf = state_transf
-		self.specialHandler = specialHandler
 
 	def is_applicable(self, state):
 		return self.precond(state)
@@ -263,11 +262,11 @@ def add_door_to_room(room_num, side, state, newDoor = Door()):
 	
 # Make function to determine index?
 
-def add_door_operator(state, room_num, side):
+def add_door_operator(state, sendBack, room_num, side):
 	
 	newState = copy_state(state)
 	add_door_to_room(room_num, side, newState)
-	return newState
+	sendBack(newState)
 	
 def doors_is_valid(state, side):
 	
@@ -315,24 +314,31 @@ def doors_is_valid(state, side):
 #def add_music_puzzle_to_room(state, room_num):
 		
 # takes a room num from 0 to 8 and prompts the user for a url for the wallpaper
-def add_wallpaper_to_room(state, room_num):
+def add_wallpaper_to_room(state, sendBack, room_num):
+	
+	# Prompt the user for wallpaper url 
 	url = window.prompt("Enter a complete URL for a wallpaper. Say 'cancel' to cancel.", "images/wall.jpg")
-
-	if(url is None):
+	if(url_is_valid(url)):	
+	
+		# Copy state
 		newState = copy_state(state)
 		
-	elif(url_is_valid(url)):	
-		newState = copy_state(state)
 		ROOMS = newState["Rooms"]
 		picked = ROOMS[room_num]
+		
 		for loc in picked.walls:
 			picked.walls[loc].wallpaper.url = url
+		
+		sendBack(newState)
 	
+	elif(url != "cancel"):
+		alert("URL was not valid")
+		
+		# Recurse
+		add_wallpaper_to_room(state,sendBack,room_num)
 	else:
-		alert("URL was not valid. Try again.")
-		return add_wallpaper_to_room(room_num, state)
+		sendBack()
 	
-	return newState
 	
 def url_is_valid(url):	
 	# Note: Only works with Brython Implemented
@@ -350,19 +356,18 @@ def change_room_selection(state,sendBack,room_num):
 	newState = copy_state(state)
 	newState["Selected_Room"] = room_num
 	sendBack(newState)
-	return newState
 
-def change_image_puzzle_selection(puzzle_num, state):
+def change_image_puzzle_selection(state, sendBack, puzzle_num):
 	newState = copy_state(state)
 	newState["Selected_Image"] = puzzle_num
-	return newState
+	sendBack(newState)
 
-def change_music_puzzle_selection(puzzle_num, state):
+def change_music_puzzle_selection(state, sendBack, puzzle_num):
 	newState = copy_state(state)
 	newState["Selected_Music"] = puzzle_num
-	return newState
+	sendBack(newState)
 	
-def change_role(state, role):
+def change_role(state, sendBack, role):
 	global OPERATORS
 	newState = copy_state(state)
 	newState['Role'] = role
@@ -370,27 +375,30 @@ def change_role(state, role):
 	# reset the operators
 	newState['Operators'] = set_operators(newState)
 	
-	return newState
+	sendBack(newState)
 
-def create_image_puzzle(state):
+def create_image_puzzle(state, sendBack):
 
-	url = window.prompt("Enter a complete URL for a picture. Say 'cancel' to cancel.", "images/metalfencing.jpg")
+	# Prompt the user for a image url
+	url = window.prompt("Enter a complete URL for a picture. Say 'cancel' to cancel.", "images/force.jpg")
 
-	if(url == "cancel"):
-		newState = copy_state(state)
-		
-	elif(url_is_valid(url)):
+	if(url_is_valid(url)):
+	
 		newState = copy_state(state)
 		name = getName(url)
 		newPuzzle = Puzzle(name,url)
 		newState["Image_Puzzles"].append(newPuzzle)
 		newState["Selected_Image"] = len(newState["Image_Puzzles"]) - 1
-	else:
-		alert("URL was not valid. Try again.")
-		return create_image_puzzle(state)
+		sendBack(newState)
+		
+	elif(url != "cancel"):
 	
-	return newState
-
+		alert("URL was not valid. Try again.")
+		# Recurse
+		create_image_puzzle(state)
+	else:
+		sendBack()
+	
 # gets a name out of a url
 def getName(url):
 	
@@ -410,85 +418,84 @@ def getName(url):
 	
 	return name
 		
-# Requires a list of args. Given a state it will return an ajax
-# request. Given an ajax request it will return a new state.
-def create_music_puzzle(args):
+def create_music_puzzle(state, sendBack):
 
-	length = len(args)
+	url = window.prompt("Enter a complete URL for a sheetMusic file. Say 'cancel' to cancel.", "music/twinkleTwinkle.txt")
+	if(url_is_valid(url)):
 	
-	if(length == 1):
-		url = window.prompt("Enter a complete URL for a sheetMusic file. Say 'cancel' to cancel.", "music/twinkleTwinkleChords.txt")
+		# When the request is recieved
+		def requestSuccess(req):
+			if(req.status == 200 or req.status == 0):
+				newState = copy_state(state)
+				# Assign name of song from json object
+				song = json.loads(req.responseText)
+				newPuzzle = Music(song["name"],song["notes"])
 		
-		if(url_is_valid(url)):
-			request = ajax.ajax()
-			request.open('GET',url,True)
+				newState["Music_Puzzles"].append(newPuzzle)
+				newState["Selected_Music"] = len(newState["Music_Puzzles"]) - 1
+				sendBack(newState)
+			else:
+				print("request failure")
 		
-			return request
-		else:
-			alert("URL was not valid. Try again.")
-			return create_music_puzzle(args)
+		request = ajax.ajax()
+		request.open('GET',url,True)
+		request.bind("complete",requestSuccess)
+		request.send()
 		
+	elif(url != "cancel"):
+		alert("URL was not valid. Try again.")
+		create_music_puzzle(state, sendBack)
 	else:
-		
-		request = args.pop()
-		state = args.pop()
-		newState = copy_state(state)
-		
-		# Assign name of song from json object
-		song = json.loads(request.responseText)
-		newPuzzle = Music(song["name"],song["notes"])
-		
-		newState["Music_Puzzles"].append(newPuzzle)
-		newState["Selected_Music"] = len(newState["Music_Puzzles"]) - 1
-		
-		return newState
+		sendBack()
 
-def addImageTransformation(transformation, state):
+def addImageTransformation(state, sendBack, transformation):
 	newState = copy_state(state)
 	
 	# Add transform to newState list
 	newState["Image_Puzzles"][newState["Selected_Image"]].add_transform(transformation)
 
-	return newState
+	sendBack(newState)
 	
-def addMusicTransformation(transformation,state):
+def addMusicTransformation(state, transformation):
 	newState = copy_state(state)
 	
 	# Add transform to newState list
 	newState["Music_Puzzles"][newState["Selected_Music"]].add_transform(transformation)
-	return newState
+	sendBack(newState)
 	
 #</COMMON_CODE>		
 
 #<OPERATORS>
-#Method that can be called to set the Operators 
-#of the current Role given the current State
+# Method that can be called to set the Operators 
+# of the current Role given the current State.
+# Each operators state transfer must have a callback function defined.
 def set_operators(state):
-	# Sendback is the function given by the client which recieves the modified state
+
+	# Sendback is the function given by the client which receives the modified state
 	sb = None
+	
 	role_operators =\
 		[Operator("Change Role to " + role + ".",
 			lambda state, r = role: state['Role'] is not r,
-			lambda state, r = role: change_role(state, r))
+			lambda state, sb, r = role: change_role(state, sb, r))
 		for role in ["Architect", "Image Puzzle", "Music Puzzle", "Rules"]] 
 	if (state['Role'] == "Architect"):
 		selection_operators =\
 			[Operator("Switch to room numbered " + str(num + 1) + " for editing.",
 				lambda state, n = num: n is not state["Selected_Room"],
-				# Added callback maybe it will work
 				lambda state, sb, n = num: change_room_selection(state,sb,n))
 			for num in range(9)]
 
 		door_operators =\
 			[Operator("Add door to current room on " + cardinal + " wall.",
 				lambda state, c = cardinal: doors_is_valid(state, c),
-				lambda state, c = cardinal: add_door_operator(state, state["Selected_Room"], c))
+				lambda state, sb, c = cardinal: add_door_operator(state, sb, state["Selected_Room"], c))
 			for cardinal in ['N', 'S', 'E', 'W']]		
 
 		wallpaper_operators =\
 			Operator("Add wallpaper to current room.",
 				lambda state: True,
-				lambda state: add_wallpaper_to_room(state, state["Selected_Room"]))
+				lambda state, sb: add_wallpaper_to_room(state, sb, state["Selected_Room"]))
 					
 		OPERATORS = selection_operators	+ door_operators + wallpaper_operators + role_operators
 		
@@ -499,33 +506,33 @@ def set_operators(state):
 		selection_operators =\
 			[Operator("Switch to puzzle " + str(num + 1) + ", \"" + state["Image_Puzzles"][num].name + ",\" for editing",
 				lambda state, n = num: n < len(state["Image_Puzzles"]) and len(state["Image_Puzzles"]) > 1 and n != state["Selected_Image"],
-				lambda state, n = num: change_image_puzzle_selection(n, state))
+				lambda state, sb, n = num: change_image_puzzle_selection(state, sb, n))
 			for num in range(numOfPuzzles)]
 		
 		create_new_puzzle =\
 			Operator("Create a new image puzzle.",
 				lambda state: True,
-				lambda state: create_image_puzzle(state))
+				lambda state, sb: create_image_puzzle(state, sb))
 		horiz_flip =\
 			Operator("Flip the image horizontally.",
 				lambda state: state["Selected_Image"] > -1,
-				lambda state: addImageTransformation("horizFlip", state))
+				lambda state, sb: addImageTransformation(state, sb,"horizFlip"))
 		vert_flip =\
 			Operator("Flip the image vertically.",
 				lambda state: state["Selected_Image"] > -1,
-				lambda state: addImageTransformation("vertFlip", state))
+				lambda state, sb: addImageTransformation(state, sb, "vertFlip"))
 		shuff_rows =\
 			Operator("Shuffle the rows of the image.",
 				lambda state: state["Selected_Image"] > -1,
-				lambda state: addImageTransformation("shuffleRows", state))
+				lambda state, sb: addImageTransformation(state, sb, "shuffleRows"))
 		invs_shuff_rows =\
 			Operator("Invert Row shuffling",
 				lambda state: state["Selected_Image"] > -1,
-				lambda state: addImageTransformation("shuffleRowsInverse", state))
+				lambda state, sb: addImageTransformation(state, sb, "shuffleRowsInverse"))
 		shuff_cols =\
 			Operator("Shuffle the columns of the image.",
 				lambda state: state["Selected_Image"] > -1,
-				lambda state: addImageTransformation("shuffleColumns", state))
+				lambda state, sb: addImageTransformation(state, sb, "shuffleColumns"))
 				
 		OPERATORS = selection_operators + role_operators + create_new_puzzle + horiz_flip + vert_flip + shuff_rows + invs_shuff_rows + shuff_cols
 		
@@ -536,44 +543,43 @@ def set_operators(state):
 		selection_operators =\
 			[Operator("Switch to puzzle " + str(num + 1) + ", \"" + state["Music_Puzzles"][num].name + "\" for editing.",
 				lambda state, n = num: n < len(state["Music_Puzzles"]) and len(state["Music_Puzzles"]) > 1 and n != state["Selected_Music"],
-				lambda state, n = num: change_music_puzzle_selection(n, state))
+				lambda state, sb, n = num: change_music_puzzle_selection(state, sb, n))
 			for num in range(numOfPuzzles)]
 		
 		create_new_puzzle =\
 			Operator("Create a new music puzzle.",
 				lambda state: True,
-				lambda state: create_music_puzzle(state),
-				specialHandler = "async")
+				lambda state, sb: create_music_puzzle(state,sb))
 		
 		increase_pitch =\
 			Operator("Increase pitch of song",
 				lambda state: state["Selected_Music"] > -1,
-				lambda state: addMusicTransformation("increasePitch", state))
+				lambda state, sb: addMusicTransformation(state, sb, "increasePitch"))
 		
 		decrease_pitch =\
 			Operator("Decrease pitch of song",
 				lambda state: state["Selected_Music"] > -1,
-				lambda state: addMusicTransformation("decreasePitch", state))
+				lambda state, sb: addMusicTransformation(state, sb, "decreasePitch"))
 		
 		increase_tempo =\
 			Operator("Increase tempo of song",
 				lambda state: state["Selected_Music"] > -1,
-				lambda state: addMusicTransformation("increaseTempo", state))
+				lambda state, sb: addMusicTransformation(state, sb, "increaseTempo"))
 		
 		decrease_tempo =\
 			Operator("Decrease tempo of song",
 				lambda state: state["Selected_Music"] > -1,
-				lambda state: addMusicTransformation("decreaseTempo", state))
+				lambda state, sb: addMusicTransformation(state, sb, "decreaseTempo"))
 
 		shuffle_notes =\
 			Operator("Shuffle notes of song",
 				lambda state: state["Selected_Music"] > -1,
-				lambda state: addMusicTransformation("shuffleNotes", state))
+				lambda state, sb: addMusicTransformation(state, sb, "shuffleNotes"))
 
 		reverse_notes =\
 			Operator("Reverse notes of song",
 				lambda state: state["Selected_Music"] > -1,
-				lambda state: addMusicTransformation("reverseNotes",state))
+				lambda state, sb: addMusicTransformation(state, sb, "reverseNotes"))
 		
 		OPERATORS = selection_operators + role_operators  + create_new_puzzle + increase_tempo + decrease_tempo + shuffle_notes + increase_pitch + decrease_pitch + reverse_notes        
 	
@@ -595,7 +601,7 @@ INITIAL_STATE['Music_Puzzles'] = []
 INITIAL_STATE['Selected_Room'] = 0
 INITIAL_STATE['Selected_Image'] = -1
 INITIAL_STATE['Selected_Music'] = -1
-INITIAL_STATE['Role'] = "Architect"
+INITIAL_STATE['Role'] = "Music Puzzle"
 INITIAL_STATE['Operators'] = set_operators(INITIAL_STATE)	
 
 
