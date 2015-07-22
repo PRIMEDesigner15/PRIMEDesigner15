@@ -64,6 +64,7 @@ def repopulate_operator_choices(current_state):
 			item.disabled = True
 			item.selected = False
 
+
 			
 def handleApplyButtonClick(evt):
 	# get selected operator.
@@ -76,12 +77,26 @@ def handleApplyButtonClick(evt):
 	try:
 
 		if(op.specialHandler is None):
+		
+			def recieveNewState(state):
+				#print(state)
+				new_state = state
+				current_state = new_state
+				render_state(current_state)
+				finalize_state(current_state)
+				
+			# Gives the state transfer the new state.
+			# recieve new state is the callback called by 
+			# PRIMEDesigner15 after it executes
+			alert("got here 1")
+			print(recieveNewState)
+			op.state_transf(current_state,recieveNewState)
+			#alert("got here 2")
+			#new_state = op.state_transf(current_state)
+			#current_state = new_state
+			#render_state(current_state)
 			
-			new_state = op.state_transf(current_state)
-			current_state = new_state
-			render_state(current_state)
-			
-			finalize_state(current_state)
+			#finalize_state(current_state)
 			
 		else:
 			

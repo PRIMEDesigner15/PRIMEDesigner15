@@ -344,10 +344,12 @@ def url_is_valid(url):
 		return False
 	else:
 		return False
-	
-def change_room_selection(state, room_num):
+
+# Changes which room the user selects. Then calls the callback function, passing it the new state.
+def change_room_selection(state,sendBack,room_num):
 	newState = copy_state(state)
 	newState["Selected_Room"] = room_num
+	sendBack(newState)
 	return newState
 
 def change_image_puzzle_selection(puzzle_num, state):
@@ -459,19 +461,22 @@ def addMusicTransformation(transformation,state):
 #</COMMON_CODE>		
 
 #<OPERATORS>
-def set_operators(state):
 #Method that can be called to set the Operators 
 #of the current Role given the current State
+def set_operators(state):
+	# Sendback is the function given by the client which recieves the modified state
+	sb = None
 	role_operators =\
 		[Operator("Change Role to " + role + ".",
 			lambda state, r = role: state['Role'] is not r,
 			lambda state, r = role: change_role(state, r))
-		for role in ["Architect", "Image Puzzle", "Music Puzzle", "Rules"]] 			
+		for role in ["Architect", "Image Puzzle", "Music Puzzle", "Rules"]] 
 	if (state['Role'] == "Architect"):
 		selection_operators =\
 			[Operator("Switch to room numbered " + str(num + 1) + " for editing.",
 				lambda state, n = num: n is not state["Selected_Room"],
-				lambda state, n = num: change_room_selection(state, n))
+				# Added callback maybe it will work
+				lambda state, sb, n = num: change_room_selection(state,sb,n))
 			for num in range(9)]
 
 		door_operators =\
@@ -590,7 +595,7 @@ INITIAL_STATE['Music_Puzzles'] = []
 INITIAL_STATE['Selected_Room'] = 0
 INITIAL_STATE['Selected_Image'] = -1
 INITIAL_STATE['Selected_Music'] = -1
-INITIAL_STATE['Role'] = "Image Puzzle"
+INITIAL_STATE['Role'] = "Architect"
 INITIAL_STATE['Operators'] = set_operators(INITIAL_STATE)	
 
 
