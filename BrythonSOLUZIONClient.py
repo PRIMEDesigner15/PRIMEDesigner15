@@ -7,7 +7,7 @@ from browser import doc, alert, html, console
 #import PRIMEDesigner15VisForBrython
 from PRIMEDesigner15VisForBrython import set_up_gui as set_up_user_interface
 from PRIMEDesigner15VisForBrython import render_state_svg_graphics as render_state
-from PRIMEDesigner15VisForBrython import set_up_loading_div, show_loading, hide_loading
+from PRIMEDesigner15VisForBrython import set_up_loading_div, set_up_black_overlay, show_loading, hide_loading
 from PRIMEDesigner15 import INITIAL_STATE, set_operators
 
 
@@ -18,7 +18,7 @@ RESET_BUTTON = None
 BACKTRACK_BUTTON = None
 overlayWindow = None
 Operators = None
-#Operators = INITIAL_STATE["Operators"]
+
 
 def printStack(state_stack):
 	if (len(state_stack) > 0 ):
@@ -64,8 +64,15 @@ def repopulate_operator_choices(current_state):
 			item.disabled = True
 			item.selected = False
 
-
-			
+def recieveNewState(state = None):
+	global current_state
+	alert("sent back")
+	if(state is not None):
+		new_state = state
+		current_state = new_state
+		render_state(current_state)
+		finalize_state(current_state)
+		
 def handleApplyButtonClick(evt):
 	# get selected operator.
 	global Operators, opSelect, current_state, STATE_STACK
@@ -74,18 +81,9 @@ def handleApplyButtonClick(evt):
 	# Get Operators
 	i = opSelect.selectedIndex
 	op = Operators[i]
-	show_loading()
+	#sendBack = recieveNewState
+	
 	try:
-
-		def recieveNewState(state = None):
-			hide_loading()
-			if(state is not None):
-				#print(state)
-				new_state = state
-				current_state = new_state
-				render_state(current_state)
-				finalize_state(current_state)
-				
 				
 		# Gives the state transfer function the new state.
 		# receiveNewState that you see above
@@ -107,16 +105,6 @@ def finalize_state(current_state):
 	BACKTRACK_BUTTON.disabled = False
 	RESET_BUTTON.disabled = False
 	repopulate_operator_choices(current_state)
-
-def set_up_status_line():
-	global gui, statusline
-	statuslinediv = html.DIV(Id="statuslinediv", style={"backgroundColor":"#CCCCFF"})
-	statuslabel = html.I("Status Line: ")
-	statusline = html.B(Id="statustext")
-	statusline.text="Solving Is Open"
-	statuslinediv <= statuslabel
-	statuslinediv <= statusline
-	return statuslinediv
 
 def handleresetbuttonclick(e):
 	initialize()
@@ -166,10 +154,12 @@ def initialize():
 # Operators
 Operators = INITIAL_STATE["Operators"]
 opSelectdiv = set_up_Operators_interface()
-statuslinediv = set_up_status_line()
-set_up_user_interface(opSelectdiv, statuslinediv) # Handled in separate Python file.
-set_up_loading_div()
+
 reset_and_backtrack_div = set_up_reset_and_backtrack_div()
-statuslinediv <= reset_and_backtrack_div
+set_up_user_interface(opSelectdiv, reset_and_backtrack_div) # Handled in separate Python file.
+
+set_up_black_overlay()
+set_up_loading_div()
+
 	
 initialize()

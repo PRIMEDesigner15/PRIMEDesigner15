@@ -26,6 +26,11 @@ PROBLEM_DESC=\
 
 #<COMMON_CODE>
 
+BRYTHON = True
+
+if(BRYTHON):
+	from PRIMEDesigner15VisForBrython import hide_loading, show_loading, add_puzzle_menu
+
 from browser import document, window, alert, console, ajax
 from javascript import JSObject, JSConstructor
 import time, json
@@ -310,6 +315,16 @@ def doors_is_valid(state, side):
 			return True
 	else:
 		return False
+def add_puzzle_operator(state, sendBack, room_num,side):		
+	alert("add puzzle")
+	def processMenu(state,cardinal,puzzle):
+		print(cardinal)
+		print(puzzle)
+	add_puzzle_menu(state,processMenu)
+	pass
+
+def puzzles_is_valid(state, side):
+	return True
 		
 #def add_music_puzzle_to_room(state, room_num):
 		
@@ -422,7 +437,7 @@ def create_music_puzzle(state, sendBack):
 
 	url = window.prompt("Enter a complete URL for a sheetMusic file. Say 'cancel' to cancel.", "music/twinkleTwinkle.txt")
 	if(url_is_valid(url)):
-	
+		show_loading()
 		# When the request is recieved
 		def requestSuccess(req):
 			if(req.status == 200 or req.status == 0):
@@ -433,6 +448,7 @@ def create_music_puzzle(state, sendBack):
 		
 				newState["Music_Puzzles"].append(newPuzzle)
 				newState["Selected_Music"] = len(newState["Music_Puzzles"]) - 1
+				hide_loading()
 				sendBack(newState)
 			else:
 				print("request failure")
@@ -456,7 +472,7 @@ def addImageTransformation(state, sendBack, transformation):
 
 	sendBack(newState)
 	
-def addMusicTransformation(state, transformation):
+def addMusicTransformation(state, sendBack, transformation):
 	newState = copy_state(state)
 	
 	# Add transform to newState list
@@ -496,8 +512,14 @@ def set_operators(state):
 			Operator("Add wallpaper to current room.",
 				lambda state: True,
 				lambda state, sb: add_wallpaper_to_room(state, sb, state["Selected_Room"]))
+				
+		add_puzzle_operators =\
+			Operator("Add a puzzle to current room",
+				lambda state: puzzles_is_valid(state),
+				lambda state, sb: add_puzzle_operator(state, sb))
+				
 					
-		OPERATORS = selection_operators	+ door_operators + wallpaper_operators + role_operators
+		OPERATORS = selection_operators	+ door_operators + wallpaper_operators + add_puzzle_operators +  role_operators
 		
 	elif(state['Role'] == "Image Puzzle"):
 		
@@ -601,7 +623,7 @@ INITIAL_STATE['Music_Puzzles'] = []
 INITIAL_STATE['Selected_Room'] = 0
 INITIAL_STATE['Selected_Image'] = -1
 INITIAL_STATE['Selected_Music'] = -1
-INITIAL_STATE['Role'] = "Music Puzzle"
+INITIAL_STATE['Role'] = "Architect"
 INITIAL_STATE['Operators'] = set_operators(INITIAL_STATE)	
 
 

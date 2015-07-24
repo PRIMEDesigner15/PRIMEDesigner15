@@ -39,16 +39,15 @@ LAST_STATE = None # cache of current state for use in
 LINE_WIDTH = 4
 
 # Sets up the gui
-def set_up_gui(opselectdiv, statuslinediv):
+def set_up_gui(opselectdiv, reset_and_backtrack_div):
 	global gui
 	gui = html.DIV(Id = "thegui")
 	render_state()
 	gui <= opselectdiv
-	gui <= statuslinediv
+	gui <= reset_and_backtrack_div
 	document <= gui
 
-# Sets up the loading div for asynchronous calls
-def set_up_loading_div():
+def set_up_black_overlay():
 	
 	gui = document.getElementById("thegui")
 	blackOverlay = html.DIV(id = "blackOverlay",
@@ -65,6 +64,11 @@ def set_up_loading_div():
 								'opacity' : '.80',
 								'filter' : 'alpha(opacity=80)'
 								})
+	
+	gui <= blackOverlay
+	
+# Sets up the loading div for asynchronous calls
+def set_up_loading_div():
 
 	width = 200
 	height = 100
@@ -91,24 +95,114 @@ def set_up_loading_div():
 								'margin' : 'auto'
 								})
 
+
 	loadingDiv <= loadingImg						
 	gui <= loadingDiv
-	gui <= blackOverlay
 	
+# Returns a form containing a list of radio button elements 
+# with no ids for each of the four cardinal directions
+def create_direction_form():
+	alert("got here 2")
+	# List comprehension to construct inputs
+	directionForm = html.FORM()
+	directionInputs =\
+		[html.INPUT(type="radio", name = 'direction', value = nme, style = {"display" : 'inline'} )
+		for nme in ["North Wall", "East Wall", "South Wall", "West Wall"]]
+	
+	# Make first one checked
+	directionInputs[0].checked = True
+	
+	# Append radio buttons to form, 
+	# some string manipulation to make the values easier to handle
+	for radioButton in directionInputs:
+		directionForm <= radioButton
+		directionForm <= html.P(radioButton.value, style = {"display" : "inline", "padding-right" : "10px"})
+		radioButton.value = radioButton.value[0]
+		
+	return directionForm
 
-def show_loading():
-	loadingDiv = document.getElementById("loadingDiv")
+# Removes the add puzzle menu from the gui
+def destroy_add_puzzle_menu(state):
+	menu = document.getElementById("addPuzzleMenu")
+	gui.removeChild(menu)
+
+# Creates an architect menu with choices of which puzzle to select.
+# calls a callback function, sendBack, when the user hits a button.
+def add_puzzle_menu(state, sendBack):
+	musicPuzzles = state["Music_Puzzles"]
+	imagePuzzles = state["Image_Puzzles"]
+	
+	width = 200
+	height = 200
+	menu = html.DIV(id = "addPuzzleMenu",
+							style = {
+								#'display' : 'none',
+								'position' : 'fixed',
+								#'width' : str(width) + "px",
+								#'height' : str(height) + "px",
+								'padding' : '10px',
+								'background' : 'white',
+								'border-radius' : '10px',
+								'border' : '5px solid grey',
+								'left' : '50%',
+								'top' : '50%',
+								'margin-top' : "-" + str(1/2 * height) + 'px',
+								'margin-left' : "-" + str(1/2 * width) + 'px',
+								'z-index' : '1003',
+								'overflow' : 'auto'
+							})
+	title1 = html.P(id="addPuzzleTitle1", style = {"margin-top" : '0'})
+	title1.innerHTML = "Place Puzzle:"
+	
+	title2 = html.P(id="addPuzzleTitle2")
+	title2.innerHTML = "Which puzzle would you like to place?"
+	
+	title3 = html.P(id="addPuzzleTitle3")
+	title3.innerHTML = "Which wall of the room?"
+	
+	direction = "N"
+	alert("got here1")
+	directionForm = create_direction_form()
+	#print(directionForm)
+	
+	def destroyAndSendBack():
+		destroy_add_puzzle_menu()
+		sendBack(state,direction,"lolol")
+	
+	okButton = html.BUTTON(id = "addPuzzleOkButton")
+	okButton.innerHTML = "Place Puzzle"
+	okButton.onclick = destroyAndSendBack
+	
+	cancelButton = html.BUTTON(id = "addPuzzleCancelButton")
+	cancelButton.innerHTML = "Cancel"
+	cancelButton.onclick = destroy_add_puzzle_menu
+	
+	# Append
+	menu <= title1
+	menu <= title2
+	menu <= title3
+	menu <= directionForm
+	menu <= okButton
+	menu <= cancelButton
+	gui <= menu
+	alert("appended")
+	
+def show_overlay():
 	blackOverlay = document.getElementById("blackOverlay")
-	
-	loadingDiv.style.display = "initial"
 	blackOverlay.style.display = "initial"
-
+	
+def show_loading():
+	show_overLay()
+	loadingDiv = document.getElementById("loadingDiv")
+	loadingDiv.style.display = "initial"
+	
+def hide_overlay():
+	blackOverlay = document.getElementById("blackOverlay")
+	blackOverlay.style.display = "none"
+	
 def hide_loading():
 	loadingDiv = document.getElementById("loadingDiv")
-	blackOverlay = document.getElementById("blackOverlay")
-	
 	loadingDiv.style.display = "none"
-	blackOverlay.style.display = "none"
 
 
 # renders the state
