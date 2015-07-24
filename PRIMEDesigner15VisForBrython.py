@@ -100,9 +100,10 @@ def set_up_loading_div():
 	gui <= loadingDiv
 	
 # Returns a form containing a list of radio button elements 
-# with no ids for each of the four cardinal directions
+# with no ids for each of the four cardinal directions AND
+# descriptive paragraph tags in between the radio buttons.
 def create_direction_form():
-	alert("got here 2")
+
 	# List comprehension to construct inputs
 	directionForm = html.FORM()
 	directionInputs =\
@@ -162,11 +163,20 @@ def add_puzzle_menu(state, sendBack):
 	
 	direction = "N"
 	alert("got here1")
+	
+		
 	directionForm = create_direction_form()
 	#print(directionForm)
 	
 	def destroyAndSendBack():
 		destroy_add_puzzle_menu()
+		
+		# Get which direction is checked in the directionForm
+		for elt in directionForm:
+			if(elt.tagName == 'INPUT'):
+				if(elt.checked == True):
+					direction = elt.value
+				
 		sendBack(state,direction,"lolol")
 	
 	okButton = html.BUTTON(id = "addPuzzleOkButton")
