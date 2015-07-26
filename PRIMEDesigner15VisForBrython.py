@@ -123,8 +123,8 @@ def create_direction_form():
 	return directionForm
 
 # Removes the add puzzle menu from the gui
-def destroy_add_puzzle_menu(state):
-	menu = document.getElementById("addPuzzleMenu")
+def destroy_menu(menuName):
+	menu = document.getElementById(menuName)
 	gui.removeChild(menu)
 
 # Creates an architect menu with choices of which puzzle to select.
@@ -169,7 +169,7 @@ def add_puzzle_menu(state, sendBack):
 	#print(directionForm)
 	
 	def destroyAndSendBack():
-		destroy_add_puzzle_menu()
+		destroy_menu("addPuzzleMenu")
 		
 		# Get which direction is checked in the directionForm
 		for elt in directionForm:
@@ -185,7 +185,7 @@ def add_puzzle_menu(state, sendBack):
 	
 	cancelButton = html.BUTTON(id = "addPuzzleCancelButton")
 	cancelButton.innerHTML = "Cancel"
-	cancelButton.onclick = destroy_add_puzzle_menu
+	cancelButton.onclick = lambda e: destroy_menu("addPuzzleMenu")
 	
 	# Append
 	menu <= title1
@@ -196,6 +196,51 @@ def add_puzzle_menu(state, sendBack):
 	menu <= cancelButton
 	gui <= menu
 	alert("appended")
+	
+def create_rule_menu(state, sendBack):
+	rules = state["Rules"]
+	
+	width = 200
+	height = 200
+	menu = html.DIV(id = "createRuleMenu",
+							style = {
+								#'display' : 'none',
+								'position' : 'fixed',
+								#'width' : str(width) + "px",
+								#'height' : str(height) + "px",
+								'padding' : '10px',
+								'background' : 'white',
+								'border-radius' : '10px',
+								'border' : '5px solid grey',
+								'left' : '50%',
+								'top' : '50%',
+								'margin-top' : "-" + str(1/2 * height) + 'px',
+								'margin-left' : "-" + str(1/2 * width) + 'px',
+								'z-index' : '1003',
+								'overflow' : 'auto'
+							})
+
+	title1 = html.P(id="createRuleTitle1", style = {"margin-top" : '0'})
+	title1.innerHTML = "New Rule:"							
+
+	def destroyAndSendBack():
+		destroy_menu("createRuleMenu")
+		
+		# Get which direction is checked in the directionForm
+		for elt in directionForm:
+			if(elt.tagName == 'INPUT'):
+				if(elt.checked == True):
+					direction = elt.value
+				
+		sendBack(state,direction,"lolol")
+	
+	okButton = html.BUTTON(id = "createRuleOkButton")
+	okButton.innerHTML = "Create Rule"
+	okButton.onclick = destroyAndSendBack
+	
+	cancelButton = html.BUTTON(id = "createRuleCancelButton")
+	cancelButton.innerHTML = "Cancel"
+	cancelButton.onclick = lambda e: destroy_menu("createRuleMenu")
 	
 def show_overlay():
 	blackOverlay = document.getElementById("blackOverlay")

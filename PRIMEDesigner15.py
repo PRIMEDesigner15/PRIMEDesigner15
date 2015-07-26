@@ -231,6 +231,24 @@ class Music:
 			noteCopy.append(note)
 		return Music(self.name, noteCopy, self.transformList)
 	
+class Rule:
+	def __init__(self, name = "defaultName", causeCondition, effectCondition, isActive):
+		
+		self.name = name
+		
+		self.causeCondition = causeCondition
+		
+		self.effectCondition = effectCondition
+		
+		self.isActive = isActive
+'''
+If solve puzzle then open/close door
+If enter room then open/close door
+If solve puzzle then message
+If enter room then message
+
+'''		
+	
 class Operator:
   
 	def __init__(self, name, precond, state_transf):
@@ -606,7 +624,12 @@ def set_operators(state):
 		OPERATORS = selection_operators + role_operators  + create_new_puzzle + increase_tempo + decrease_tempo + shuffle_notes + increase_pitch + decrease_pitch + reverse_notes        
 	
 	elif(state['Role'] == "Rules"):
-		OPERATORS = role_operators
+		create_rule =\
+			Operator("Create new Rule.",
+				lambda state: True,
+				lambda state, sb: createRule(state, sb))
+				
+		OPERATORS = role_operators + create_rule
 	else:
 		alert("unsupported role")
 	
@@ -620,6 +643,9 @@ INITIAL_STATE['Rooms'] = []
 INITIAL_STATE['Doors'] = []
 INITIAL_STATE['Image_Puzzles'] = []
 INITIAL_STATE['Music_Puzzles'] = []
+INITIAL_STATE['Rules'] = []
+#INITIAL_STATE['Causes'] = []
+#INITIAL_STATE['Effects'] = []
 INITIAL_STATE['Selected_Room'] = 0
 INITIAL_STATE['Selected_Image'] = -1
 INITIAL_STATE['Selected_Music'] = -1
