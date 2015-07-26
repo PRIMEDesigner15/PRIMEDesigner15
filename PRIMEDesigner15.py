@@ -209,7 +209,7 @@ class Puzzle:
 	def copy(self):
 		return Puzzle(self.name,self.url, self.transformList)
 		
-class Music:
+class musicPuzzle:
 
 	def __init__(self, name = "defaultName", notes, transformList = []):
 		
@@ -229,7 +229,7 @@ class Music:
 		noteCopy = []
 		for note in self.notes:
 			noteCopy.append(note)
-		return Music(self.name, noteCopy, self.transformList)
+		return musicPuzzle(self.name, noteCopy, self.transformList)
 	
 class Rule:
 	def __init__(self, name = "defaultName", causeCondition, effectCondition, isActive):
@@ -452,17 +452,18 @@ def getName(url):
 	return name
 		
 def create_music_puzzle(state, sendBack):
-
 	url = window.prompt("Enter a complete URL for a sheetMusic file. Say 'cancel' to cancel.", "music/twinkleTwinkle.txt")
 	if(url_is_valid(url)):
+		alert("got here1")
 		show_loading()
+		alert("got here2")
 		# When the request is recieved
 		def requestSuccess(req):
 			if(req.status == 200 or req.status == 0):
 				newState = copy_state(state)
 				# Assign name of song from json object
 				song = json.loads(req.responseText)
-				newPuzzle = Music(song["name"],song["notes"])
+				newPuzzle = musicPuzzle(song["name"],song["notes"])
 		
 				newState["Music_Puzzles"].append(newPuzzle)
 				newState["Selected_Music"] = len(newState["Music_Puzzles"]) - 1
@@ -475,7 +476,7 @@ def create_music_puzzle(state, sendBack):
 		request.open('GET',url,True)
 		request.bind("complete",requestSuccess)
 		request.send()
-		
+	
 	elif(url != "cancel"):
 		alert("URL was not valid. Try again.")
 		create_music_puzzle(state, sendBack)
