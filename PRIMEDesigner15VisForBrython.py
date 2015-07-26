@@ -152,6 +152,7 @@ def add_puzzle_menu(state, sendBack):
 								'z-index' : '1003',
 								'overflow' : 'auto'
 							})
+							
 	title1 = html.P(id="addPuzzleTitle1", style = {"margin-top" : '0'})
 	title1.innerHTML = "Place Puzzle:"
 	
@@ -197,20 +198,25 @@ def add_puzzle_menu(state, sendBack):
 	gui <= menu
 	alert("appended")
 	
+# Display the black overlay
 def show_overlay():
 	blackOverlay = document.getElementById("blackOverlay")
 	blackOverlay.style.display = "initial"
 	
+# Show the loading screen and overlay
 def show_loading():
-	show_overLay()
+	show_overlay()
 	loadingDiv = document.getElementById("loadingDiv")
 	loadingDiv.style.display = "initial"
 	
+# Hide the black overlay
 def hide_overlay():
 	blackOverlay = document.getElementById("blackOverlay")
 	blackOverlay.style.display = "none"
-	
+
+# Hide the loading screen and overlay
 def hide_loading():
+	hide_overlay()
 	loadingDiv = document.getElementById("loadingDiv")
 	loadingDiv.style.display = "none"
 
