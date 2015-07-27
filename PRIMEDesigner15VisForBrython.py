@@ -124,11 +124,12 @@ def create_direction_form():
 
 # Creates an image puzzle list and a music puzzle list.
 # Returns a div containing both the lists
-def create_puzzle_list(state):
+def create_puzzle_lists(state):
 	lists = html.DIV()
 	imageList = html.DIV()
 	musicList = html.DIV()
 	
+
 	title1 = html.P("Image Puzzles")
 	title2 = html.P("Music Puzzles")
 
@@ -146,7 +147,8 @@ def create_puzzle_list(state):
 			
 			listDiv <= name
 			imageList <= listDiv
-			
+	
+	'''		
 	# Create the music puzzle divs
 	if(len(state["Music_Puzzle"]) == 0):
 		title3 = html.P("No music puzzles created")
@@ -154,15 +156,15 @@ def create_puzzle_list(state):
 		for musicPuzzle in state["Music_Puzzles"]:
 			
 			listDiv = html.DIV()
-			name = html.P(imagePuzzle.name) 
+			name = html.P(musicPuzzle.name)
 			
-	
-	
-	
+			listDiv <= name
+			musicList <= listDiv
+		
 	lists <= imageList
 	lists <= musicList
 	
-
+	return lists'''
 	
 	
 	
@@ -209,7 +211,10 @@ def add_puzzle_menu(state, sendBack):
 	direction = "N"
 	alert("got here1")
 	
-		
+	# Create the list of puzzles for the user to chose from
+	create_puzzle_lists(state)
+	
+	
 	directionForm = create_direction_form()
 	#print(directionForm)
 	

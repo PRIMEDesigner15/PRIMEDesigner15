@@ -211,7 +211,7 @@ class ImagePuzzle:
 		
 class MusicPuzzle:
 
-	def __init__(self, name = "defaultName", notes, transformList = []):
+	def __init__(self, name = "defaultName", notes = [], transformList = []):
 		
 		self.name = name
 		
@@ -648,7 +648,7 @@ INITIAL_STATE['Rules'] = []
 INITIAL_STATE['Selected_Room'] = 0
 INITIAL_STATE['Selected_Image'] = -1
 INITIAL_STATE['Selected_Music'] = -1
-INITIAL_STATE['Role'] = "Image Puzzle"
+INITIAL_STATE['Role'] = "Architect"
 INITIAL_STATE['Operators'] = set_operators(INITIAL_STATE)	
 
 
