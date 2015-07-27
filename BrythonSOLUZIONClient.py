@@ -66,7 +66,6 @@ def repopulate_operator_choices(current_state):
 
 def recieveNewState(state = None):
 	global current_state
-	alert("sent back")
 	if(state is not None):
 		new_state = state
 		current_state = new_state

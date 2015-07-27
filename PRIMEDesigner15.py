@@ -454,9 +454,7 @@ def getName(url):
 def create_music_puzzle(state, sendBack):
 	url = window.prompt("Enter a complete URL for a sheetMusic file. Say 'cancel' to cancel.", "music/twinkleTwinkle.txt")
 	if(url_is_valid(url)):
-		alert("got here1")
 		show_loading()
-		alert("got here2")
 		# When the request is recieved
 		def requestSuccess(req):
 			if(req.status == 200 or req.status == 0):
@@ -650,7 +648,7 @@ INITIAL_STATE['Rules'] = []
 INITIAL_STATE['Selected_Room'] = 0
 INITIAL_STATE['Selected_Image'] = -1
 INITIAL_STATE['Selected_Music'] = -1
-INITIAL_STATE['Role'] = "Architect"
+INITIAL_STATE['Role'] = "Image Puzzle"
 INITIAL_STATE['Operators'] = set_operators(INITIAL_STATE)	
 
 
