@@ -193,7 +193,7 @@ class Door:
 	def copy(self):
 		return Door(self.isOpen, self.url)
 
-class Puzzle:
+class ImagePuzzle:
 
 	def __init__(self, name, url, transformList = []):
 		
@@ -207,9 +207,9 @@ class Puzzle:
 		self.transformList.append(transform)
 	
 	def copy(self):
-		return Puzzle(self.name,self.url, self.transformList)
+		return ImagePuzzle(self.name,self.url, self.transformList)
 		
-class musicPuzzle:
+class MusicPuzzle:
 
 	def __init__(self, name = "defaultName", notes, transformList = []):
 		
@@ -229,7 +229,7 @@ class musicPuzzle:
 		noteCopy = []
 		for note in self.notes:
 			noteCopy.append(note)
-		return musicPuzzle(self.name, noteCopy, self.transformList)
+		return MusicPuzzle(self.name, noteCopy, self.transformList)
 	
 class Rule:
 	def __init__(self, name = "defaultName", causeCondition, effectCondition, isActive):
@@ -419,7 +419,7 @@ def create_image_puzzle(state, sendBack):
 	
 		newState = copy_state(state)
 		name = getName(url)
-		newPuzzle = Puzzle(name,url)
+		newPuzzle = ImagePuzzle(name,url)
 		newState["Image_Puzzles"].append(newPuzzle)
 		newState["Selected_Image"] = len(newState["Image_Puzzles"]) - 1
 		sendBack(newState)
@@ -461,7 +461,7 @@ def create_music_puzzle(state, sendBack):
 				newState = copy_state(state)
 				# Assign name of song from json object
 				song = json.loads(req.responseText)
-				newPuzzle = musicPuzzle(song["name"],song["notes"])
+				newPuzzle = MusicPuzzle(song["name"],song["notes"])
 		
 				newState["Music_Puzzles"].append(newPuzzle)
 				newState["Selected_Music"] = len(newState["Music_Puzzles"]) - 1

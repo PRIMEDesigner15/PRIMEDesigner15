@@ -122,6 +122,50 @@ def create_direction_form():
 		
 	return directionForm
 
+# Creates an image puzzle list and a music puzzle list.
+# Returns a div containing both the lists
+def create_puzzle_list(state):
+	lists = html.DIV()
+	imageList = html.DIV()
+	musicList = html.DIV()
+	
+	title1 = html.P("Image Puzzles")
+	title2 = html.P("Music Puzzles")
+
+	imageList <= title1
+	musicList <= title2
+	
+	# Create the image puzzle divs
+	if(len(state["Image_Puzzles"]) == 0):
+		title3 = html.P("No image puzzles created")
+	else:
+		for imagePuzzle in state["Image_Puzzles"]:
+		
+			listDiv = html.DIV()
+			name = html.P(imagePuzzle.name)
+			
+			listDiv <= name
+			imageList <= listDiv
+			
+	# Create the music puzzle divs
+	if(len(state["Music_Puzzle"]) == 0):
+		title3 = html.P("No music puzzles created")
+	else:
+		for musicPuzzle in state["Music_Puzzles"]:
+			
+			listDiv = html.DIV()
+			name = html.P(imagePuzzle.name) 
+			
+	
+	
+	
+	lists <= imageList
+	lists <= musicList
+	
+
+	
+	
+	
 # Removes the add puzzle menu from the gui
 def destroy_menu(menuName):
 	menu = document.getElementById(menuName)
