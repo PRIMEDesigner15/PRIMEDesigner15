@@ -102,10 +102,19 @@ def set_up_loading_div():
 	loadingDiv <= loadingImg						
 	gui <= loadingDiv
 	
+# Bad 0(n) operation to check if an element is in a list
+def isWithin(item, list):
+	found = False
+	for element in list:
+		if(item == element):
+			found = True
+	return found
+
 # Returns a form containing a list of radio button elements 
 # with no ids for each of the four cardinal directions AND
 # descriptive paragraph tags in between the radio buttons.
-def create_direction_form():
+# The banned directions, given as a list of characters, will grey out their respective radioButtons
+def create_direction_form(bannedDirections = None):
 
 	# List comprehension to construct inputs
 	directionForm = html.FORM()
@@ -114,15 +123,24 @@ def create_direction_form():
 		for nme in ["North Wall", "East Wall", "South Wall", "West Wall"]]
 	
 	# Make first one checked
-	directionInputs[0].checked = True
+	#directionInputs[0].checked = True
 	
 	# Append radio buttons to form, 
 	# some string manipulation to make the values easier to handle
+	checked = False
 	for radioButton in directionInputs:
 		directionForm <= radioButton
 		directionForm <= html.P(radioButton.value, style = {"display" : "inline", "padding-right" : "10px"})
 		radioButton.value = radioButton.value[0]
 		
+		# Disable the radio button with the banned direction
+		# and make the next available radioButton checked
+		if(isWithin(radioButton.value, bannedDirections)):
+			radioButton.disabled = True
+		elif(not checked):
+			radioButton.checked = True
+			checked = True
+
 	return directionForm
 
 # Creates an image puzzle list and a music puzzle list.
@@ -201,8 +219,9 @@ def destroy_menu(menuName):
 	gui.removeChild(menu)
 
 # Creates an architect menu with choices of which puzzle to select.
+# The band direction will be disabled when the user tries to choose it.
 # calls a callback function, sendBack, when the user hits a button.
-def add_puzzle_menu(state, sendBack):
+def add_puzzle_menu(state, sendBack, bannedDirection = None):
 	musicPuzzles = state["Music_Puzzles"]
 	imagePuzzles = state["Image_Puzzles"]
 	
@@ -242,7 +261,7 @@ def add_puzzle_menu(state, sendBack):
 	lists = create_puzzle_lists(state)
 	
 	# Create Direction Form
-	directionForm = create_direction_form()
+	directionForm = create_direction_form(bannedDirection)
 	#print(directionForm)
 	
 	

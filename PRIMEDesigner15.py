@@ -290,7 +290,9 @@ def add_door_operator(state, sendBack, room_num, side):
 	newState = copy_state(state)
 	add_door_to_room(room_num, side, newState)
 	sendBack(newState)
-	
+
+# Checks if a door can be placed on a wall, meaning a door cannot already be on a wall
+# and a puzzle cannot be on the wall or on the other side of the wall.
 def doors_is_valid(state, side):
 	
 	# Reduce magic constants.
@@ -340,7 +342,7 @@ def add_puzzle_operator(state, sendBack, room_num, side):
 		print(cardinal)
 		print(puzzle)
 		#sendBack from here
-	add_puzzle_menu(state,processMenu)
+	add_puzzle_menu(state,processMenu, ['N','S','E','W'])
 
 '''
 def create_rule(state):
