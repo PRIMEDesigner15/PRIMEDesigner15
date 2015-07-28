@@ -129,8 +129,6 @@ def create_direction_form():
 # Returns a div containing both the lists
 def create_puzzle_lists(state):
 
-<<<<<<< HEAD
-=======
 	title1 = html.P("Image Puzzles:")
 	title2 = html.P("Music Puzzles:")
 
@@ -171,9 +169,7 @@ def create_puzzle_lists(state):
 	lists <= musicList
 	
 	return lists
->>>>>>> origin/master
-	
-	
+
 	
 # Removes the add puzzle menu from the gui
 def destroy_menu(menuName):
