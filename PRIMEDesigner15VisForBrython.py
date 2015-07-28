@@ -128,10 +128,10 @@ def create_direction_form():
 # Creates an image puzzle list and a music puzzle list.
 # Returns a div containing both the lists
 def create_puzzle_lists(state):
+
 	lists = html.DIV(id = "create_puzzle_lists")
 	imageList = html.DIV(id = "create_puzzle_image_list")
-	musicList = html.DIV(id = "create_puzzle_music_list")
-	
+	musicList = html.DIV(id = "Create_puzzle_music_list")
 
 	title1 = html.P("Image Puzzles:")
 	title2 = html.P("Music Puzzles:")
@@ -189,8 +189,6 @@ def add_puzzle_menu(state, sendBack):
 							style = {
 								#'display' : 'none',
 								'position' : 'fixed',
-								'width' : str(width) + "px",
-								'height' : str(height) + "px",
 								'padding' : '10px',
 								'background' : 'white',
 								'border-radius' : '10px',
@@ -217,10 +215,56 @@ def add_puzzle_menu(state, sendBack):
 	
 	# Create the list of puzzles for the user to chose from
 	lists = create_puzzle_lists(state)
-	
+	alert("gotta")
 	
 	directionForm = create_direction_form()
 	#print(directionForm)
+	
+	# Create direction form
+#----------------------------------------------------
+	lists = html.DIV(id = "create_puzzle_lists")
+	imageList = html.DIV(id = "create_puzzle_image_list")
+	musicList = html.DIV(id = "create_puzzle_music_list")
+	
+
+	title1 = html.P("Image Puzzles")
+	title2 = html.P("Music Puzzles")
+
+	imageList <= title1
+	musicList <= title2
+	
+
+	# Create the image puzzle divs
+	if(len(state["Image_Puzzles"]) == 0):
+		noPuzzlesTitle = html.P("No image puzzles created")
+		imageList <= noPuzzlesTitle
+	else:
+		for imagePuzzle in state["Image_Puzzles"]:
+		
+			listDiv = html.DIV()
+			name = html.P(imagePuzzle.name)
+			
+			listDiv <= name
+			imageList <= listDiv
+	
+	# Create the music puzzle divs
+	if(len(state["Music_Puzzles"]) == 0):
+		noPuzzlesTitle = html.P("No music puzzles created")
+		musicList <= noPuzzlesTitle
+	else:
+		for musicPuzzle in state["Music_Puzzles"]:
+			
+			listDiv = html.DIV()
+			name = html.P(musicPuzzle.name)
+			
+			listDiv <= name
+			musicList <= listDiv
+	
+	
+	lists <= imageList
+	lists <= musicList
+	
+#----------------------------------------------------
 	
 	def destroyAndSendBack():
 		
@@ -252,7 +296,6 @@ def add_puzzle_menu(state, sendBack):
 					direction = element.value
 		
 		destroy_menu("addPuzzleMenu")
-		
 		sendBack(state,direction,"lolol")
 	
 	okButton = html.BUTTON(id = "addPuzzleOkButton")
