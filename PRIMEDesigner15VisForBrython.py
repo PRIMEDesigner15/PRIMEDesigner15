@@ -273,14 +273,13 @@ def add_puzzle_menu(state, sendBack):
 			# Send back information and destroy the state
 			destroy_menu("addPuzzleMenu")
 			sendBack(state,direction,chosen)
-		
+		else:
+			alert("No puzzle selected")
 		
 		
 	okButton = html.BUTTON(id = "addPuzzleOkButton", style = {"margin-top" : "10px", "margin-right" : "10px"})
 	okButton.innerHTML = "Place Puzzle"
 	okButton.onclick = destroyAndSendBack
-	if(musLen == 0 and imgLen == 0 ):
-		okButton.disabled = True
 	
 	cancelButton = html.BUTTON(id = "addPuzzleCancelButton", style = {"margin-top" : "10px"})
 	cancelButton.innerHTML = "Cancel"

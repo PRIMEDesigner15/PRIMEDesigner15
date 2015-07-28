@@ -656,9 +656,10 @@ INITIAL_STATE['Doors'] = []
 INITIAL_STATE['Image_Puzzles'] = []
 INITIAL_STATE['Music_Puzzles'] = []
 
+'''
 # ADD A BLANK MUSIC PUZZLE FOR DEBUG PURPOSES ONLY
 INITIAL_STATE["Music_Puzzles"].append(MusicPuzzle())
-'''INITIAL_STATE["Music_Puzzles"].append(MusicPuzzle())
+INITIAL_STATE["Music_Puzzles"].append(MusicPuzzle())
 INITIAL_STATE["Music_Puzzles"].append(MusicPuzzle())
 INITIAL_STATE["Music_Puzzles"].append(MusicPuzzle())
 
