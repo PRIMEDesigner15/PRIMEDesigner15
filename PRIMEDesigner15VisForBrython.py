@@ -38,6 +38,9 @@ LAST_STATE = None # cache of current state for use in
 
 LINE_WIDTH = 4
 
+Causes = ["Enter Room"]
+Effects = ["Open Door", "Close Door", "Play Music", "Display Message"]
+
 # Sets up the gui
 def set_up_gui(opselectdiv, reset_and_backtrack_div):
 	global gui
@@ -126,6 +129,49 @@ def create_direction_form():
 # Returns a div containing both the lists
 def create_puzzle_lists(state):
 
+<<<<<<< HEAD
+=======
+	title1 = html.P("Image Puzzles:")
+	title2 = html.P("Music Puzzles:")
+
+	imageList <= title1
+	musicList <= title2
+	
+	# Create the image puzzle divs
+	if(len(state["Image_Puzzles"]) == 0):
+		noPuzzlesTitle = html.P("No image puzzles created")
+		imageList <= noPuzzlesTitle
+	else:
+		listSelect = html.SELECT()
+		listSelect.elt.id = "Image Puzzles"
+		listSelect <= html.OPTION("Unselected")
+		for imagePuzzle in state["Image_Puzzles"]:
+		
+			listSelect <= html.OPTION(imagePuzzle.name)
+			
+		imageList <= listSelect
+	
+	# Create the music puzzle divs
+	if(len(state["Music_Puzzles"]) == 0):
+		noPuzzlesTitle = html.P("No music puzzles created")
+		musicList <= noPuzzlesTitle
+	else:
+		listSelect = html.SELECT()
+		listSelect.elt.id = "Music Puzzles"
+		listSelect <= html.OPTION("Unselected")		
+		for musicPuzzle in state["Music_Puzzles"]:
+			
+			listSelect <= html.OPTION(musicPuzzle.name)
+			
+		
+		musicList <= listSelect
+	
+	
+	lists <= imageList
+	lists <= musicList
+	
+	return lists
+>>>>>>> origin/master
 	
 	
 	
@@ -224,6 +270,33 @@ def add_puzzle_menu(state, sendBack):
 	
 	def destroyAndSendBack():
 		destroy_menu("addPuzzleMenu")
+		
+		'''
+		http://cdn.meme.am/instances2/500x/980344.jpg
+		
+		
+		#Get chosen puzzle
+		console.log("here")
+		console.log(browser.document["Image Puzzles"].elt)
+		chosen = None
+		chosenImg = browser.document["Image Puzzles"].elt.value
+		chosenMus = browser.document["Music Puzzles"].elt.value
+		console.log(chosenImg)
+		console.log(chosenMus)
+		if (chosenImg == "Unselected"):
+			if (chosenMus == "Unselected"):
+				# do something
+				alert("No puzzle selected")
+			else:
+				chosen = chosenMus
+		elif (chosenMus != "Unselected"):
+			# do something
+			alert("Both types of puzzles chosen")
+		else:
+			chosen = chosenImg
+		
+		alert(chosen)
+		'''
 		
 		# Get which direction is checked in the directionForm
 		for elt in directionForm:
