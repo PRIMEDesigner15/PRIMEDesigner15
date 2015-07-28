@@ -195,7 +195,7 @@ class Door:
 
 class ImagePuzzle:
 
-	def __init__(self, name, url, transformList = []):
+	def __init__(self, name = "defaultImageName", url = "images/metalfencing.jpg", transformList = []):
 		
 		self.name = name
 		self.url = url
@@ -211,7 +211,7 @@ class ImagePuzzle:
 		
 class MusicPuzzle:
 
-	def __init__(self, name = "defaultName", notes = [], transformList = []):
+	def __init__(self, name = "defaultMusicName", notes = [], transformList = []):
 		
 		self.name = name
 		
@@ -642,6 +642,16 @@ INITIAL_STATE['Rooms'] = []
 INITIAL_STATE['Doors'] = []
 INITIAL_STATE['Image_Puzzles'] = []
 INITIAL_STATE['Music_Puzzles'] = []
+
+# ADD A BLANK MUSIC PUZZLE FOR DEBUG PURPOSES ONLY
+INITIAL_STATE["Music_Puzzles"].append(MusicPuzzle())
+INITIAL_STATE["Music_Puzzles"].append(MusicPuzzle())
+INITIAL_STATE["Music_Puzzles"].append(MusicPuzzle())
+INITIAL_STATE["Music_Puzzles"].append(MusicPuzzle())
+
+# ADD A BLANK IMAGE PUZZLE FOR DEBUG PURPOSES ONLY
+INITIAL_STATE["Image_Puzzles"].append(ImagePuzzle())
+
 INITIAL_STATE['Rules'] = []
 #INITIAL_STATE['Causes'] = []
 #INITIAL_STATE['Effects'] = []

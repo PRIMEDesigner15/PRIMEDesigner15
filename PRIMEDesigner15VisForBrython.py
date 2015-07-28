@@ -125,9 +125,9 @@ def create_direction_form():
 # Creates an image puzzle list and a music puzzle list.
 # Returns a div containing both the lists
 def create_puzzle_lists(state):
-	lists = html.DIV()
-	imageList = html.DIV()
-	musicList = html.DIV()
+	lists = html.DIV(id = "create_puzzle_lists")
+	imageList = html.DIV(id = "create_puzzle_image_list")
+	musicList = html.DIV(id = "create_puzzle_music_list")
 	
 
 	title1 = html.P("Image Puzzles")
@@ -138,7 +138,8 @@ def create_puzzle_lists(state):
 	
 	# Create the image puzzle divs
 	if(len(state["Image_Puzzles"]) == 0):
-		title3 = html.P("No image puzzles created")
+		noPuzzlesTitle = html.P("No image puzzles created")
+		imageList <= noPuzzlesTitle
 	else:
 		for imagePuzzle in state["Image_Puzzles"]:
 		
@@ -148,10 +149,10 @@ def create_puzzle_lists(state):
 			listDiv <= name
 			imageList <= listDiv
 	
-	'''		
 	# Create the music puzzle divs
-	if(len(state["Music_Puzzle"]) == 0):
-		title3 = html.P("No music puzzles created")
+	if(len(state["Music_Puzzles"]) == 0):
+		noPuzzlesTitle = html.P("No music puzzles created")
+		musicList <= noPuzzlesTitle
 	else:
 		for musicPuzzle in state["Music_Puzzles"]:
 			
@@ -160,11 +161,12 @@ def create_puzzle_lists(state):
 			
 			listDiv <= name
 			musicList <= listDiv
-		
+	
+	
 	lists <= imageList
 	lists <= musicList
 	
-	return lists'''
+	return lists
 	
 	
 	
@@ -185,8 +187,8 @@ def add_puzzle_menu(state, sendBack):
 							style = {
 								#'display' : 'none',
 								'position' : 'fixed',
-								#'width' : str(width) + "px",
-								#'height' : str(height) + "px",
+								'width' : str(width) + "px",
+								'height' : str(height) + "px",
 								'padding' : '10px',
 								'background' : 'white',
 								'border-radius' : '10px',
@@ -212,7 +214,7 @@ def add_puzzle_menu(state, sendBack):
 	alert("got here1")
 	
 	# Create the list of puzzles for the user to chose from
-	create_puzzle_lists(state)
+	lists = create_puzzle_lists(state)
 	
 	
 	directionForm = create_direction_form()
@@ -240,6 +242,7 @@ def add_puzzle_menu(state, sendBack):
 	# Append
 	menu <= title1
 	menu <= title2
+	menu <= lists
 	menu <= title3
 	menu <= directionForm
 	menu <= okButton
