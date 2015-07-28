@@ -658,12 +658,12 @@ INITIAL_STATE['Music_Puzzles'] = []
 
 # ADD A BLANK MUSIC PUZZLE FOR DEBUG PURPOSES ONLY
 INITIAL_STATE["Music_Puzzles"].append(MusicPuzzle())
-INITIAL_STATE["Music_Puzzles"].append(MusicPuzzle())
+'''INITIAL_STATE["Music_Puzzles"].append(MusicPuzzle())
 INITIAL_STATE["Music_Puzzles"].append(MusicPuzzle())
 INITIAL_STATE["Music_Puzzles"].append(MusicPuzzle())
 
 # ADD A BLANK IMAGE PUZZLE FOR DEBUG PURPOSES ONLY
-INITIAL_STATE["Image_Puzzles"].append(ImagePuzzle())
+INITIAL_STATE["Image_Puzzles"].append(ImagePuzzle())'''
 
 INITIAL_STATE['Rules'] = []
 #INITIAL_STATE['Causes'] = []

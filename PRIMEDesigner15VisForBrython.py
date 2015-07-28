@@ -153,15 +153,13 @@ def create_puzzle_lists(state):
 	imageList <= title1	
 	musicList <= title2
 
+	listSelect = html.SELECT(id = "imageSelect", disabled = True)
 	# Create the image puzzle divs
 	if(len(state["Image_Puzzles"]) == 0):
-		noPuzzlesTitle = html.P("No image puzzles created")
-		noPuzzlesTitle.style.fontSize = "13px"
-		imageList <= noPuzzlesTitle
+		listSelect <= html.OPTION("No image puzzles created")
 	else:
-		listSelect = html.SELECT(id = "imageSelect")
 		i = 1
-		rad1 = html.INPUT(type = "radio", name = "whichList", checked = True)
+		rad1 = html.INPUT(type = "radio", name = "whichList")
 		rad1.onclick = enableImageSelect
 		for imagePuzzle in state["Image_Puzzles"]:
 			
@@ -170,15 +168,15 @@ def create_puzzle_lists(state):
 			i = i + 1
 		
 		imageList <= rad1
-		imageList <= listSelect
+		
+	imageList <= listSelect
 	
+	listSelect = html.SELECT(id = "musicSelect", disabled = True)
 	# Create the music puzzle divs
 	if(len(state["Music_Puzzles"]) == 0):
-		noPuzzlesTitle = html.P("No music puzzles created")
-		noPuzzlesTitle.style.fontSize = "13px"
-		musicList <= noPuzzlesTitle
+		listSelect <= html.OPTION("No music puzzles created")
+		listSelect.disabled = True
 	else:
-		listSelect = html.SELECT(id = "musicSelect", disabled = True)
 		i = 1
 		rad2 = html.INPUT(type = "radio", name = "whichList")
 		rad2.onclick = enableMusicSelect
@@ -189,8 +187,8 @@ def create_puzzle_lists(state):
 			i = i + 1
 		
 		musicList <= rad2
-		musicList <= listSelect
-	
+
+	musicList <= listSelect
 	
 	lists <= imageList
 	lists <= musicList
@@ -263,21 +261,25 @@ def add_puzzle_menu(state, sendBack):
 		imgSelect = document.getElementById("imageSelect")
 		musSelect = document.getElementById("musicSelect")
 		
-		if(imgLen != 0 and imgSelect.disabled):
-			chosenNum = musSelect.selectedIndex
-			chosen = musicPuzzles[chosenNum]
-		elif(musLen != 0 and musSelect.disabled):
-			chosenNum = musSelect.selectedIndex
-			chosen = imagePuzzles[chosenNum]
+		if(imgSelect.disabled != musSelect.disabled):
+			
+			if(imgSelect.disabled):
+				chosenNum = musSelect.selectedIndex
+				chosen = musicPuzzles[chosenNum]
+			else:
+				chosenNum = musSelect.selectedIndex
+				chosen = imagePuzzles[chosenNum]
+			
+			# Send back information and destroy the state
+			destroy_menu("addPuzzleMenu")
+			sendBack(state,direction,chosen)
 		
-		# Send back information and destroy the state
-		destroy_menu("addPuzzleMenu")
-		sendBack(state,direction,chosen)
+		
 		
 	okButton = html.BUTTON(id = "addPuzzleOkButton", style = {"margin-top" : "10px", "margin-right" : "10px"})
 	okButton.innerHTML = "Place Puzzle"
 	okButton.onclick = destroyAndSendBack
-	if(musLen == 0 and imgLen == 0):
+	if(musLen == 0 and imgLen == 0 ):
 		okButton.disabled = True
 	
 	cancelButton = html.BUTTON(id = "addPuzzleCancelButton", style = {"margin-top" : "10px"})
