@@ -217,54 +217,10 @@ def add_puzzle_menu(state, sendBack):
 	lists = create_puzzle_lists(state)
 	alert("gotta")
 	
+	# Create Direction Form
 	directionForm = create_direction_form()
 	#print(directionForm)
 	
-	# Create direction form
-#----------------------------------------------------
-	lists = html.DIV(id = "create_puzzle_lists")
-	imageList = html.DIV(id = "create_puzzle_image_list")
-	musicList = html.DIV(id = "create_puzzle_music_list")
-	
-
-	title1 = html.P("Image Puzzles")
-	title2 = html.P("Music Puzzles")
-
-	imageList <= title1
-	musicList <= title2
-	
-
-	# Create the image puzzle divs
-	if(len(state["Image_Puzzles"]) == 0):
-		noPuzzlesTitle = html.P("No image puzzles created")
-		imageList <= noPuzzlesTitle
-	else:
-		for imagePuzzle in state["Image_Puzzles"]:
-		
-			listDiv = html.DIV()
-			name = html.P(imagePuzzle.name)
-			
-			listDiv <= name
-			imageList <= listDiv
-	
-	# Create the music puzzle divs
-	if(len(state["Music_Puzzles"]) == 0):
-		noPuzzlesTitle = html.P("No music puzzles created")
-		musicList <= noPuzzlesTitle
-	else:
-		for musicPuzzle in state["Music_Puzzles"]:
-			
-			listDiv = html.DIV()
-			name = html.P(musicPuzzle.name)
-			
-			listDiv <= name
-			musicList <= listDiv
-	
-	
-	lists <= imageList
-	lists <= musicList
-	
-#----------------------------------------------------
 	
 	def destroyAndSendBack():
 		
