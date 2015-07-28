@@ -125,6 +125,60 @@ def create_direction_form():
 # Creates an image puzzle list and a music puzzle list.
 # Returns a div containing both the lists
 def create_puzzle_lists(state):
+
+	
+	
+	
+# Removes the add puzzle menu from the gui
+def destroy_menu(menuName):
+	menu = document.getElementById(menuName)
+	gui.removeChild(menu)
+
+# Creates an architect menu with choices of which puzzle to select.
+# calls a callback function, sendBack, when the user hits a button.
+def add_puzzle_menu(state, sendBack):
+	musicPuzzles = state["Music_Puzzles"]
+	imagePuzzles = state["Image_Puzzles"]
+	
+	width = 200
+	height = 200
+	menu = html.DIV(id = "addPuzzleMenu",
+							style = {
+								#'display' : 'none',
+								'position' : 'fixed',
+								'padding' : '10px',
+								'background' : 'white',
+								'border-radius' : '10px',
+								'border' : '5px solid grey',
+								'left' : '50%',
+								'top' : '50%',
+								'margin-top' : "-" + str(1/2 * height) + 'px',
+								'margin-left' : "-" + str(1/2 * width) + 'px',
+								'z-index' : '1003',
+								'overflow' : 'auto'
+							})
+							
+	title1 = html.P(id="addPuzzleTitle1", style = {"margin-top" : '0'})
+	title1.innerHTML = "Place Puzzle:"
+	
+	title2 = html.P(id="addPuzzleTitle2")
+	title2.innerHTML = "Which puzzle would you like to place?"
+	
+	title3 = html.P(id="addPuzzleTitle3")
+	title3.innerHTML = "Which wall of the room?"
+	
+	direction = "N"
+	alert("got here1")
+	
+	# Create the list of puzzles for the user to chose from
+	lists = create_puzzle_lists(state)
+	
+	
+	directionForm = create_direction_form()
+	#print(directionForm)
+	
+	# Create direction form
+#----------------------------------------------------
 	lists = html.DIV(id = "create_puzzle_lists")
 	imageList = html.DIV(id = "create_puzzle_image_list")
 	musicList = html.DIV(id = "create_puzzle_music_list")
@@ -166,59 +220,7 @@ def create_puzzle_lists(state):
 	lists <= imageList
 	lists <= musicList
 	
-	return lists
-	
-	
-	
-# Removes the add puzzle menu from the gui
-def destroy_menu(menuName):
-	menu = document.getElementById(menuName)
-	gui.removeChild(menu)
-
-# Creates an architect menu with choices of which puzzle to select.
-# calls a callback function, sendBack, when the user hits a button.
-def add_puzzle_menu(state, sendBack):
-	musicPuzzles = state["Music_Puzzles"]
-	imagePuzzles = state["Image_Puzzles"]
-	
-	width = 200
-	height = 200
-	menu = html.DIV(id = "addPuzzleMenu",
-							style = {
-								#'display' : 'none',
-								'position' : 'fixed',
-								'width' : str(width) + "px",
-								'height' : str(height) + "px",
-								'padding' : '10px',
-								'background' : 'white',
-								'border-radius' : '10px',
-								'border' : '5px solid grey',
-								'left' : '50%',
-								'top' : '50%',
-								'margin-top' : "-" + str(1/2 * height) + 'px',
-								'margin-left' : "-" + str(1/2 * width) + 'px',
-								'z-index' : '1003',
-								'overflow' : 'auto'
-							})
-							
-	title1 = html.P(id="addPuzzleTitle1", style = {"margin-top" : '0'})
-	title1.innerHTML = "Place Puzzle:"
-	
-	title2 = html.P(id="addPuzzleTitle2")
-	title2.innerHTML = "Which puzzle would you like to place?"
-	
-	title3 = html.P(id="addPuzzleTitle3")
-	title3.innerHTML = "Which wall of the room?"
-	
-	direction = "N"
-	alert("got here1")
-	
-	# Create the list of puzzles for the user to chose from
-	lists = create_puzzle_lists(state)
-	
-	
-	directionForm = create_direction_form()
-	#print(directionForm)
+#----------------------------------------------------
 	
 	def destroyAndSendBack():
 		destroy_menu("addPuzzleMenu")
