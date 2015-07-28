@@ -38,6 +38,9 @@ LAST_STATE = None # cache of current state for use in
 
 LINE_WIDTH = 4
 
+Causes = ["Enter Room"]
+Effects = ["Open Door", "Close Door", "Play Music", "Display Message"]
+
 # Sets up the gui
 def set_up_gui(opselectdiv, reset_and_backtrack_div):
 	global gui
@@ -130,8 +133,8 @@ def create_puzzle_lists(state):
 	musicList = html.DIV(id = "create_puzzle_music_list")
 	
 
-	title1 = html.P("Image Puzzles")
-	title2 = html.P("Music Puzzles")
+	title1 = html.P("Image Puzzles:")
+	title2 = html.P("Music Puzzles:")
 
 	imageList <= title1
 	musicList <= title2
@@ -141,26 +144,29 @@ def create_puzzle_lists(state):
 		noPuzzlesTitle = html.P("No image puzzles created")
 		imageList <= noPuzzlesTitle
 	else:
+		listSelect = html.SELECT()
+		listSelect.elt.id = "Image Puzzles"
+		listSelect <= html.OPTION("Unselected")
 		for imagePuzzle in state["Image_Puzzles"]:
 		
-			listDiv = html.DIV()
-			name = html.P(imagePuzzle.name)
+			listSelect <= html.OPTION(imagePuzzle.name)
 			
-			listDiv <= name
-			imageList <= listDiv
+		imageList <= listSelect
 	
 	# Create the music puzzle divs
 	if(len(state["Music_Puzzles"]) == 0):
 		noPuzzlesTitle = html.P("No music puzzles created")
 		musicList <= noPuzzlesTitle
 	else:
+		listSelect = html.SELECT()
+		listSelect.elt.id = "Music Puzzles"
+		listSelect <= html.OPTION("Unselected")		
 		for musicPuzzle in state["Music_Puzzles"]:
 			
-			listDiv = html.DIV()
-			name = html.P(musicPuzzle.name)
+			listSelect <= html.OPTION(musicPuzzle.name)
 			
-			listDiv <= name
-			musicList <= listDiv
+		
+		musicList <= listSelect
 	
 	
 	lists <= imageList
@@ -222,6 +228,33 @@ def add_puzzle_menu(state, sendBack):
 	
 	def destroyAndSendBack():
 		destroy_menu("addPuzzleMenu")
+		
+		'''
+		http://cdn.meme.am/instances2/500x/980344.jpg
+		
+		
+		#Get chosen puzzle
+		console.log("here")
+		console.log(browser.document["Image Puzzles"].elt)
+		chosen = None
+		chosenImg = browser.document["Image Puzzles"].elt.value
+		chosenMus = browser.document["Music Puzzles"].elt.value
+		console.log(chosenImg)
+		console.log(chosenMus)
+		if (chosenImg == "Unselected"):
+			if (chosenMus == "Unselected"):
+				# do something
+				alert("No puzzle selected")
+			else:
+				chosen = chosenMus
+		elif (chosenMus != "Unselected"):
+			# do something
+			alert("Both types of puzzles chosen")
+		else:
+			chosen = chosenImg
+		
+		alert(chosen)
+		'''
 		
 		# Get which direction is checked in the directionForm
 		for elt in directionForm:
