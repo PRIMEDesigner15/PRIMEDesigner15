@@ -336,15 +336,11 @@ def doors_is_valid(state, side):
 
 # room_num, side parameters don't do anything..?
 def add_puzzle_operator(state, sendBack, room_num, side):		
-	alert("add puzzle")
-	#why do we have a sendback parameter if this is the sendback function
 	def processMenu(state,cardinal,puzzle):
-		#alert("triggered processMenu")
 		print(cardinal)
 		print(puzzle)
 		#sendBack from here
 	add_puzzle_menu(state,processMenu)
-	pass
 
 '''
 def create_rule(state):

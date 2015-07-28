@@ -135,35 +135,60 @@ def create_puzzle_lists(state):
 
 	title1 = html.P("Image Puzzles:")
 	title2 = html.P("Music Puzzles:")
-
-	imageList <= title1
-	musicList <= title2
 	
+	# Enables image select, disables music select	
+	def enableImageSelect():
+		imageSelect = document.getElementById("imageSelect")
+		musicSelect = document.getElementById("musicSelect")
+		imageSelect.disabled = False
+		musicSelect.disabled = True
+	
+	# Enables music select, disables image select
+	def enableMusicSelect():
+		imageSelect = document.getElementById("imageSelect")
+		musicSelect = document.getElementById("musicSelect")
+		imageSelect.disabled = True
+		musicSelect.disabled = False
+
+	imageList <= title1	
+	musicList <= title2
+
 	# Create the image puzzle divs
 	if(len(state["Image_Puzzles"]) == 0):
 		noPuzzlesTitle = html.P("No image puzzles created")
+		noPuzzlesTitle.style.fontSize = "13px"
 		imageList <= noPuzzlesTitle
 	else:
-		listSelect = html.SELECT(id = "Image Puzzles")
-		listSelect <= html.OPTION("Unselected")
+		listSelect = html.SELECT(id = "imageSelect")
+		i = 1
+		rad1 = html.INPUT(type = "radio", name = "whichList", checked = True)
+		rad1.onclick = enableImageSelect
 		for imagePuzzle in state["Image_Puzzles"]:
-		
-			listSelect <= html.OPTION(imagePuzzle.name)
 			
+			optionText = "Image puzzle " + str(i) + ", '" + imagePuzzle.name + "'"
+			listSelect <= html.OPTION(optionText)
+			i = i + 1
+		
+		imageList <= rad1
 		imageList <= listSelect
 	
 	# Create the music puzzle divs
 	if(len(state["Music_Puzzles"]) == 0):
 		noPuzzlesTitle = html.P("No music puzzles created")
+		noPuzzlesTitle.style.fontSize = "13px"
 		musicList <= noPuzzlesTitle
 	else:
-		listSelect = html.SELECT(id = "Music Puzzles")
-		listSelect <= html.OPTION("Unselected")		
+		listSelect = html.SELECT(id = "musicSelect", disabled = True)
+		i = 1
+		rad2 = html.INPUT(type = "radio", name = "whichList")
+		rad2.onclick = enableMusicSelect
 		for musicPuzzle in state["Music_Puzzles"]:
 			
-			listSelect <= html.OPTION(musicPuzzle.name)
-			
+			optionText = "Music puzzle " + str(i) + ", '" + musicPuzzle.name + "'"
+			listSelect <= html.OPTION(optionText)
+			i = i + 1
 		
+		musicList <= rad2
 		musicList <= listSelect
 	
 	
@@ -183,11 +208,14 @@ def add_puzzle_menu(state, sendBack):
 	musicPuzzles = state["Music_Puzzles"]
 	imagePuzzles = state["Image_Puzzles"]
 	
+	musLen = len(musicPuzzles)
+	imgLen = len(imagePuzzles)
+	
 	width = 200
 	height = 200
 	menu = html.DIV(id = "addPuzzleMenu",
 							style = {
-								#'display' : 'none',
+								'text-align' : 'center',
 								'position' : 'fixed',
 								'padding' : '10px',
 								'background' : 'white',
@@ -201,7 +229,7 @@ def add_puzzle_menu(state, sendBack):
 								'overflow' : 'auto'
 							})
 							
-	title1 = html.P(id="addPuzzleTitle1", style = {"margin-top" : '0'})
+	title1 = html.P(id="addPuzzleTitle1", style = {"margin-top" : '0', 'text-align' : 'left', 'font-size' : '13px'})
 	title1.innerHTML = "Place Puzzle:"
 	
 	title2 = html.P(id="addPuzzleTitle2")
@@ -211,11 +239,9 @@ def add_puzzle_menu(state, sendBack):
 	title3.innerHTML = "Which wall of the room?"
 	
 	direction = "N"
-	alert("got here1")
 	
 	# Create the list of puzzles for the user to chose from
 	lists = create_puzzle_lists(state)
-	alert("gotta")
 	
 	# Create Direction Form
 	directionForm = create_direction_form()
@@ -226,39 +252,35 @@ def add_puzzle_menu(state, sendBack):
 		
 		#http://cdn.meme.am/instances2/500x/980344.jpg
 		
-		
-		#Get chosen puzzle
-		console.log("here")
-		chosen = None
-		chosenImg = document.getElementById("Image Puzzles").elt.value
-		chosenMus = document.getElementById("Music Puzzles").elt.value
-		
-		if (chosenImg == "Unselected"):
-			if (chosenMus == "Unselected"):
-				# do something
-				alert("No puzzle selected")
-			else:
-				chosen = chosenMus
-		elif (chosenMus != "Unselected"):
-			# do something
-			alert("Both types of puzzles chosen")
-		else:
-			chosen = chosenImg
-		
 		# Get which direction is checked in the directionForm
 		for element in directionForm:
 			if(element.tagName == 'INPUT'):
 				if(element.checked == True):
 					direction = element.value
 		
+		#Get chosen puzzle
+		chosen = None
+		imgSelect = document.getElementById("imageSelect")
+		musSelect = document.getElementById("musicSelect")
+		
+		if(imgLen != 0 and imgSelect.disabled):
+			chosenNum = musSelect.selectedIndex
+			chosen = musicPuzzles[chosenNum]
+		elif(musLen != 0 and musSelect.disabled):
+			chosenNum = musSelect.selectedIndex
+			chosen = imagePuzzles[chosenNum]
+		
+		# Send back information and destroy the state
 		destroy_menu("addPuzzleMenu")
-		sendBack(state,direction,"lolol")
-	
-	okButton = html.BUTTON(id = "addPuzzleOkButton")
+		sendBack(state,direction,chosen)
+		
+	okButton = html.BUTTON(id = "addPuzzleOkButton", style = {"margin-top" : "10px", "margin-right" : "10px"})
 	okButton.innerHTML = "Place Puzzle"
 	okButton.onclick = destroyAndSendBack
+	if(musLen == 0 and imgLen == 0):
+		okButton.disabled = True
 	
-	cancelButton = html.BUTTON(id = "addPuzzleCancelButton")
+	cancelButton = html.BUTTON(id = "addPuzzleCancelButton", style = {"margin-top" : "10px"})
 	cancelButton.innerHTML = "Cancel"
 	cancelButton.onclick = lambda e: destroy_menu("addPuzzleMenu")
 	
@@ -271,7 +293,6 @@ def add_puzzle_menu(state, sendBack):
 	menu <= okButton
 	menu <= cancelButton
 	gui <= menu
-	alert("appended")
 
 def create_rule_form(state):
 	global causes, effects
