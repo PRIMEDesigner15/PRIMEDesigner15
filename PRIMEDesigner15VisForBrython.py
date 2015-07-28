@@ -129,6 +129,10 @@ def create_direction_form():
 # Returns a div containing both the lists
 def create_puzzle_lists(state):
 
+	lists = html.DIV(id = "create_puzzle_lists")
+	imageList = html.DIV(id = "create_puzzle_image_list")
+	musicList = html.DIV(id = "Create_puzzle_music_list")
+
 	title1 = html.P("Image Puzzles:")
 	title2 = html.P("Music Puzzles:")
 
@@ -214,7 +218,7 @@ def add_puzzle_menu(state, sendBack):
 	
 	# Create the list of puzzles for the user to chose from
 	lists = create_puzzle_lists(state)
-	
+	alert("gotta")
 	
 	directionForm = create_direction_form()
 	#print(directionForm)
@@ -232,6 +236,7 @@ def add_puzzle_menu(state, sendBack):
 	imageList <= title1
 	musicList <= title2
 	
+
 	# Create the image puzzle divs
 	if(len(state["Image_Puzzles"]) == 0):
 		noPuzzlesTitle = html.P("No image puzzles created")
@@ -295,9 +300,9 @@ def add_puzzle_menu(state, sendBack):
 		'''
 		
 		# Get which direction is checked in the directionForm
-		for elt in directionForm:
-			if(elt.tagName == 'INPUT'):
-				if(elt.checked == True):
+		for element in directionForm:
+			if(element.tagName == 'INPUT'):
+				if(element.checked == True):
 					direction = elt.value
 				
 		sendBack(state,direction,"lolol")
