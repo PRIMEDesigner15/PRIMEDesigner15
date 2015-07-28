@@ -29,7 +29,7 @@ PROBLEM_DESC=\
 BRYTHON = True
 
 if(BRYTHON):
-	from PRIMEDesigner15VisForBrython import hide_loading, show_loading, add_puzzle_menu
+	from PRIMEDesigner15VisForBrython import hide_loading, show_loading, add_puzzle_menu, create_rule_menu
 
 from browser import document, window, alert, console, ajax
 from javascript import JSObject, JSConstructor
@@ -333,14 +333,29 @@ def doors_is_valid(state, side):
 			return True
 	else:
 		return False
-def add_puzzle_operator(state, sendBack, room_num,side):		
+
+# room_num, side parameters don't do anything..?
+def add_puzzle_operator(state, sendBack, room_num, side):		
 	alert("add puzzle")
+	#why do we have a sendback parameter if this is the sendback function
 	def processMenu(state,cardinal,puzzle):
+		#alert("triggered processMenu")
 		print(cardinal)
 		print(puzzle)
+		#sendBack from here
 	add_puzzle_menu(state,processMenu)
 	pass
 
+'''
+def create_rule(state):
+	def processMenu(state, cause, effect):
+		print(cause)
+		print(effect)
+
+	create_rule_menu(state, processMenu)
+	'''
+		
+	
 def puzzles_is_valid(state, side):
 	return True
 		
@@ -495,6 +510,8 @@ def addMusicTransformation(state, sendBack, transformation):
 	# Add transform to newState list
 	newState["Music_Puzzles"][newState["Selected_Music"]].add_transform(transformation)
 	sendBack(newState)
+	
+
 	
 #</COMMON_CODE>		
 

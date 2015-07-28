@@ -144,8 +144,7 @@ def create_puzzle_lists(state):
 		noPuzzlesTitle = html.P("No image puzzles created")
 		imageList <= noPuzzlesTitle
 	else:
-		listSelect = html.SELECT()
-		listSelect.elt.id = "Image Puzzles"
+		listSelect = html.SELECT(id = "Image Puzzles")
 		listSelect <= html.OPTION("Unselected")
 		for imagePuzzle in state["Image_Puzzles"]:
 		
@@ -158,8 +157,7 @@ def create_puzzle_lists(state):
 		noPuzzlesTitle = html.P("No music puzzles created")
 		musicList <= noPuzzlesTitle
 	else:
-		listSelect = html.SELECT()
-		listSelect.elt.id = "Music Puzzles"
+		listSelect = html.SELECT(id = "Music Puzzles")
 		listSelect <= html.OPTION("Unselected")		
 		for musicPuzzle in state["Music_Puzzles"]:
 			
@@ -173,8 +171,6 @@ def create_puzzle_lists(state):
 	lists <= musicList
 	
 	return lists
-	
-	
 	
 # Removes the add puzzle menu from the gui
 def destroy_menu(menuName):
@@ -227,20 +223,16 @@ def add_puzzle_menu(state, sendBack):
 	#print(directionForm)
 	
 	def destroyAndSendBack():
-		destroy_menu("addPuzzleMenu")
 		
-		'''
-		http://cdn.meme.am/instances2/500x/980344.jpg
+		#http://cdn.meme.am/instances2/500x/980344.jpg
 		
 		
 		#Get chosen puzzle
 		console.log("here")
-		console.log(browser.document["Image Puzzles"].elt)
 		chosen = None
-		chosenImg = browser.document["Image Puzzles"].elt.value
-		chosenMus = browser.document["Music Puzzles"].elt.value
-		console.log(chosenImg)
-		console.log(chosenMus)
+		chosenImg = document.getElementById("Image Puzzles").elt.value
+		chosenMus = document.getElementById("Music Puzzles").elt.value
+		
 		if (chosenImg == "Unselected"):
 			if (chosenMus == "Unselected"):
 				# do something
@@ -253,15 +245,14 @@ def add_puzzle_menu(state, sendBack):
 		else:
 			chosen = chosenImg
 		
-		alert(chosen)
-		'''
-		
 		# Get which direction is checked in the directionForm
-		for elt in directionForm:
-			if(elt.tagName == 'INPUT'):
-				if(elt.checked == True):
-					direction = elt.value
-				
+		for element in directionForm:
+			if(element.tagName == 'INPUT'):
+				if(element.checked == True):
+					direction = element.value
+		
+		destroy_menu("addPuzzleMenu")
+		
 		sendBack(state,direction,"lolol")
 	
 	okButton = html.BUTTON(id = "addPuzzleOkButton")
@@ -282,9 +273,51 @@ def add_puzzle_menu(state, sendBack):
 	menu <= cancelButton
 	gui <= menu
 	alert("appended")
+
+def create_rule_form(state):
+	global causes, effects
+	
+	console.log("Inside create rule form")
+	
+	# List comprehension to construct inputs
+	ruleForm = html.FORM()
+	causesSelect = html.SELECT()
+	causesSelect.elt.id = "causesSelect"
+	effectsSelect = html.SELECT()
+	effectsSelect.elt.id = "effectsSelect"
+	
+	for cause in causes:
+		causeOpt = html.SElECT(cause)
+		causesSelect <= causeOpt 
+	
+	for puzzle in state["Music_Puzzles"]:
+		causeOpt = html.SELECT("Solve: " + puzzle.name)
+		causesSelect <= causeOpt 
+	
+	for puzzle in state["Image_Puzzles"]:
+		causeOpt = html.SELECT("Solve: " + puzzle.name)
+		causesSelect <= causeOpt 
+		
+	for effect in effects:
+		effectOpt = html.SElECT(effect)
+		effectsSelect <= effectOpt
+	
+	ruleDiv = html.DIV()
+	
+	ruleDiv <= "Cause: "
+	ruleDiv <= causesSelect
+	
+	ruleDiv <= "Effect: "
+	ruleDiv <= effectsSelect
+	
+	ruleForm <= ruleDiv
+	
+	return ruleFrom
 	
 def create_rule_menu(state, sendBack):
 	rules = state["Rules"]
+	
+	console.log("inside create rule menu")
 	
 	width = 200
 	height = 200
@@ -308,7 +341,10 @@ def create_rule_menu(state, sendBack):
 
 	title1 = html.P(id="createRuleTitle1", style = {"margin-top" : '0'})
 	title1.innerHTML = "New Rule:"							
-
+	
+	ruleForm = create_rule_form(state)
+	
+	
 	def destroyAndSendBack():
 		destroy_menu("createRuleMenu")
 		
@@ -327,6 +363,12 @@ def create_rule_menu(state, sendBack):
 	cancelButton = html.BUTTON(id = "createRuleCancelButton")
 	cancelButton.innerHTML = "Cancel"
 	cancelButton.onclick = lambda e: destroy_menu("createRuleMenu")
+	menu <= title1
+	menu <= ruleForm
+	menu <= okButton
+	menu <= cancelButton
+	gui <= menu
+	console.log("everything appended")
 	
 # Display the black overlay
 def show_overlay():
