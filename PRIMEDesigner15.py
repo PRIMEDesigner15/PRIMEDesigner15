@@ -335,7 +335,7 @@ def doors_is_valid(state, side):
 			return True
 	else:
 		return False
-
+		
 # room_num, side parameters don't do anything..?
 def add_puzzle_operator(state, sendBack, room_num, side):		
 	def processMenu(state,cardinal,puzzle):
