@@ -305,7 +305,7 @@ def doors_is_valid(state, side):
 		north_room = room_num - 3
 		if (north_room < 0):
 			return False
-		elif (ROOMS[room_num].walls['N'].door is not None or ROOMS[north_room].walls['S'].door is not None):
+		elif (ROOMS[room_num].walls['N'].door is not None or ROOMS[room_num].walls['N'].puzzle is not None):
 			return False
 		else:
 			return True
@@ -313,7 +313,7 @@ def doors_is_valid(state, side):
 		south_room = room_num + 3
 		if (south_room > 8):
 			return False
-		elif (ROOMS[room_num].walls['S'].door is not None or ROOMS[south_room].walls['N'].door is not None):
+		elif (ROOMS[room_num].walls['S'].door is not None or ROOMS[room_num].walls['S'].puzzle is not None):
 			return False
 		else:
 			return True
@@ -321,7 +321,7 @@ def doors_is_valid(state, side):
 		east_room = room_num + 1
 		if (room_num + 1) % 3 is 0:
 			return False
-		elif (ROOMS[room_num].walls['E'].door is not None or ROOMS[east_room].walls['W'].door is not None): 	
+		elif (ROOMS[room_num].walls['E'].door is not None or ROOMS[room_num].walls['E'].puzzle is not None): 	
 			return False
 		else:
 			return True
@@ -329,7 +329,7 @@ def doors_is_valid(state, side):
 		west_room = room_num - 1
 		if (room_num + 1) % 3 is 1:
 			return False
-		elif (ROOMS[room_num].walls['W'].door is not None or ROOMS[west_room].walls['E'].door is not None):	
+		elif (ROOMS[room_num].walls['W'].door is not None or ROOMS[room_num].walls['W'].puzzle is not None):	
 			return False
 		else: 
 			return True
