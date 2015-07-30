@@ -38,7 +38,9 @@ LAST_STATE = None # cache of current state for use in
 
 LINE_WIDTH = 4
 
-Causes = ["Enter Room"]
+Causes = ["Enter Room 1", "Enter Room 2", "Enter Room 3"
+		, "Enter Room 4", "Enter Room 5", "Enter Room 6"
+		, "Enter Room 7", "Enter Room 8", "Enter Room 9"]
 Effects = ["Open Door", "Close Door", "Play Music", "Display Message"]
 
 # Sets up the gui
@@ -321,25 +323,23 @@ def create_rule_form(state):
 	
 	# List comprehension to construct inputs
 	ruleForm = html.FORM()
-	causesSelect = html.SELECT()
-	causesSelect.elt.id = "causesSelect"
-	effectsSelect = html.SELECT()
-	effectsSelect.elt.id = "effectsSelect"
+	causesSelect = html.SELECT(id = "causesSelect")
+	effectsSelect = html.SELECT(id = "effectsSelect")
 	
-	for cause in causes:
-		causeOpt = html.SElECT(cause)
+	for cause in Causes:
+		causeOpt = html.OPTION(cause)
 		causesSelect <= causeOpt 
 	
 	for puzzle in state["Music_Puzzles"]:
-		causeOpt = html.SELECT("Solve: " + puzzle.name)
+		causeOpt = html.OPTION("Solve: " + puzzle.name)
 		causesSelect <= causeOpt 
 	
 	for puzzle in state["Image_Puzzles"]:
-		causeOpt = html.SELECT("Solve: " + puzzle.name)
+		causeOpt = html.OPTION("Solve: " + puzzle.name)
 		causesSelect <= causeOpt 
 		
-	for effect in effects:
-		effectOpt = html.SElECT(effect)
+	for effect in Effects:
+		effectOpt = html.OPTION(effect)
 		effectsSelect <= effectOpt
 	
 	ruleDiv = html.DIV()
@@ -352,12 +352,12 @@ def create_rule_form(state):
 	
 	ruleForm <= ruleDiv
 	
-	return ruleFrom
+	return ruleForm
 	
 def create_rule_menu(state, sendBack):
-	rules = state["Rules"]
-	
 	console.log("inside create rule menu")
+
+	rules = state["Rules"]
 	
 	width = 200
 	height = 200
@@ -386,15 +386,13 @@ def create_rule_menu(state, sendBack):
 	
 	
 	def destroyAndSendBack():
+		# Get which direction is checked in the directionForm
+		cause = None
+		effect = None
+		
 		destroy_menu("createRuleMenu")
 		
-		# Get which direction is checked in the directionForm
-		for elt in directionForm:
-			if(elt.tagName == 'INPUT'):
-				if(elt.checked == True):
-					direction = elt.value
-				
-		sendBack(state,direction,"lolol")
+		sendBack(state, cause, effect)
 	
 	okButton = html.BUTTON(id = "createRuleOkButton")
 	okButton.innerHTML = "Create Rule"

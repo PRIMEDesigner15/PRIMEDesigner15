@@ -62,6 +62,8 @@ def copy_state(state):
 	newState["Image_Puzzles"] = newImagePuzzles
 	newState["Music_Puzzles"] = newMusicPuzzles
 	
+	newState["Rules"] = state["Rules"]
+	
 	# Primitives and operators do not need to be deep copied.
 	newState["Selected_Room"] = state["Selected_Room"]	
 	newState["Selected_Image"] = state["Selected_Image"]
@@ -370,14 +372,14 @@ def get_invalid_cardinals(state):
 
 	return invalidCardinals
 
-'''
-def create_rule(state):
+
+def create_rule_operator(state):
+	console.log("inside create_rule")
 	def processMenu(state, cause, effect):
 		print(cause)
 		print(effect)
-
+	console.log("inside create_rule")	
 	create_rule_menu(state, processMenu)
-	'''
 		
 	
 def puzzles_is_valid(state, side):
@@ -410,7 +412,6 @@ def add_wallpaper_to_room(state, sendBack, room_num):
 		add_wallpaper_to_room(state,sendBack,room_num)
 	else:
 		sendBack()
-	
 	
 def url_is_valid(url):	
 	# Note: Only works with Brython Implemented
@@ -667,7 +668,7 @@ def set_operators(state):
 		create_rule =\
 			Operator("Create new Rule.",
 				lambda state: True,
-				lambda state, sb: createRule(state, sb))
+				lambda state: create_rule_operator(state))
 				
 		OPERATORS = role_operators + create_rule
 	else:
