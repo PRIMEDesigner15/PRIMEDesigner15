@@ -305,7 +305,9 @@ def doors_is_valid(state, side):
 		north_room = room_num - 3
 		if (north_room < 0):
 			return False
-		elif (ROOMS[room_num].walls['N'].door is not None or ROOMS[room_num].walls['N'].puzzle is not None):
+		elif (ROOMS[room_num].walls['N'].door is not None 
+				or ROOMS[room_num].walls['N'].puzzle is not None
+				or ROOMS[north_room].walls['S'].puzzle is not None):
 			return False
 		else:
 			return True
@@ -313,7 +315,9 @@ def doors_is_valid(state, side):
 		south_room = room_num + 3
 		if (south_room > 8):
 			return False
-		elif (ROOMS[room_num].walls['S'].door is not None or ROOMS[room_num].walls['S'].puzzle is not None):
+		elif (ROOMS[room_num].walls['S'].door is not None 
+				or ROOMS[room_num].walls['S'].puzzle is not None
+				or ROOMS[south_room].walls['N'].puzzle is not None):
 			return False
 		else:
 			return True
@@ -321,7 +325,9 @@ def doors_is_valid(state, side):
 		east_room = room_num + 1
 		if (room_num + 1) % 3 is 0:
 			return False
-		elif (ROOMS[room_num].walls['E'].door is not None or ROOMS[room_num].walls['E'].puzzle is not None): 	
+		elif (ROOMS[room_num].walls['E'].door is not None 
+				or ROOMS[room_num].walls['E'].puzzle is not None
+				or ROOMS[east_room].walls['W'].puzzle is not None): 	
 			return False
 		else:
 			return True
@@ -329,7 +335,9 @@ def doors_is_valid(state, side):
 		west_room = room_num - 1
 		if (room_num + 1) % 3 is 1:
 			return False
-		elif (ROOMS[room_num].walls['W'].door is not None or ROOMS[room_num].walls['W'].puzzle is not None):	
+		elif (ROOMS[room_num].walls['W'].door is not None 
+				or ROOMS[room_num].walls['W'].puzzle is not None
+				or ROOMS[west_room].walls['E'].puzzle is not None):	
 			return False
 		else: 
 			return True
@@ -342,7 +350,25 @@ def add_puzzle_operator(state, sendBack, room_num, side):
 		print(cardinal)
 		print(puzzle)
 		#sendBack from here
-	add_puzzle_menu(state,processMenu, ['N','S','E','W'])
+	add_puzzle_menu(state,processMenu, get_invalid_cardinals(state))
+
+# returns a list of cardinals representing 
+#sides of a room that can not be used to place a puzzle
+def get_invalid_cardinals(state):
+	invalidCardinals = []
+	room_num = state["Selected_Room"]
+	selectedRoom = state["Rooms"][room_num]
+	
+	if(selectedRoom.walls['N'].puzzle is not None or selectedRoom.walls['N'].door is not None):
+		invalidCardinals.append('N')
+	if(selectedRoom.walls['E'].puzzle is not None or selectedRoom.walls['E'].door is not None):
+		invalidCardinals.append('E')
+	if(selectedRoom.walls['S'].puzzle is not None or selectedRoom.walls['S'].door is not None):
+		invalidCardinals.append('S')
+	if(selectedRoom.walls['W'].puzzle is not None or selectedRoom.walls['W'].door is not None):
+		invalidCardinals.append('W')	
+
+	return invalidCardinals
 
 '''
 def create_rule(state):
