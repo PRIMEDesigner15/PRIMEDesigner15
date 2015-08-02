@@ -66,13 +66,18 @@ def repopulate_operator_choices(current_state):
 			item.selected = False
 
 def recieveNewState(state = None):
-	global current_state
 	if(state is not None):
 		new_state = state
-		current_state = new_state
-		render_state(current_state)
-		finalize_state(current_state)
-		
+		replaceCurrentState(new_state)
+
+def replaceCurrentState(new_state):
+	global current_state
+	console.log("inside replace:")
+	current_state = new_state
+	render_state(current_state)
+	finalize_state(current_state)
+
+	
 def handleApplyButtonClick(evt):
 	# get selected operator.
 	global Operators, opSelect, current_state, STATE_STACK
@@ -83,24 +88,28 @@ def handleApplyButtonClick(evt):
 	op = Operators[i]
 	#sendBack = recieveNewState
 	
-	if (type(op) is Operator):
+	if (type(op) is Operator): #Get state straight from the operator
 		console.log("bananas in a row")
-	elif (type(op) is AsyncOperator):
+		new_state = op.state_transf(current_state)
+		console.log("got new state")
+		replaceCurrentState(new_state)
+		
+	elif (type(op) is AsyncOperator): #Pass it function to get new state
 		console.log("bananas all at once")
+		try:	
+			# Gives the state transfer function the new state.
+			# receiveNewState that you see above
+			# is the callback function called when 
+			# op.state_transf finishes execution.
+			op.state_transf(current_state,recieveNewState)
+			
+		except (Exception) as e:
+			alert("An error occured when applying this operator. Error: "+str(e))		
 	else:
 		console.log("apples")
 	
 		
-	try:
-				
-		# Gives the state transfer function the new state.
-		# receiveNewState that you see above
-		# is the callback function called when 
-		# op.state_transf finishes execution.
-		op.state_transf(current_state,recieveNewState)
-		
-	except (Exception) as e:
-		alert("An error occured when applying this operator. Error: "+str(e))
+	
 
 #opSelectdiv = set_up_Operators_interface()
 
