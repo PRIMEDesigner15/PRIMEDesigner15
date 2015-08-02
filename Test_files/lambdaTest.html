@@ -13,8 +13,31 @@
 	<script type="text/python">
 	from browser import console
 	
+	class OgOp:
+		def __init__(self):
+			self.message = '1'
+		def feeling(self):
+			print("mfw im alive")
+		def thought(self):
+			print("im og")
+		
+	class Inheriter(OgOp):
+
+		def thought(self):
+			print("im still cool")
+			
+	a = OgOp()
+	console.log(a.message)
+	a.feeling()
+	a.thought()
+	
+	b = Inheriter()
+	console.log(b.message)
+	b.feeling()
+	b.thought()
+		
 	</script>
-	<script type="text/javascript">
+	<script type="text/javascript">/*
 		var piano = new Wad({
 			source : 'square', 
 			env : {
@@ -59,7 +82,7 @@
 				piano.play( {pitch : 'Eb5', wait : beat * (15)})
 				piano.play( {pitch : 'G5', wait : beat * (15.5), filter : { q : 15}})
 			}
-		}
+		}*/
 	</script>
 	
 	<button id="play"> play </button>

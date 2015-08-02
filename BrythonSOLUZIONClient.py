@@ -9,7 +9,8 @@ from PRIMEDesigner15VisForBrython import set_up_gui as set_up_user_interface
 from PRIMEDesigner15VisForBrython import render_state_svg_graphics as render_state
 from PRIMEDesigner15VisForBrython import set_up_loading_div, set_up_black_overlay, show_loading, hide_loading
 from PRIMEDesigner15 import INITIAL_STATE, set_operators
-
+from templateRoot.PRIMEDesigner15Operator import Operator as Operator
+from templateRoot.PRIMEDesigner15Operator import AsyncOperator as AsyncOperator
 
 current_state = None
 opSelect = None
@@ -82,6 +83,14 @@ def handleApplyButtonClick(evt):
 	op = Operators[i]
 	#sendBack = recieveNewState
 	
+	if (type(op) is Operator):
+		console.log("bananas in a row")
+	elif (type(op) is AsyncOperator):
+		console.log("bananas all at once")
+	else:
+		console.log("apples")
+	
+		
 	try:
 				
 		# Gives the state transfer function the new state.

@@ -30,7 +30,9 @@ BRYTHON = True
 
 if(BRYTHON):
 	from PRIMEDesigner15VisForBrython import hide_loading, show_loading, add_puzzle_menu, create_rule_menu
-
+	from templateRoot.PRIMEDesigner15Operator import Operator as Operator
+	from templateRoot.PRIMEDesigner15Operator import AsyncOperator as AsyncOperator
+	
 from browser import document, window, alert, console, ajax
 from javascript import JSObject, JSConstructor
 import time, json
@@ -250,19 +252,6 @@ If solve puzzle then message
 If enter room then message
 
 '''		
-	
-class Operator:
-  
-	def __init__(self, name, precond, state_transf):
-		self.name = name
-		self.precond = precond
-		self.state_transf = state_transf
-
-	def is_applicable(self, state):
-		return self.precond(state)
-
-	def apply(self, state):
-		return self.state_transf(state)
 
 # Takes a room num from 0 to 8 and a side for the door to be on, [N, S, E, W]
 # Optional newDoor parameter which allows you to pass which door the walls will point to.
