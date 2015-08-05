@@ -87,14 +87,12 @@ def handleApplyButtonClick(evt):
 	op = Operators[i]
 	#sendBack = recieveNewState
 	
-	if (type(op) is Operator): #Get state straight from the operator
-		console.log("bananas in a row")
+	if (type(op) is Operator): # Get state straight from the operator
 		new_state = op.state_transf(current_state)
 		console.log("got new state")
 		replaceCurrentState(new_state)
 		
 	elif (type(op) is AsyncOperator): #Pass it function to get new state
-		console.log("bananas all at once")
 		try:	
 			# Gives the state transfer function the new state.
 			# receiveNewState that you see above
@@ -105,10 +103,7 @@ def handleApplyButtonClick(evt):
 		except (Exception) as e:
 			alert("An error occured when applying this operator. Error: "+str(e))		
 	else:
-		console.log("apples")
-	
-		
-	
+		console.log("Element in 'Operators' is not of type Operators")
 
 #opSelectdiv = set_up_Operators_interface()
 
