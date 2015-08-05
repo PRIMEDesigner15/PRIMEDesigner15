@@ -77,7 +77,6 @@ def replaceCurrentState(new_state):
 	render_state(current_state)
 	finalize_state(current_state)
 
-	
 def handleApplyButtonClick(evt):
 	# get selected operator.
 	global Operators, opSelect, current_state, STATE_STACK
