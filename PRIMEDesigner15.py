@@ -40,24 +40,24 @@ import time, json
 
 # Preforms a deep copy of the given state. 
 def copy_state(state):
-	newState = {"Rooms": [], "Doors": set()}
+	newState = {"Rooms": [], "Doors": []}
 	newRooms = []
-	newDoors = set()
+	newDoors = []
 	newImagePuzzles = []
 	newMusicPuzzles = []
 	
-	alert("got here2")
+	
 	# Copy the rooms (without doors in their walls) and doors into the newState's dictionary.
 	for room in state["Rooms"]:
 		newRooms.append(room.copy())
 	for door in state["Doors"]:
-		newDoors.add(door.copy())
+		newDoors.append(door.copy())
 	for imagePuzzle in state["Image_Puzzles"]:
 		newImagePuzzles.append(imagePuzzle.copy())
 	for musicPuzzle in state["Music_Puzzles"]:
 		newMusicPuzzles.append(musicPuzzle.copy())
 	
-	alert("got here3")
+	
 	# Put the new lists into the new state's lists.
 	newState["Rooms"] = newRooms
 	newState["Doors"] = newDoors
@@ -75,14 +75,14 @@ def copy_state(state):
 	# Operators is updated in set_operators.
 	newState["Operators"] = state["Operators"]
 	
-	alert("got here4")
 	# Add in doors to the walls in the rooms.
+	door_index = 0
 	for room_num in range(9):
 		for direction in ['N', 'S', 'E', 'W']:
 			if(state["Rooms"][room_num].walls[direction].door is not None and newState["Rooms"][room_num].walls[direction].door is None):
-				alert("iterate")
-				add_door_to_room(room_num, direction, newState, state["Doors"].pop())
-	alert("got here5")
+				add_door_to_room(room_num, direction, newState, state["Doors"][door_index])
+				door_index += 1
+
 	return newState
 		
 def describe_state(state):
@@ -184,7 +184,7 @@ class Wallpaper:
 
 class Door:
 	
-	def __init__(self, isOpen = False, url="images/door.jpg"):
+	def __init__(self, isOpen = True, url="images/door.jpg"):
 		self.isOpen = isOpen
 		self.url = url
 		
@@ -260,7 +260,6 @@ def add_door_to_room(room_num, side, state, newDoor = Door()):
 	
 	ROOMS = state["Rooms"]
 	DOORS = state["Doors"]
-	alert(DOORS)
 	ROOMS[room_num].walls[side].door = newDoor
 	if side == 'N':
 		ROOMS[room_num - 3].walls['S'].door = newDoor
@@ -272,8 +271,8 @@ def add_door_to_room(room_num, side, state, newDoor = Door()):
 		ROOMS[room_num - 1].walls['E'].door = newDoor
 	else:
 		alert("Error: Invalid direction passed to add_door")
-	
-	DOORS.add(newDoor)
+
+	DOORS.append(newDoor)
 	
 # Make function to determine index?
 
@@ -287,6 +286,8 @@ def add_door_operator(state, room_num, side):
 # Checks if a door can be placed on a wall, meaning a door cannot already be on a wall
 # and a puzzle cannot be on the wall or on the other side of the wall.
 def doors_is_valid(state, side):
+	
+	# Reduce magic constants.
 	
 	ROOMS = state["Rooms"]
 	DOORS = state["Doors"]
@@ -336,26 +337,20 @@ def doors_is_valid(state, side):
 		return False
 		
 # room_num, side parameters don't do anything..?
-def add_puzzle_operator(state, sendBack):		
+def add_puzzle_operator(state, sendBack, room_num, side):		
 	def processMenu(state,cardinal,puzzle):
-		'''newState = copy_state(state)
-		room_num = state["Selected_Room"]
-		selectedRoom = state["Rooms"][room_num]
-		selectedRoom.walls[cardinal].puzzle = puzzle
-		alert(selectedRoom.walls[cardinal].puzzle)
-		sendBack(newState)'''
+		print(cardinal)
 		print(puzzle)
-		
 		#sendBack from here
-	add_puzzle_menu(state, processMenu, puzzles_is_valid(state))
+	add_puzzle_menu(state, processMenu, get_invalid_cardinals(state))
 
 # returns a list of cardinals representing 
-# sides of a room that can not be used to place a puzzle
-def puzzles_is_valid(state):
+#sides of a room that can not be used to place a puzzle
+def get_invalid_cardinals(state):
 	invalidCardinals = []
 	room_num = state["Selected_Room"]
 	selectedRoom = state["Rooms"][room_num]
-	alert(selectedRoom.walls['N'].puzzle)
+	
 	if(selectedRoom.walls['N'].puzzle is not None or selectedRoom.walls['N'].door is not None):
 		invalidCardinals.append('N')
 	if(selectedRoom.walls['E'].puzzle is not None or selectedRoom.walls['E'].door is not None):
@@ -674,10 +669,11 @@ def set_operators(state):
 #<INITIAL_STATE> The game is a list of 9 rooms stored a list.
 INITIAL_STATE = {}
 INITIAL_STATE['Rooms'] = []
-INITIAL_STATE['Doors'] = set()
+INITIAL_STATE['Doors'] = []
 INITIAL_STATE['Image_Puzzles'] = []
 INITIAL_STATE['Music_Puzzles'] = []
 
+'''
 # ADD A BLANK MUSIC PUZZLE FOR DEBUG PURPOSES ONLY
 INITIAL_STATE["Music_Puzzles"].append(MusicPuzzle())
 INITIAL_STATE["Music_Puzzles"].append(MusicPuzzle())
@@ -685,7 +681,7 @@ INITIAL_STATE["Music_Puzzles"].append(MusicPuzzle())
 INITIAL_STATE["Music_Puzzles"].append(MusicPuzzle())
 
 # ADD A BLANK IMAGE PUZZLE FOR DEBUG PURPOSES ONLY
-INITIAL_STATE["Image_Puzzles"].append(ImagePuzzle())
+INITIAL_STATE["Image_Puzzles"].append(ImagePuzzle())'''
 
 INITIAL_STATE['Rules'] = []
 #INITIAL_STATE['Causes'] = []
