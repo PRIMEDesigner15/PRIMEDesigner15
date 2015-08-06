@@ -184,7 +184,7 @@ class Wallpaper:
 
 class Door:
 	
-	def __init__(self, isOpen = True, url="images/door.jpg"):
+	def __init__(self, isOpen = False, url="images/door.jpg"):
 		self.isOpen = isOpen
 		self.url = url
 		
@@ -273,9 +273,8 @@ def add_door_to_room(room_num, side, state, newDoor = Door()):
 		alert("Error: Invalid direction passed to add_door")
 
 	DOORS.append(newDoor)
-	
-# Make function to determine index?
 
+# Operator version of add door that returns new state
 def add_door_operator(state, room_num, side):
 	
 	newState = copy_state(state)
@@ -283,9 +282,37 @@ def add_door_operator(state, room_num, side):
 	
 	return newState
 
+# Removes the reference to a door from the a wall shared 
+# by two rooms.
+def remove_door_from_room(room_num, side, state):
+	
+	ROOMS = state["Rooms"]
+	DOORS = state["Doors"]
+	ROOMS[room_num].walls[side].door = None
+	if side == 'N':
+		ROOMS[room_num - 3].walls['S'].door = None
+	elif side == 'S':
+		ROOMS[room_num + 3].walls['N'].door = None
+	elif side == 'E':
+		ROOMS[room_num + 1].walls['W'].door = None
+	elif side == 'W':
+		ROOMS[room_num - 1].walls['E'].door = None
+	else:
+		alert("Error: Invalid direction passed to add_door")
+
+	# Remove a doors from the list so there are two fewer doors
+	DOORS.pop()
+
+# Operator version of remove door that returns new state
+def remove_door_operator(state, room_num, side):
+
+	newState = copy_state(state)
+	remove_door_from_room(room_num,side,newState)
+	return newState
+	
 # Checks if a door can be placed on a wall, meaning a door cannot already be on a wall
 # and a puzzle cannot be on the wall or on the other side of the wall.
-def doors_is_valid(state, side):
+def add_doors_is_valid(state, side):
 	
 	# Reduce magic constants.
 	
@@ -335,6 +362,17 @@ def doors_is_valid(state, side):
 			return True
 	else:
 		return False
+
+# Return true if a door can be removed and false if it cant
+def remove_doors_is_valid(state,side):
+	
+	ROOMS = state["Rooms"]
+	DOORS = state["Doors"]
+	room_num = state["Selected_Room"]
+
+	door = ROOMS[room_num].walls[side].door
+	return door is not None
+	
 		
 # room_num, side parameters don't do anything..?
 def add_puzzle_operator(state, sendBack, room_num, side):		
@@ -549,12 +587,18 @@ def set_operators(state):
 				lambda state, n = num: change_room_selection(state, n))
 			for num in range(9)]
 
-		door_operators =\
+		add_door_operators =\
 			[Operator("Add door to current room on " + cardinal + " wall.",
-				lambda state, c = cardinal: doors_is_valid(state, c),
+				lambda state, c = cardinal: add_doors_is_valid(state, c),
 				lambda state, c = cardinal: add_door_operator(state, state["Selected_Room"], c))
-			for cardinal in ['N', 'S', 'E', 'W']]		
-
+			for cardinal in ['N', 'S', 'E', 'W']]
+			
+		remove_door_operators =\
+			[Operator("Remove door from current room on " + cardinal + " wall.",
+				lambda state, c = cardinal: remove_doors_is_valid(state, c),
+				lambda state, c = cardinal: remove_door_operator(state, state["Selected_Room"], c))
+			for cardinal in ['N', 'S', 'E', 'W']]
+			
 		wallpaper_operators =\
 			AsyncOperator("Add wallpaper to current room.",
 				lambda state: True,
@@ -565,8 +609,7 @@ def set_operators(state):
 				lambda state: True,
 				lambda state, sb: add_puzzle_operator(state, sb))
 				
-					
-		OPERATORS = selection_operators	+ door_operators + wallpaper_operators + add_puzzle_operators +  role_operators
+		OPERATORS = selection_operators	+ add_door_operators + remove_door_operators + wallpaper_operators + add_puzzle_operators +  role_operators
 		
 	elif(state['Role'] == "Image Puzzle"):
 		
