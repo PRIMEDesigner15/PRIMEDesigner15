@@ -75,14 +75,25 @@ def copy_state(state):
 	# Operators is updated in set_operators.
 	newState["Operators"] = state["Operators"]
 	
-	# Add in doors to the walls in the rooms.
+	# Add in doors/puzzles to the walls in the rooms.
 	door_index = 0
 	for room_num in range(9):
 		for direction in ['N', 'S', 'E', 'W']:
-			if(state["Rooms"][room_num].walls[direction].door is not None and newState["Rooms"][room_num].walls[direction].door is None):
+			oldWall = state["Rooms"][room_num].walls[direction]
+			newWall = newState["Rooms"][room_num].walls[direction]
+			if(oldWall.door is not None and newWall.door is None):
 				add_door_to_room(room_num, direction, newState, state["Doors"][door_index])
 				door_index += 1
-
+			if(oldWall.puzzle is not None):
+				image_index = 0
+				music_index = 0
+				if(type(oldWall.puzzle) is imagePuzzle):
+					add_puzzle_to_room(room_num,direction,newState,oldWall.puzzle)
+					image_index += 1
+				else:
+					add_puzzle_to_room(room_num,direction,newState,oldWall.puzzle)
+					music_index += 1
+					
 	return newState
 		
 def describe_state(state):
@@ -256,10 +267,14 @@ If enter room then message
 # Takes a room num from 0 to 8 and a side for the door to be on, [N, S, E, W]
 # Optional newDoor parameter which allows you to pass which door the walls will point to.
 # Is default set to the creation of a new door.
-def add_door_to_room(room_num, side, state, newDoor = Door()):
-	
+def add_door_to_room(room_num, side, state, newDoor = None):
 	ROOMS = state["Rooms"]
 	DOORS = state["Doors"]
+	
+	if(newDoor is None):
+		newDoor = Door()
+		DOORS.append(newDoor)
+	
 	ROOMS[room_num].walls[side].door = newDoor
 	if side == 'N':
 		ROOMS[room_num - 3].walls['S'].door = newDoor
@@ -271,8 +286,9 @@ def add_door_to_room(room_num, side, state, newDoor = Door()):
 		ROOMS[room_num - 1].walls['E'].door = newDoor
 	else:
 		alert("Error: Invalid direction passed to add_door")
+		DOORS.pop()
 
-	DOORS.append(newDoor)
+	print(DOORS)
 
 # Operator version of add door that returns new state
 def add_door_operator(state, room_num, side):
@@ -373,7 +389,15 @@ def remove_doors_is_valid(state,side):
 	door = ROOMS[room_num].walls[side].door
 	return door is not None
 	
-		
+# Adds the passed puzzle to the correct room and side of the 
+# passed state
+def add_puzzle_to_room(state,room_num,side,puzzle):
+	state["Rooms"]["room_num"].walls["side"].puzzle = puzzle
+	if(type(puzzle) is imagePuzzle):
+		state["Image_puzzles"].append(puzzle)
+	else:
+		state["Music_puzzles"].append(puzzle)
+	
 # room_num, side parameters don't do anything..?
 def add_puzzle_operator(state, sendBack):
 	def processMenu(state,cardinal,puzzle):

@@ -72,7 +72,6 @@ def recieveNewState(state = None):
 
 def replaceCurrentState(new_state):
 	global current_state
-	console.log("inside replace:")
 	current_state = new_state
 	render_state(current_state)
 	finalize_state(current_state)
@@ -88,13 +87,13 @@ def handleApplyButtonClick(evt):
 	#sendBack = recieveNewState
 	
 	if (type(op) is Operator): #Get state straight from the operator
-		console.log("bananas in a row")
+
 		new_state = op.state_transf(current_state)
 		console.log("got new state")
 		replaceCurrentState(new_state)
 		
 	elif (type(op) is AsyncOperator): #Pass it function to get new state
-		console.log("bananas all at once")
+
 		try:	
 			# Gives the state transfer function the new state.
 			# receiveNewState that you see above
