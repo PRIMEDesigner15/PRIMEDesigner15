@@ -77,6 +77,8 @@ def copy_state(state):
 	
 	# Add in doors/puzzles to the walls in the rooms.
 	door_index = 0
+	image_index = 0
+	music_index = 0
 	for room_num in range(9):
 		for direction in ['N', 'S', 'E', 'W']:
 			oldWall = state["Rooms"][room_num].walls[direction]
@@ -85,8 +87,6 @@ def copy_state(state):
 				add_door_to_room(room_num, direction, newState, state["Doors"][door_index])
 				door_index += 1
 			if(oldWall.puzzle is not None):
-				image_index = 0
-				music_index = 0
 				if(type(oldWall.puzzle) is imagePuzzle):
 					add_puzzle_to_room(room_num,direction,newState,oldWall.puzzle)
 					image_index += 1
@@ -288,7 +288,6 @@ def add_door_to_room(room_num, side, state, newDoor = None):
 		alert("Error: Invalid direction passed to add_door")
 		DOORS.pop()
 
-	print(DOORS)
 
 # Operator version of add door that returns new state
 def add_door_operator(state, room_num, side):
@@ -390,20 +389,22 @@ def remove_doors_is_valid(state,side):
 	return door is not None
 	
 # Adds the passed puzzle to the correct room and side of the 
-# passed state
-def add_puzzle_to_room(state,room_num,side,puzzle):
-	state["Rooms"]["room_num"].walls["side"].puzzle = puzzle
-	if(type(puzzle) is imagePuzzle):
+# passed state. Default is creation of new blank imagePuzzle.
+def add_puzzle_to_room(room_num,side, state, puzzle = None):
+	if puzzle is None:
+		puzzle = imagePuzzle()
 		state["Image_puzzles"].append(puzzle)
-	else:
-		state["Music_puzzles"].append(puzzle)
+		
+	state["Rooms"][room_num].walls[side].puzzle = puzzle
 	
 # room_num, side parameters don't do anything..?
-def add_puzzle_operator(state, sendBack):
-	def processMenu(state,cardinal,puzzle):
-		print(cardinal)
-		print(puzzle)
-		#sendBack from here
+def add_puzzle_operator(state, room_num, sendBack):
+
+	def processMenu(state,side,puzzle):
+		newState = copy_state(state)
+		add_puzzle_to_room(room_num,side,newState,puzzle)
+		sendBack(newState)
+		
 	add_puzzle_menu(state, processMenu)
 
 # returns a list of cardinals representing 
@@ -430,7 +431,6 @@ def create_rule_operator(state, sendBack):
 		print(cause)
 		print(effect)
 		#sendBack from here
-	console.log("inside create_rule")	
 	create_rule_menu(state, processMenu)
 		
 #def add_music_puzzle_to_room(state, room_num):
@@ -631,7 +631,7 @@ def set_operators(state):
 		add_puzzle_operators =\
 			AsyncOperator("Add a puzzle to current room",
 				lambda state: True,
-				lambda state, sb: add_puzzle_operator(state, sb))
+				lambda state, sb: add_puzzle_operator(state, state["Selected_Room"], sb))
 				
 		OPERATORS = selection_operators	+ add_door_operators + remove_door_operators + wallpaper_operators + add_puzzle_operators +  role_operators
 		
@@ -740,7 +740,7 @@ INITIAL_STATE['Doors'] = []
 INITIAL_STATE['Image_Puzzles'] = []
 INITIAL_STATE['Music_Puzzles'] = []
 
-'''
+
 # ADD A BLANK MUSIC PUZZLE FOR DEBUG PURPOSES ONLY
 INITIAL_STATE["Music_Puzzles"].append(MusicPuzzle())
 INITIAL_STATE["Music_Puzzles"].append(MusicPuzzle())
@@ -748,7 +748,7 @@ INITIAL_STATE["Music_Puzzles"].append(MusicPuzzle())
 INITIAL_STATE["Music_Puzzles"].append(MusicPuzzle())
 
 # ADD A BLANK IMAGE PUZZLE FOR DEBUG PURPOSES ONLY
-INITIAL_STATE["Image_Puzzles"].append(ImagePuzzle())'''
+INITIAL_STATE["Image_Puzzles"].append(ImagePuzzle())
 
 INITIAL_STATE['Rules'] = []
 #INITIAL_STATE['Causes'] = []

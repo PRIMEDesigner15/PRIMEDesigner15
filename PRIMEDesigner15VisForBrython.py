@@ -41,6 +41,11 @@ LINE_WIDTH = 4
 Causes = ["Enter Room"]
 Effects = ["Open Door", "Close Door", "Play Music", "Display Message"]
 
+# Should've done this a million years ago. Makes it easy
+# to remove debug alerts.
+def dAlert(string):
+	alert(string)
+
 # Sets up the gui
 def set_up_gui(opselectdiv, reset_and_backtrack_div):
 	global gui
@@ -314,7 +319,6 @@ def add_puzzle_menu(state, sendBack, bannedDirections = None):
 	menu <= cancelButton
 	gui <= menu
 	
-	alert("all appended")
 
 def create_rule_form(state):
 	global causes, effects
@@ -519,7 +523,6 @@ def hide_loading():
 
 # renders the state
 def render_state():
-	
 	boarddiv = html.DIV(Id = "boarddivid", style = {"backgroundColor":"#CCFFCC"})
 	boarddiv <= html.I("Puzzle state:")
 	
@@ -615,7 +618,7 @@ def render_state_svg_graphics(state):
 		if(state["Selected_Image"] != -1):
 			puzzle = state["Image_Puzzles"][state["Selected_Image"]]
 			canMan.setURL(puzzle.url)
-			drawPuzzle(puzzle)
+			drawImagePuzzle(puzzle)
 	elif(state['Role'] == "Music Puzzle"):
 		prepareMusicDisplay()
 		puzzle_num = state["Selected_Music"]
@@ -676,7 +679,6 @@ def prepareMusicDisplay():
 def drawRoom(room,room_num):
 	# thickness of a room's walls.
 	THICKNESS = .3
-	
 	#(x3,y3) and (x4,y4) make up the shorter end of the trapezoid
 	# draws north wall
 	wall = room.walls['N']
@@ -713,14 +715,18 @@ def drawRoom(room,room_num):
 # draws a wall, requires 2 more points to form trapezoidal 3d shape.
 # Temporary optional color for walls.
 def drawWall(wall,x3,y3,x4,y4,room_num):
+
 	drawWallpaper(wall,x3,y3,x4,y4,room_num)
+	
 	if (wall.door is not None):
 		drawDoor(wall,x3,y3,x4,y4)
-	
+
+	if (wall.puzzle is not None):
+		type = "imagePuzzle"
+		drawPuzzle(wall,type,x3,y3,x4,y4)
 # draws a wallpaper, requires 2 more points to form trapezoidal 3d shape.	
 def drawWallpaper(wall,x3,y3,x4,y4,room_num):
 	global LINE_WIDTH, APANEL, board
-	
 	if (wall.loc == 'S'):
 		transform = "translate(1,1),rotate(180)"
 	elif (wall.loc == 'E'):
@@ -820,6 +826,39 @@ def drawDoor(wall,x3,y3,x4,y4):
 	APANEL <= defs
 	APANEL <= frameDiv
 	APANEL <= doorDiv
+	
+# Draws a wall on a wall with the given wall coordinates.
+# Fills in the polygon green for image puzzles and blue for music puzzles.
+def drawPuzzle(wall,type,x3,y3,x4,y4):
+	# Caution: Sensitive variable, keep it around 1 for a good sized puzzle.
+	PUZZLE_SIZE = 1.2
+
+	# map (p)uzzle coords to wall coords before translation
+	(px1,py1,px2,py2,px3,py3,px4,py4) = (wall.x1,wall.y1,wall.x2,wall.y2,x3,y3,x4,y4)
+	
+	# fit the (p)uzzle into a smaller trapezoid
+	if (wall.loc == 'E' or wall.loc == 'W'):
+		py1 += 1/PUZZLE_SIZE * (3/8)
+		py2 -= 1/PUZZLE_SIZE * (3/8)
+		py3 -= 1/PUZZLE_SIZE * (4/15)
+		py4 += 1/PUZZLE_SIZE * (4/15)
+		
+	elif (wall.loc == 'N' or wall.loc == 'S'):
+		px1 += 1/PUZZLE_SIZE * (3/8)
+		px2 -= 1/PUZZLE_SIZE * (3/8)
+		px3 -= 1/PUZZLE_SIZE * (4/15)
+		px4 += 1/PUZZLE_SIZE * (4/15)
+	else:
+		alert("drawPuzzle wall location check broke")
+			
+	# Create puzzle polygon
+	fill = "green"
+	if(type == "musicPuzzle"):
+		fill = "blue"
+	
+	puzzleDiv = create_polygon(px1,py1,px2,py2,px3,py3,px4,py4, fill = fill)
+
+	APANEL <= puzzleDiv
 
 # returns an svg polygon at the given 4 points.
 def create_polygon(x1,y1,x2,y2,x3,y3,x4,y4, fill = "black", stroke = "black", transform = "rotate(0)", id = "polygon"):
@@ -853,7 +892,7 @@ def mapNumToDiv(x):
 	global GAME_WIDTH, GAME_HEIGHT
 	return int( (x * GAME_WIDTH)/3)
 	
-def drawPuzzle(puzzle):
+def drawImagePuzzle(puzzle):
 	global canMan
 	
 	def done():

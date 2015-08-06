@@ -73,6 +73,7 @@ def recieveNewState(state = None):
 def replaceCurrentState(new_state):
 	global current_state
 	current_state = new_state
+	console.log(render_state)
 	render_state(current_state)
 	finalize_state(current_state)
 
@@ -89,7 +90,6 @@ def handleApplyButtonClick(evt):
 	if (type(op) is Operator): #Get state straight from the operator
 
 		new_state = op.state_transf(current_state)
-		console.log("got new state")
 		replaceCurrentState(new_state)
 		
 	elif (type(op) is AsyncOperator): #Pass it function to get new state
