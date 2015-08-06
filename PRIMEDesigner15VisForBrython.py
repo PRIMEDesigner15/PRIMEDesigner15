@@ -132,15 +132,16 @@ def create_direction_form(bannedDirections = None):
 		directionForm <= radioButton
 		directionForm <= html.P(radioButton.value, style = {"display" : "inline", "padding-right" : "10px"})
 		radioButton.value = radioButton.value[0]
-		
 		# Disable the radio button with the banned direction
 		# and make the next available radioButton checked
-		if(isWithin(radioButton.value, bannedDirections)):
-			radioButton.disabled = True
-		elif(not checked):
-			radioButton.checked = True
-			checked = True
-
+		if(bannedDirections is not None):
+			if(isWithin(radioButton.value, bannedDirections)):
+				radioButton.disabled = True
+			elif(not checked):
+				radioButton.checked = True
+				checked = True
+	
+	
 	return directionForm
 
 # Creates an image puzzle list and a music puzzle list.
@@ -221,7 +222,7 @@ def destroy_menu(menuName):
 # Creates an architect menu with choices of which puzzle to select.
 # The band direction will be disabled when the user tries to choose it.
 # calls a callback function, sendBack, when the user hits a button.
-def add_puzzle_menu(state, sendBack, bannedDirection = None):
+def add_puzzle_menu(state, sendBack, bannedDirections = None):
 	musicPuzzles = state["Music_Puzzles"]
 	imagePuzzles = state["Image_Puzzles"]
 	
@@ -261,7 +262,7 @@ def add_puzzle_menu(state, sendBack, bannedDirection = None):
 	lists = create_puzzle_lists(state)
 	
 	# Create Direction Form
-	directionForm = create_direction_form(bannedDirection)
+	directionForm = create_direction_form(bannedDirections)
 	#print(directionForm)
 	
 	
@@ -295,7 +296,6 @@ def add_puzzle_menu(state, sendBack, bannedDirection = None):
 		else:
 			alert("No puzzle selected")	
 		
-		
 	okButton = html.BUTTON(id = "addPuzzleOkButton", style = {"margin-top" : "10px", "margin-right" : "10px"})
 	okButton.innerHTML = "Place Puzzle"
 	okButton.onclick = destroyAndSendBack
@@ -313,6 +313,8 @@ def add_puzzle_menu(state, sendBack, bannedDirection = None):
 	menu <= okButton
 	menu <= cancelButton
 	gui <= menu
+	
+	alert("all appended")
 
 def create_rule_form(state):
 	global causes, effects

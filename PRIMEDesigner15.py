@@ -375,12 +375,12 @@ def remove_doors_is_valid(state,side):
 	
 		
 # room_num, side parameters don't do anything..?
-def add_puzzle_operator(state, sendBack, room_num, side):		
+def add_puzzle_operator(state, sendBack):
 	def processMenu(state,cardinal,puzzle):
 		print(cardinal)
 		print(puzzle)
 		#sendBack from here
-	add_puzzle_menu(state, processMenu, puzzle_is_valid(state))
+	add_puzzle_menu(state, processMenu)
 
 # returns a list of cardinals representing 
 # sides of a room that can not be used to place a puzzle
