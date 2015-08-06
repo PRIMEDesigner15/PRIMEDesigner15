@@ -342,11 +342,11 @@ def add_puzzle_operator(state, sendBack, room_num, side):
 		print(cardinal)
 		print(puzzle)
 		#sendBack from here
-	add_puzzle_menu(state, processMenu, get_invalid_cardinals(state))
+	add_puzzle_menu(state, processMenu, puzzle_is_valid(state))
 
 # returns a list of cardinals representing 
-#sides of a room that can not be used to place a puzzle
-def get_invalid_cardinals(state):
+# sides of a room that can not be used to place a puzzle
+def puzzles_is_valid(state):
 	invalidCardinals = []
 	room_num = state["Selected_Room"]
 	selectedRoom = state["Rooms"][room_num]
