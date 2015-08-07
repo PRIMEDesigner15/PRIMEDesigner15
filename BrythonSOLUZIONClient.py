@@ -73,7 +73,6 @@ def recieveNewState(state = None):
 def replaceCurrentState(new_state):
 	global current_state
 	current_state = new_state
-	console.log(render_state)
 	render_state(current_state)
 	finalize_state(current_state)
 

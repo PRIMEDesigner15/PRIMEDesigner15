@@ -40,14 +40,15 @@ import time, json
 
 # Preforms a deep copy of the given state. 
 def copy_state(state):
-	newState = {"Rooms": [], "Doors": []}
+	newState = {"Rooms": [], "Doors": set()}
 	newRooms = []
-	newDoors = []
+	newDoors = set()
 	newImagePuzzles = []
 	newMusicPuzzles = []
 	
 	#Debug
-	print("image puzzles")
+	print(state["Doors"])
+	'''print("image puzzles")
 	string = ""
 	for puzzle in state["Image_Puzzles"]:
 		string += puzzle.name + " ,"
@@ -57,13 +58,13 @@ def copy_state(state):
 	for puzzle in state["Music_Puzzles"]:
 		string += puzzle.name + " ,"
 	print(string)
-	
+	'''
 	
 	# Copy the rooms (without doors in their walls) and doors into the newState's dictionary.
 	for room in state["Rooms"]:
 		newRooms.append(room.copy())
 	for door in state["Doors"]:
-		newDoors.append(door.copy())
+		newDoors.add(door.copy())
 	for imagePuzzle in state["Image_Puzzles"]:
 		newImagePuzzles.append(imagePuzzle.copy())
 	for musicPuzzle in state["Music_Puzzles"]:
@@ -88,7 +89,6 @@ def copy_state(state):
 	newState["Operators"] = state["Operators"]
 	
 	# Add in doors/puzzles to the walls in the rooms.
-	door_index = 0
 	music_index = 0
 	image_index = 0
 	for room_num in range(9):
@@ -96,8 +96,9 @@ def copy_state(state):
 			oldWall = state["Rooms"][room_num].walls[direction]
 			newWall = newState["Rooms"][room_num].walls[direction]
 			if(oldWall.door is not None and newWall.door is None):
-				add_door_to_room(room_num, direction, newState, newState["Doors"][door_index])
-				door_index += 1
+				door = newState["Doors"].pop()
+				add_door_to_room(room_num, direction, newState, door)
+				door = newState["Doors"].add(door)
 			if(oldWall.puzzle is not None):
 				if(type(oldWall.puzzle) is ImagePuzzle):
 					add_puzzle_to_room(room_num,direction,newState,newState["Image_Puzzles"][image_index])
@@ -280,7 +281,7 @@ def add_door_to_room(room_num, side, state, newDoor = None):
 	
 	if(newDoor is None):
 		newDoor = Door()
-		DOORS.append(newDoor)
+		DOORS.add(newDoor)
 	
 	ROOMS[room_num].walls[side].door = newDoor
 	if side == 'N':
@@ -741,7 +742,7 @@ def set_operators(state):
 #<INITIAL_STATE> The game is a list of 9 rooms stored a list.
 INITIAL_STATE = {}
 INITIAL_STATE['Rooms'] = []
-INITIAL_STATE['Doors'] = []
+INITIAL_STATE['Doors'] = set()
 INITIAL_STATE['Image_Puzzles'] = []
 INITIAL_STATE['Music_Puzzles'] = []
 
