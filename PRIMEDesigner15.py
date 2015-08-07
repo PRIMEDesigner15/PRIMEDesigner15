@@ -77,8 +77,6 @@ def copy_state(state):
 	
 	# Add in doors/puzzles to the walls in the rooms.
 	door_index = 0
-	image_index = 0
-	music_index = 0
 	for room_num in range(9):
 		for direction in ['N', 'S', 'E', 'W']:
 			oldWall = state["Rooms"][room_num].walls[direction]
@@ -86,13 +84,6 @@ def copy_state(state):
 			if(oldWall.door is not None and newWall.door is None):
 				add_door_to_room(room_num, direction, newState, state["Doors"][door_index])
 				door_index += 1
-			if(oldWall.puzzle is not None):
-				if(type(oldWall.puzzle) is imagePuzzle):
-					add_puzzle_to_room(room_num,direction,newState,oldWall.puzzle)
-					image_index += 1
-				else:
-					add_puzzle_to_room(room_num,direction,newState,oldWall.puzzle)
-					music_index += 1
 					
 	return newState
 		
@@ -174,7 +165,7 @@ class Wall:
 	# Returns a copy of itself. Does not copy its door.
 	def copy(self):
 		newWall = Wall(self.x1,self.y1,self.x2,self.y2,self.loc)
-		if(newWall.puzzle is None):
+		if(self.puzzle is None):
 			newWall.puzzle = None
 		else: 
 			newWall.puzzle =  puzzle.copy()
@@ -222,6 +213,7 @@ class ImagePuzzle:
 		self.transformList.append(transform)
 	
 	def copy(self):
+		alert("copying imagepuzzle")
 		return ImagePuzzle(self.name,self.url, self.transformList)
 		
 class MusicPuzzle:
@@ -244,6 +236,7 @@ class MusicPuzzle:
 		noteCopy = []
 		for note in self.notes:
 			noteCopy.append(note)
+		alert("copying musicPuzzle")
 		return MusicPuzzle(self.name, noteCopy, self.transformList)
 	
 class Rule:
