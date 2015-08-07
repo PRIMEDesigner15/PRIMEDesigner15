@@ -853,7 +853,7 @@ def drawPuzzle(wall,type,x3,y3,x4,y4):
 	# Create puzzle polygon
 	fill = "green"	
 	puzzleDiv = create_polygon(px1,py1,px2,py2,px3,py3,px4,py4, fill = fill)
-
+	
 	APANEL <= puzzleDiv
 
 # returns an svg polygon at the given 4 points.

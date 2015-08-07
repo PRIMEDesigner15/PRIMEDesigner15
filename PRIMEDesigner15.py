@@ -46,6 +46,18 @@ def copy_state(state):
 	newImagePuzzles = []
 	newMusicPuzzles = []
 	
+	#Debug
+	print("image puzzles")
+	string = ""
+	for puzzle in state["Image_Puzzles"]:
+		string += puzzle.name + " ,"
+	print(string)
+	string = ""
+	print("music puzzles")
+	for puzzle in state["Music_Puzzles"]:
+		string += puzzle.name + " ,"
+	print(string)
+	
 	
 	# Copy the rooms (without doors in their walls) and doors into the newState's dictionary.
 	for room in state["Rooms"]:
@@ -77,13 +89,22 @@ def copy_state(state):
 	
 	# Add in doors/puzzles to the walls in the rooms.
 	door_index = 0
+	music_index = 0
+	image_index = 0
 	for room_num in range(9):
 		for direction in ['N', 'S', 'E', 'W']:
 			oldWall = state["Rooms"][room_num].walls[direction]
 			newWall = newState["Rooms"][room_num].walls[direction]
 			if(oldWall.door is not None and newWall.door is None):
-				add_door_to_room(room_num, direction, newState, state["Doors"][door_index])
+				add_door_to_room(room_num, direction, newState, newState["Doors"][door_index])
 				door_index += 1
+			if(oldWall.puzzle is not None):
+				if(type(oldWall.puzzle) is ImagePuzzle):
+					add_puzzle_to_room(room_num,direction,newState,newState["Image_Puzzles"][image_index])
+					image_index += 1
+				if(type(oldWall.puzzle) is MusicPuzzle):
+					add_puzzle_to_room(room_num,direction,newState,newState["Music_Puzzles"][music_index])
+					music_index += 1
 					
 	return newState
 		
@@ -165,12 +186,6 @@ class Wall:
 	# Returns a copy of itself. Does not copy its door.
 	def copy(self):
 		newWall = Wall(self.x1,self.y1,self.x2,self.y2,self.loc)
-		if(self.puzzle is None):
-			newWall.puzzle = None
-		else: 
-			newWall.puzzle =  puzzle.copy()
-		
-		newWall.wallpaper = self.wallpaper.copy()
 		return newWall
 		
 # Default url is wall.jpg
@@ -213,7 +228,6 @@ class ImagePuzzle:
 		self.transformList.append(transform)
 	
 	def copy(self):
-		alert("copying imagepuzzle")
 		return ImagePuzzle(self.name,self.url, self.transformList)
 		
 class MusicPuzzle:
@@ -236,7 +250,7 @@ class MusicPuzzle:
 		noteCopy = []
 		for note in self.notes:
 			noteCopy.append(note)
-		alert("copying musicPuzzle")
+
 		return MusicPuzzle(self.name, noteCopy, self.transformList)
 	
 class Rule:
@@ -733,13 +747,13 @@ INITIAL_STATE['Music_Puzzles'] = []
 
 
 # ADD A BLANK MUSIC PUZZLE FOR DEBUG PURPOSES ONLY
-INITIAL_STATE["Music_Puzzles"].append(MusicPuzzle())
-INITIAL_STATE["Music_Puzzles"].append(MusicPuzzle())
-INITIAL_STATE["Music_Puzzles"].append(MusicPuzzle())
-INITIAL_STATE["Music_Puzzles"].append(MusicPuzzle())
+INITIAL_STATE["Music_Puzzles"].append(MusicPuzzle(name="1"))
+INITIAL_STATE["Music_Puzzles"].append(MusicPuzzle(name="2"))
+INITIAL_STATE["Music_Puzzles"].append(MusicPuzzle(name="3"))
+INITIAL_STATE["Music_Puzzles"].append(MusicPuzzle(name="4"))
 
 # ADD A BLANK IMAGE PUZZLE FOR DEBUG PURPOSES ONLY
-INITIAL_STATE["Image_Puzzles"].append(ImagePuzzle())
+INITIAL_STATE["Image_Puzzles"].append(ImagePuzzle(name="5"))
 
 INITIAL_STATE['Rules'] = []
 #INITIAL_STATE['Causes'] = []
