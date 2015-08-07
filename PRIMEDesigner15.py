@@ -405,7 +405,10 @@ def add_puzzle_operator(state, room_num, sendBack):
 		add_puzzle_to_room(room_num,side,newState,puzzle)
 		sendBack(newState)
 		
-	add_puzzle_menu(state, processMenu)
+	# Get banned directions
+	bannedDirections = puzzles_is_valid(state)
+	# Creates a menu with banned direction radio buttons disabled
+	add_puzzle_menu(state, processMenu,bannedDirections)
 
 # returns a list of cardinals representing 
 # sides of a room that can not be used to place a puzzle
@@ -414,14 +417,9 @@ def puzzles_is_valid(state):
 	room_num = state["Selected_Room"]
 	selectedRoom = state["Rooms"][room_num]
 	
-	if(selectedRoom.walls['N'].puzzle is not None or selectedRoom.walls['N'].door is not None):
-		invalidCardinals.append('N')
-	if(selectedRoom.walls['E'].puzzle is not None or selectedRoom.walls['E'].door is not None):
-		invalidCardinals.append('E')
-	if(selectedRoom.walls['S'].puzzle is not None or selectedRoom.walls['S'].door is not None):
-		invalidCardinals.append('S')
-	if(selectedRoom.walls['W'].puzzle is not None or selectedRoom.walls['W'].door is not None):
-		invalidCardinals.append('W')	
+	for c in ['N','S','E','W']:
+		if (selectedRoom.walls[c].puzzle is not None or selectedRoom.walls[c].door is not None):
+			invalidCardinals.append(c)
 
 	return invalidCardinals
 
@@ -630,7 +628,7 @@ def set_operators(state):
 				
 		add_puzzle_operators =\
 			AsyncOperator("Add a puzzle to current room",
-				lambda state: True,
+				lambda state: puzzles_is_valid(state) != ['N','S','E','W'],
 				lambda state, sb: add_puzzle_operator(state, state["Selected_Room"], sb))
 				
 		OPERATORS = selection_operators	+ add_door_operators + remove_door_operators + wallpaper_operators + add_puzzle_operators +  role_operators
