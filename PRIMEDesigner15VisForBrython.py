@@ -832,30 +832,26 @@ def drawDoor(wall,x3,y3,x4,y4):
 def drawPuzzle(wall,type,x3,y3,x4,y4):
 	# Caution: Sensitive variable, keep it around 1 for a good sized puzzle.
 	PUZZLE_SIZE = 1.2
-
 	# map (p)uzzle coords to wall coords before translation
 	(px1,py1,px2,py2,px3,py3,px4,py4) = (wall.x1,wall.y1,wall.x2,wall.y2,x3,y3,x4,y4)
 	
 	# fit the (p)uzzle into a smaller trapezoid
 	if (wall.loc == 'E' or wall.loc == 'W'):
-		py1 += 1/PUZZLE_SIZE * (3/8)
-		py2 -= 1/PUZZLE_SIZE * (3/8)
-		py3 -= 1/PUZZLE_SIZE * (4/15)
-		py4 += 1/PUZZLE_SIZE * (4/15)
+		py1 += 1/PUZZLE_SIZE * (1/4)
+		py2 -= 1/PUZZLE_SIZE * (1/4)
+		py3 -= 1/PUZZLE_SIZE * (1/5)
+		py4 += 1/PUZZLE_SIZE * (1/5)
 		
 	elif (wall.loc == 'N' or wall.loc == 'S'):
-		px1 += 1/PUZZLE_SIZE * (3/8)
-		px2 -= 1/PUZZLE_SIZE * (3/8)
-		px3 -= 1/PUZZLE_SIZE * (4/15)
-		px4 += 1/PUZZLE_SIZE * (4/15)
+		px1 += 1/PUZZLE_SIZE * (1/4)
+		px2 -= 1/PUZZLE_SIZE * (1/4)
+		px3 -= 1/PUZZLE_SIZE * (1/5)
+		px4 += 1/PUZZLE_SIZE * (1/5)
 	else:
 		alert("drawPuzzle wall location check broke")
 			
 	# Create puzzle polygon
-	fill = "green"
-	if(type == "musicPuzzle"):
-		fill = "blue"
-	
+	fill = "green"	
 	puzzleDiv = create_polygon(px1,py1,px2,py2,px3,py3,px4,py4, fill = fill)
 
 	APANEL <= puzzleDiv
