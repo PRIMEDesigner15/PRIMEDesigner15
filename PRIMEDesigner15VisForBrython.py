@@ -151,8 +151,8 @@ def create_direction_form(bannedDirections = None):
 
 # Creates an image puzzle list and a music puzzle list.
 # Returns a div containing both the lists
-def create_puzzle_lists(state):
-
+def create_puzzle_lists(imagePuzzles,musicPuzzles):
+	dAlert("got here2")
 	lists = html.DIV(id = "create_puzzle_lists")
 	imageList = html.DIV(id = "create_puzzle_image_list")
 	musicList = html.DIV(id = "Create_puzzle_music_list")
@@ -179,13 +179,13 @@ def create_puzzle_lists(state):
 
 	listSelect = html.SELECT(id = "imageSelect", disabled = True)
 	# Create the image puzzle divs
-	if(len(state["Image_Puzzles"]) == 0):
+	if(len(imagePuzzles) == 0):
 		listSelect <= html.OPTION("No image puzzles created")
 	else:
 		i = 1
 		rad1 = html.INPUT(type = "radio", name = "whichList")
 		rad1.onclick = enableImageSelect
-		for imagePuzzle in state["Image_Puzzles"]:
+		for imagePuzzle in imagePuzzles:
 			
 			optionText = "Image puzzle " + str(i) + ", '" + imagePuzzle.name + "'"
 			listSelect <= html.OPTION(optionText)
@@ -197,14 +197,14 @@ def create_puzzle_lists(state):
 	
 	listSelect = html.SELECT(id = "musicSelect", disabled = True)
 	# Create the music puzzle divs
-	if(len(state["Music_Puzzles"]) == 0):
+	if(len(musicPuzzles) == 0):
 		listSelect <= html.OPTION("No music puzzles created")
 		listSelect.disabled = True
 	else:
 		i = 1
 		rad2 = html.INPUT(type = "radio", name = "whichList")
 		rad2.onclick = enableMusicSelect
-		for musicPuzzle in state["Music_Puzzles"]:
+		for musicPuzzle in musicPuzzles:
 			
 			optionText = "Music puzzle " + str(i) + ", '" + musicPuzzle.name + "'"
 			listSelect <= html.OPTION(optionText)
@@ -228,9 +228,11 @@ def destroy_menu(menuName):
 # The band direction will be disabled when the user tries to choose it.
 # calls a callback function, sendBack, when the user hits a button.
 def add_puzzle_menu(state, sendBack, bannedDirections = None):
-	musicPuzzles = state["Music_Puzzles"]
-	imagePuzzles = state["Image_Puzzles"]
-	
+
+	# convert puzzle sets to lists for the UI
+	musicPuzzles = list(state["Music_Puzzles"])
+	imagePuzzles = list(state["Image_Puzzles"])
+
 	musLen = len(musicPuzzles)
 	imgLen = len(imagePuzzles)
 	
@@ -262,10 +264,10 @@ def add_puzzle_menu(state, sendBack, bannedDirections = None):
 	title3.innerHTML = "Which wall of the room?"
 	
 	direction = "N"
-	
+	dAlert("got here1")
 	# Create the list of puzzles for the user to chose from
-	lists = create_puzzle_lists(state)
-	
+	lists = create_puzzle_lists(imagePuzzles,musicPuzzles)
+
 	# Create Direction Form
 	directionForm = create_direction_form(bannedDirections)
 	#print(directionForm)

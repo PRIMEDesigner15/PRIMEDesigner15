@@ -37,17 +37,19 @@ from browser import document, window, alert, console, ajax
 from javascript import JSObject, JSConstructor
 import time, json
 
+# Debug alert that can be easily searched for.
+def dAlert(string):
+	alert(string)
 
 # Preforms a deep copy of the given state. 
 def copy_state(state):
 	newState = {"Rooms": [], "Doors": set()}
 	newRooms = []
 	newDoors = set()
-	newImagePuzzles = []
-	newMusicPuzzles = []
+	newImagePuzzles = set()
+	newMusicPuzzles = set()
 	
 	#Debug
-	print(state["Doors"])
 	'''print("image puzzles")
 	string = ""
 	for puzzle in state["Image_Puzzles"]:
@@ -66,10 +68,9 @@ def copy_state(state):
 	for door in state["Doors"]:
 		newDoors.add(door.copy())
 	for imagePuzzle in state["Image_Puzzles"]:
-		newImagePuzzles.append(imagePuzzle.copy())
+		newImagePuzzles.add(imagePuzzle.copy())
 	for musicPuzzle in state["Music_Puzzles"]:
-		newMusicPuzzles.append(musicPuzzle.copy())
-	
+		newMusicPuzzles.add(musicPuzzle.copy())
 	
 	# Put the new lists into the new state's lists.
 	newState["Rooms"] = newRooms
@@ -87,10 +88,7 @@ def copy_state(state):
 	
 	# Operators is updated in set_operators.
 	newState["Operators"] = state["Operators"]
-	
 	# Add in doors/puzzles to the walls in the rooms.
-	music_index = 0
-	image_index = 0
 	for room_num in range(9):
 		for direction in ['N', 'S', 'E', 'W']:
 			oldWall = state["Rooms"][room_num].walls[direction]
@@ -98,15 +96,17 @@ def copy_state(state):
 			if(oldWall.door is not None and newWall.door is None):
 				door = newState["Doors"].pop()
 				add_door_to_room(room_num, direction, newState, door)
-				door = newState["Doors"].add(door)
-			if(oldWall.puzzle is not None):
+				newState["Doors"].add(door)
+			'''if(oldWall.puzzle is not None):
 				if(type(oldWall.puzzle) is ImagePuzzle):
-					add_puzzle_to_room(room_num,direction,newState,newState["Image_Puzzles"][image_index])
-					image_index += 1
+					puzzle = newState["Image_Puzzles"].pop()
+					add_puzzle_to_room(room_num,direction,newState,puzzle)
+					newState["Image_Puzzles"].add(puzzle)
 				if(type(oldWall.puzzle) is MusicPuzzle):
-					add_puzzle_to_room(room_num,direction,newState,newState["Music_Puzzles"][music_index])
-					music_index += 1
-					
+					puzzle = newState["Music_Puzzles"].pop()
+					add_puzzle_to_room(room_num,direction,newState,puzzle)
+					newState["Music_Puzzles"].add(puzzle)
+			'''		
 	return newState
 		
 def describe_state(state):
@@ -401,13 +401,12 @@ def remove_doors_is_valid(state,side):
 def add_puzzle_to_room(room_num,side, state, puzzle = None):
 	if puzzle is None:
 		puzzle = imagePuzzle()
-		state["Image_puzzles"].append(puzzle)
+		state["Image_puzzles"].add(puzzle)
 		
 	state["Rooms"][room_num].walls[side].puzzle = puzzle
 	
 # room_num, side parameters don't do anything..?
 def add_puzzle_operator(state, room_num, sendBack):
-
 	def processMenu(state,side,puzzle):
 		newState = copy_state(state)
 		add_puzzle_to_room(room_num,side,newState,puzzle)
@@ -514,7 +513,7 @@ def create_image_puzzle(state):
 		newState = copy_state(state)
 		name = getName(url)
 		newPuzzle = ImagePuzzle(name,url)
-		newState["Image_Puzzles"].append(newPuzzle)
+		newState["Image_Puzzles"].add(newPuzzle)
 		newState["Selected_Image"] = len(newState["Image_Puzzles"]) - 1
 		
 		return newState
@@ -559,7 +558,7 @@ def create_music_puzzle(state, sendBack):
 				song = json.loads(req.responseText)
 				newPuzzle = MusicPuzzle(song["name"],song["notes"])
 		
-				newState["Music_Puzzles"].append(newPuzzle)
+				newState["Music_Puzzles"].add(newPuzzle)
 				newState["Selected_Music"] = len(newState["Music_Puzzles"]) - 1
 				hide_loading()
 				sendBack(newState)
@@ -743,18 +742,18 @@ def set_operators(state):
 INITIAL_STATE = {}
 INITIAL_STATE['Rooms'] = []
 INITIAL_STATE['Doors'] = set()
-INITIAL_STATE['Image_Puzzles'] = []
-INITIAL_STATE['Music_Puzzles'] = []
+INITIAL_STATE['Image_Puzzles'] = set()
+INITIAL_STATE['Music_Puzzles'] = set()
 
 
 # ADD A BLANK MUSIC PUZZLE FOR DEBUG PURPOSES ONLY
-INITIAL_STATE["Music_Puzzles"].append(MusicPuzzle(name="1"))
-INITIAL_STATE["Music_Puzzles"].append(MusicPuzzle(name="2"))
-INITIAL_STATE["Music_Puzzles"].append(MusicPuzzle(name="3"))
-INITIAL_STATE["Music_Puzzles"].append(MusicPuzzle(name="4"))
+INITIAL_STATE["Music_Puzzles"].add(MusicPuzzle(name="1"))
+INITIAL_STATE["Music_Puzzles"].add(MusicPuzzle(name="2"))
+INITIAL_STATE["Music_Puzzles"].add(MusicPuzzle(name="3"))
+INITIAL_STATE["Music_Puzzles"].add(MusicPuzzle(name="4"))
 
 # ADD A BLANK IMAGE PUZZLE FOR DEBUG PURPOSES ONLY
-INITIAL_STATE["Image_Puzzles"].append(ImagePuzzle(name="5"))
+INITIAL_STATE["Image_Puzzles"].add(ImagePuzzle(name="5"))
 
 INITIAL_STATE['Rules'] = []
 #INITIAL_STATE['Causes'] = []
