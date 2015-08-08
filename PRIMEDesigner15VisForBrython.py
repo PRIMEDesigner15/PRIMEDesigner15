@@ -452,10 +452,7 @@ def create_rule_menu(state, sendBack):
 		if(effect == "Open Door"):
 			followUpForm <= "Pick a door:"
 			for index, room in enumerate(state["Rooms"]):
-				console.log(index)
-				console.log(room)
 				for wall in room.walls.values():
-					console.log(wall)
 					if wall.door is not None:
 						doorOp = html.OPTION("Open Door in room " + str(index + 1) + " on " + wall.loc + " wall.")
 						eFollowUpSelect <= doorOp
@@ -464,7 +461,7 @@ def create_rule_menu(state, sendBack):
 		elif(effect == "Close Door"):
 			followUpForm <= "Pick a door:"
 			for index, room in enumerate(state["Rooms"]):
-				for wall in room.walls:
+				for wall in room.walls.values():
 					if wall.door is not None:
 						doorOp = html.OPTION("Close Door in room " + str(index + 1) + " on " + wall.loc + " wall.")
 						eFollowUpSelect <= doorOp
