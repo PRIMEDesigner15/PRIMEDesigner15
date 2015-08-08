@@ -8,6 +8,7 @@ OPSELECT = None
 STATE_STACK = []
 RESET_BUTTON = None
 BACKTRACK_BUTTON = None
+# Are you working?
 
 if not 'PROBLEM_NAME' in globals():
   PROBLEM_NAME = "Problems"
