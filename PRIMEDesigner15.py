@@ -433,9 +433,11 @@ def puzzles_is_valid(state):
 
 def create_rule_operator(state, sendBack):
 	def processMenu(state, cause, effect):
-		print(cause)
-		print(effect)
-		#sendBack from here
+		newState = copy_state(state)
+		newRule = Rule(cause, effect)
+		newState["Rules"].append(newRule)
+		sendBack(newState)
+		
 	create_rule_menu(state, processMenu)
 		
 #def add_music_puzzle_to_room(state, room_num):

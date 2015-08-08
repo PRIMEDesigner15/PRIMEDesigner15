@@ -393,9 +393,13 @@ def create_rule_menu(state, sendBack):
 		console.log("inside evaluateOutput")
 		def destroyAndSendBack():
 			causeF  = document.getElementById("cFollowUpSelect").value
-			effectF = document.getElementById("eFollowUpSelect").value
 			
+			if(textInput is None):
+				effectF = document.getElementById("eFollowUpSelect").value
+			else:
+				effectF = "Message: " + textInput.value
 			
+			destroy_menu("followUpMenu")
 			destroy_menu("createRuleMenu")
 			
 			sendBack(state, causeF, effectF)	
@@ -426,6 +430,8 @@ def create_rule_menu(state, sendBack):
 
 		cFollowUpSelect = html.SELECT(id = "cFollowUpSelect")
 		eFollowUpSelect = html.SELECT(id = "eFollowUpSelect")
+		
+		textInput = None
 		
 		submitButton = html.BUTTON(id = "SubmitFollowUp")
 		submitButton.innerHTML = "Submit"
@@ -469,7 +475,10 @@ def create_rule_menu(state, sendBack):
 		elif(effect == "Play Music"):
 			pass
 		elif(effect == "Display Message"):
-			pass
+			followUpForm <= "Enter your message:"
+			textInput = html.INPUT(type="text", id="textInput")
+			followUpForm <= textInput
+			
 		else:
 			alert("RIP")
 		
