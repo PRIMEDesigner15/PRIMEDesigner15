@@ -1,0 +1,10 @@
+{"name" : "testMusic", "notes" :[
+
+	{"wait": 0.5, "pitch" : "E3", "hold" : 0.5},
+	{"wait": 0, "pitch" : "A3", "hold" : 0.5},
+	{"wait": 0.5, "pitch" : "A3", "hold" : 0.5},
+	{"wait": 0.5, "pitch" : "A3", "hold" : 0.5},
+	{"wait": 0.5, "pitch" : "A3", "hold" : 0.5},
+	{"wait": 0.5, "pitch" : "G3", "hold" : 0.5}
+
+]}
