@@ -721,10 +721,8 @@ def set_operators(state):
 		
 	elif(state['Role'] == "Music Puzzle"):
 		
-		print(state["Selected_Music"])
 		puzzles = state["Music_Puzzles"]
 		numOfPuzzles = len(puzzles)
-		print("got here?")
 		
 		selection_operators =\
 			[Operator("Switch to puzzle \"" + name + "\" for editing.",
