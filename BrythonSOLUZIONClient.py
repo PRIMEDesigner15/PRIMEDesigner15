@@ -89,10 +89,11 @@ def handleApplyButtonClick(evt):
 	op = Operators[i]
 	#sendBack = recieveNewState
 
-	if (type(op) is Operator): #Get state straight from the operator
+	if (type(op) is Operator): # Get state straight from the operator
 
 		new_state = op.state_transf(current_state)
 		recieveNewState(new_state)
+		
 	elif (type(op) is AsyncOperator): #Pass it function to get new state
 
 		try:	

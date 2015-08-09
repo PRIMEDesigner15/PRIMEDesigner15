@@ -518,14 +518,26 @@ def create_image_puzzle(state):
 		return None
 	elif(url_is_valid(url)):
 	
+		
 		newState = copy_state(state)
 		name = getName(url)
+		
+		
+		puzzleNames = state["Image_Puzzles"]
+		
+		# Make sure there are no copies of the name
+		i = 1
+		newName = name
+		while(newName in puzzleNames):
+			newName = name + " (" + str(i) + ")"
+			i = i + 1
+	
 		newPuzzle = ImagePuzzle(url)
 		
 		# Add newPuzzle to dictionary
-		newState["Image_Puzzles"][name] = newPuzzle
-		
-		newState["Selected_Image"] = name
+		newState["Image_Puzzles"][newName] = newPuzzle
+		newState["Selected_Image"] = newName
+
 		return newState
 		
 	else:
@@ -655,7 +667,7 @@ def set_operators(state):
 		
 		selection_operators =\
 			[Operator("Switch to puzzle \"" + name + "\" for editing",
-				lambda state, n = name: numOfPuzzles > 1 and puzzles[n] != state["Selected_Image"],
+				lambda state, n = name: numOfPuzzles > 1 and n != state["Selected_Image"],
 				lambda state, n = name: change_image_puzzle_selection(state, n))
 			for name in puzzles.keys()]
 		
