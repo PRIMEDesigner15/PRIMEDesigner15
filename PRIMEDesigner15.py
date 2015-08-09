@@ -527,7 +527,7 @@ def create_image_puzzle(state):
 		
 		puzzleNames = state["Image_Puzzles"]
 		
-		# Make sure there are no copies of the name
+		# Make sure there are no copies of the name in image puzzles
 		i = 1
 		newName = name
 		while(newName in puzzleNames):
@@ -572,27 +572,44 @@ def getName(url):
 def create_music_puzzle(state, sendBack):
 	url = window.prompt("Enter a complete URL for a sheetMusic file. Say 'cancel' to cancel.", "music/twinkleTwinkle.txt")
 	if(url_is_valid(url)):
+
+		# Double nested to allow use of name parameter
+		def requestSuccess(name):
+			# When the request is recieved
+			def requestSuccess2(req):
+				if(req.status == 200 or req.status == 0):
+					
+					newState = copy_state(state)
+					
+					# Assign name to song using data from JSON object
+					song = json.loads(req.responseText)
+					newPuzzle = MusicPuzzle(song["notes"])
+					newState["Music_Puzzles"][name] = newPuzzle
+					newState["Selected_Music"] = name
+					
+					# Hide loading visualization
+					hide_loading()
+					
+					sendBack(newState)
+				else:
+					print("request failure")
+			return requestSuccess2
+
+		# Show loading visualization
 		show_loading()
-		# When the request is received
-		def requestSuccess(req):
-			if(req.status == 200 or req.status == 0):
-				#dAlert(req.url)
-				'''newState = copy_state(state)
-				
-				# Assign name of song from json object
-				song = json.loads(req.responseText)
-				newPuzzle = MusicPuzzle(song["notes"])
 		
-				newState["Music_Puzzles"]append(newPuzzle)
-				newState["Selected_Music"] = len(newState["Music_Puzzles"]) - 1
-				hide_loading()
-				sendBack(newState)'''
-			else:
-				print("request failure")
+		name = getName(url)
+		puzzleNames = state["Music_Puzzles"]
+		# Make sure there are no copies of the name in music puzzles
+		i = 1
+		newName = name
+		while(newName in puzzleNames):
+			newName = name + " (" + str(i) + ")"
+			i = i + 1
 		
 		request = ajax.ajax()
 		request.open('GET',url,True)
-		request.bind("complete",requestSuccess)
+		request.bind("complete",requestSuccess(newName))
 		request.send()
 	
 	elif(url != "cancel"):
@@ -705,13 +722,14 @@ def set_operators(state):
 		
 	elif(state['Role'] == "Music Puzzle"):
 		
-		numOfPuzzles = len(state["Music_Puzzles"])
+		puzzles = state["Music_Puzzles"]
+		numOfPuzzles = len(puzzles)
 		
 		selection_operators =\
-			[Operator("Switch to puzzle " + str(num + 1) + ", \"" + state["Music_Puzzles"][num].name + "\" for editing.",
-				lambda state, n = num: n < len(state["Music_Puzzles"]) and len(state["Music_Puzzles"]) > 1 and n != state["Selected_Music"],
-				lambda state, n = num: change_music_puzzle_selection(state, n))
-			for num in range(numOfPuzzles)]
+			[Operator("Switch to puzzle \"" + name + "\" for editing.",
+				lambda state, n = name: numPuzzles > 1 and n != state["Selected_Music"],
+				lambda state, n = name: change_music_puzzle_selection(state, n))
+			for name in puzzles.keys()]
 		
 		create_new_puzzle =\
 			AsyncOperator("Create a new music puzzle.",
@@ -720,33 +738,33 @@ def set_operators(state):
 		
 		increase_pitch =\
 			Operator("Increase pitch of song",
-				lambda state: state["Selected_Music"] > -1,
-				lambda state, sb: addMusicTransformation(state, "increasePitch"))
+				lambda state: state["Selected_Music"] != "",
+				lambda stateW: addMusicTransformation(state, "increasePitch"))
 		
 		decrease_pitch =\
 			Operator("Decrease pitch of song",
-				lambda state: state["Selected_Music"] > -1,
-				lambda state, sb: addMusicTransformation(state, "decreasePitch"))
+				lambda state: state["Selected_Music"] != "",
+				lambda stateW: addMusicTransformation(state, "decreasePitch"))
 		
 		increase_tempo =\
 			Operator("Increase tempo of song",
-				lambda state: state["Selected_Music"] > -1,
-				lambda state, sb: addMusicTransformation(state, "increaseTempo"))
+				lambda state: state["Selected_Music"] != "",
+				lambda state: addMusicTransformation(state, "increaseTempo"))
 		
 		decrease_tempo =\
 			Operator("Decrease tempo of song",
-				lambda state: state["Selected_Music"] > -1,
-				lambda state, sb: addMusicTransformation(state, "decreaseTempo"))
+				lambda state: state["Selected_Music"] != "",
+				lambda state: addMusicTransformation(state, "decreaseTempo"))
 
 		shuffle_notes =\
 			Operator("Shuffle notes of song",
-				lambda state: state["Selected_Music"] > -1,
-				lambda state, sb: addMusicTransformation(state, "shuffleNotes"))
+				lambda state: state["Selected_Music"] != "",
+				lambda state: addMusicTransformation(state, "shuffleNotes"))
 
 		reverse_notes =\
 			Operator("Reverse notes of song",
-				lambda state: state["Selected_Music"] > -1,
-				lambda state, sb: addMusicTransformation(state, "reverseNotes"))
+				lambda state: state["Selected_Music"] != "",
+				lambda state: addMusicTransformation(state, "reverseNotes"))
 		
 		OPERATORS = selection_operators + role_operators  + create_new_puzzle + increase_tempo + decrease_tempo + shuffle_notes + increase_pitch + decrease_pitch + reverse_notes        
 	
@@ -789,7 +807,7 @@ INITIAL_STATE['Selected_Room'] = 0
 # Stores name of selected image and selected music
 INITIAL_STATE['Selected_Image'] = ""
 INITIAL_STATE['Selected_Music'] = ""
-INITIAL_STATE['Role'] = "Image Puzzle"
+INITIAL_STATE['Role'] = "Music Puzzle"
 INITIAL_STATE['Operators'] = set_operators(INITIAL_STATE)	
 
 
