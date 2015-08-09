@@ -159,7 +159,6 @@ def create_puzzle_lists(imagePuzzles,musicPuzzles):
 
 	title1 = html.P("Image Puzzles:")
 	title2 = html.P("Music Puzzles:")
-	
 	# Enables image select, disables music select	
 	def enableImageSelect():
 		imageSelect = document.getElementById("imageSelect")
@@ -188,7 +187,7 @@ def create_puzzle_lists(imagePuzzles,musicPuzzles):
 		rad1.onclick = enableImageSelect
 		for imagePuzzle in imagePuzzles:
 			
-			optionText = "Image puzzle " + str(i) + ", '" + imagePuzzle.name + "'"
+			optionText = "Image puzzle " + str(i) + ", '" + imagePuzzle + "'"
 			listSelect <= html.OPTION(optionText)
 			i = i + 1
 		
@@ -207,7 +206,7 @@ def create_puzzle_lists(imagePuzzles,musicPuzzles):
 		rad2.onclick = enableMusicSelect
 		for musicPuzzle in musicPuzzles:
 			
-			optionText = "Music puzzle " + str(i) + ", '" + musicPuzzle.name + "'"
+			optionText = "Music puzzle " + str(i) + ", '" + musicPuzzle + "'"
 			listSelect <= html.OPTION(optionText)
 			i = i + 1
 		
@@ -229,9 +228,11 @@ def destroy_menu(menuName):
 # The band direction will be disabled when the user tries to choose it.
 # calls a callback function, sendBack, when the user hits a button.
 def add_puzzle_menu(state, sendBack, bannedDirections = None):
+
 	# Convert to list for easy indexing
 	musicPuzzles = list(state["Music_Puzzles"])
 	imagePuzzles = list(state["Image_Puzzles"])
+	
 	
 	musLen = len(musicPuzzles)
 	imgLen = len(imagePuzzles)
@@ -264,6 +265,7 @@ def add_puzzle_menu(state, sendBack, bannedDirections = None):
 	title3.innerHTML = "Which wall of the room?"
 	
 	direction = "N"
+	
 	
 	# Create the list of puzzles for the user to chose from
 	lists = create_puzzle_lists(imagePuzzles,musicPuzzles)

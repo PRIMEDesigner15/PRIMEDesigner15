@@ -98,23 +98,19 @@ def copy_state(state):
 	
 	# Add in doors/puzzles to the walls in the rooms.
 	door_index = 0
-	music_index = 0
-	image_index = 0
 	for room_num in range(9):
 		for direction in ['N', 'S', 'E', 'W']:
 			oldWall = state["Rooms"][room_num].walls[direction]
 			newWall = newState["Rooms"][room_num].walls[direction]
-			if(oldWall.door is not None and newWall.door is None):
+			''''if(oldWall.door is not None and newWall.door is None):
 				add_door_to_room(room_num, direction, newState, newState["Doors"][door_index])
 				door_index += 1
-			'''if(oldWall.puzzle is not None):
+			if(oldWall.puzzle is not None):
 				if(type(oldWall.puzzle) is ImagePuzzle):
-					add_puzzle_to_room(room_num,direction,newState,newState["Image_Puzzles"][image_index])
-					image_index += 1
+					add_puzzle_to_room(room_num,direction,newState,newState["Image_Puzzles"][oldWall.puzzle])
 				if(type(oldWall.puzzle) is MusicPuzzle):
-					add_puzzle_to_room(room_num,direction,newState,newState["Music_Puzzles"][music_index])
-					music_index += 1
-				'''
+					add_puzzle_to_room(room_num,direction,newState,newState["Music_Puzzles"][oldWall.puzzle])
+			'''	
 	return newState
 		
 def describe_state(state):
@@ -412,7 +408,7 @@ def add_puzzle_to_room(room_num,side, state, puzzle = None):
 	
 # room_num, side parameters don't do anything..?
 def add_puzzle_operator(state, room_num, sendBack):
-
+	
 	def processMenu(state,side,puzzle):
 		newState = copy_state(state)
 		add_puzzle_to_room(room_num,side,newState,puzzle)
@@ -791,7 +787,10 @@ INITIAL_STATE['Music_Puzzles'] = {}
 
 
 # ADD A BLANK MUSIC PUZZLE FOR DEBUG PURPOSES ONLY
-'''INITIAL_STATE["Music_Puzzles"].append(MusicPuzzle(name="1"))
+
+INITIAL_STATE["Music_Puzzles"]["test puzzle1"] = MusicPuzzle()
+'''
+INITIAL_STATE["Music_Puzzles"].append(MusicPuzzle(name="1"))
 INITIAL_STATE["Music_Puzzles"].append(MusicPuzzle(name="2"))
 INITIAL_STATE["Music_Puzzles"].append(MusicPuzzle(name="3"))
 INITIAL_STATE["Music_Puzzles"].append(MusicPuzzle(name="4"))
