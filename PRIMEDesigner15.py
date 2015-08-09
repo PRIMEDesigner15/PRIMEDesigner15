@@ -406,7 +406,7 @@ def remove_doors_is_valid(state,side):
 def add_puzzle_to_room(room_num,side, state, puzzle = None):
 	if puzzle is None:
 		puzzle = imagePuzzle()
-		state["Image_puzzles"].append(puzzle)
+		state["Image_puzzles"]["defaultImagePuzzle"] = puzzle
 		
 	state["Rooms"][room_num].walls[side].puzzle = puzzle
 	
@@ -572,7 +572,7 @@ def getName(url):
 def create_music_puzzle(state, sendBack):
 	url = window.prompt("Enter a complete URL for a sheetMusic file. Say 'cancel' to cancel.", "music/twinkleTwinkle.txt")
 	if(url_is_valid(url)):
-
+		alert("This fired")
 		# Double nested to allow use of name parameter
 		def requestSuccess(name):
 			# When the request is recieved
@@ -594,7 +594,7 @@ def create_music_puzzle(state, sendBack):
 				else:
 					print("request failure")
 			return requestSuccess2
-
+		
 		# Show loading visualization
 		show_loading()
 		
@@ -807,7 +807,7 @@ INITIAL_STATE['Selected_Room'] = 0
 # Stores name of selected image and selected music
 INITIAL_STATE['Selected_Image'] = ""
 INITIAL_STATE['Selected_Music'] = ""
-INITIAL_STATE['Role'] = "Music Puzzle"
+INITIAL_STATE['Role'] = "Architect"
 INITIAL_STATE['Operators'] = set_operators(INITIAL_STATE)	
 
 
