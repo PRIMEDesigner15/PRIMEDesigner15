@@ -515,7 +515,9 @@ def create_image_puzzle(state):
 	# Prompt the user for a image url
 	url = window.prompt("Enter a complete URL for a picture. Say 'cancel' to cancel.", "images/force.jpg")
 	if(url is None):
+	
 		return None
+		
 	elif(url_is_valid(url)):
 	
 		
@@ -565,23 +567,26 @@ def getName(url):
 		i = i + 1
 	
 	return name
-		
+
+# NOTE: This operators requires Brython as it uses a JSON object.
 def create_music_puzzle(state, sendBack):
 	url = window.prompt("Enter a complete URL for a sheetMusic file. Say 'cancel' to cancel.", "music/twinkleTwinkle.txt")
 	if(url_is_valid(url)):
 		show_loading()
-		# When the request is recieved
+		# When the request is received
 		def requestSuccess(req):
 			if(req.status == 200 or req.status == 0):
-				newState = copy_state(state)
+				#dAlert(req.url)
+				'''newState = copy_state(state)
+				
 				# Assign name of song from json object
 				song = json.loads(req.responseText)
-				newPuzzle = MusicPuzzle(song["name"],song["notes"])
+				newPuzzle = MusicPuzzle(song["notes"])
 		
-				newState["Music_Puzzles"].append(newPuzzle)
+				newState["Music_Puzzles"]append(newPuzzle)
 				newState["Selected_Music"] = len(newState["Music_Puzzles"]) - 1
 				hide_loading()
-				sendBack(newState)
+				sendBack(newState)'''
 			else:
 				print("request failure")
 		
@@ -618,7 +623,7 @@ def addMusicTransformation(state, transformation):
 #<OPERATORS>
 # Method that can be called to set the Operators 
 # of the current Role given the current State.
-# Each operators state transfer must have a callback function defined.
+# Each AsyncOperators state transfer must have a callback function defined.
 def set_operators(state):
 
 	# Sendback is the function given by the client which receives the modified state
@@ -678,23 +683,23 @@ def set_operators(state):
 		horiz_flip =\
 			Operator("Flip the image horizontally.",
 				lambda state: state["Selected_Image"] != "",
-				lambda state, sb: addImageTransformation(state, "horizFlip"))
+				lambda state: addImageTransformation(state, "horizFlip"))
 		vert_flip =\
 			Operator("Flip the image vertically.",
 				lambda state: state["Selected_Image"] != "",
-				lambda state, sb: addImageTransformation(state, "vertFlip"))
+				lambda state: addImageTransformation(state, "vertFlip"))
 		shuff_rows =\
 			Operator("Shuffle the rows of the image.",
 				lambda state: state["Selected_Image"] != "",
-				lambda state, sb: addImageTransformation(state, "shuffleRows"))
+				lambda state: addImageTransformation(state, "shuffleRows"))
 		invs_shuff_rows =\
 			Operator("Invert Row shuffling",
 				lambda state: state["Selected_Image"] != "",
-				lambda state, sb: addImageTransformation(state, "shuffleRowsInverse"))
+				lambda state: addImageTransformation(state, "shuffleRowsInverse"))
 		shuff_cols =\
 			Operator("Shuffle the columns of the image.",
 				lambda state: state["Selected_Image"] != "",
-				lambda state, sb: addImageTransformation(state, "shuffleColumns"))
+				lambda state: addImageTransformation(state, "shuffleColumns"))
 				
 		OPERATORS =   selection_operators + create_new_puzzle + horiz_flip + vert_flip + shuff_rows + invs_shuff_rows + shuff_cols + role_operators
 		
