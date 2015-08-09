@@ -52,7 +52,7 @@ def repopulate_operator_choices(current_state):
 	got_one_selected = False
 	
 	Operators = set_operators(current_state)
-	
+	dAlert(Operators)
 	opSelect.innerHTML = ''
 	for i, elt in enumerate(Operators):
 		opSelect <= html.OPTION(elt.name, value = i)
@@ -67,6 +67,7 @@ def repopulate_operator_choices(current_state):
 		else:
 			item.disabled = True
 			item.selected = False
+	dAlert("got to the end of here")
 
 def recieveNewState(state = None):
 	if(state is not None):
@@ -75,9 +76,11 @@ def recieveNewState(state = None):
 
 def replaceCurrentState(new_state):
 	global current_state
+	
 	current_state = new_state
 	render_state(current_state)
 	finalize_state(current_state)
+
 
 def handleApplyButtonClick(evt):
 	# get selected operator.

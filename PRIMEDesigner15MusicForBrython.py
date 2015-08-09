@@ -219,9 +219,8 @@ def readChords(notes):
 def playSong(state):
 	
 	global Pitches
-	
-	index = state["Selected_Music"]
-	puzzle = state["Music_Puzzles"][index]
+
+	puzzle = state["Music_Puzzles"][state["Selected_Music"]]
 	
 	# Music Settings
 	tempo = 1.0

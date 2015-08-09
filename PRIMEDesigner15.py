@@ -496,9 +496,9 @@ def change_image_puzzle_selection(state, name):
 	newState["Selected_Image"] = name
 	return newState
 
-def change_music_puzzle_selection(state, puzzle_num):
+def change_music_puzzle_selection(state, name):
 	newState = copy_state(state)
-	newState["Selected_Music"] = puzzle_num
+	newState["Selected_Music"] = name
 	return newState
 	
 def change_role(state, role):
@@ -633,8 +633,6 @@ def addMusicTransformation(state, transformation):
 	newState["Music_Puzzles"][newState["Selected_Music"]].add_transform(transformation)
 	return newState
 	
-
-	
 #</COMMON_CODE>		
 
 #<OPERATORS>
@@ -697,6 +695,7 @@ def set_operators(state):
 			Operator("Create a new image puzzle.",
 				lambda state: True,
 				lambda state: create_image_puzzle(state))
+				
 		horiz_flip =\
 			Operator("Flip the image horizontally.",
 				lambda state: state["Selected_Image"] != "",
@@ -722,12 +721,14 @@ def set_operators(state):
 		
 	elif(state['Role'] == "Music Puzzle"):
 		
+		print(state["Selected_Music"])
 		puzzles = state["Music_Puzzles"]
 		numOfPuzzles = len(puzzles)
+		print("got here?")
 		
 		selection_operators =\
 			[Operator("Switch to puzzle \"" + name + "\" for editing.",
-				lambda state, n = name: numPuzzles > 1 and n != state["Selected_Music"],
+				lambda state, n = name: numOfPuzzles > 1 and n != state["Selected_Music"],
 				lambda state, n = name: change_music_puzzle_selection(state, n))
 			for name in puzzles.keys()]
 		
@@ -739,12 +740,12 @@ def set_operators(state):
 		increase_pitch =\
 			Operator("Increase pitch of song",
 				lambda state: state["Selected_Music"] != "",
-				lambda stateW: addMusicTransformation(state, "increasePitch"))
+				lambda state: addMusicTransformation(state, "increasePitch"))
 		
 		decrease_pitch =\
 			Operator("Decrease pitch of song",
 				lambda state: state["Selected_Music"] != "",
-				lambda stateW: addMusicTransformation(state, "decreasePitch"))
+				lambda state: addMusicTransformation(state, "decreasePitch"))
 		
 		increase_tempo =\
 			Operator("Increase tempo of song",
@@ -778,6 +779,7 @@ def set_operators(state):
 	else:
 		alert("unsupported role")
 	
+
 	return OPERATORS
 
 #</OPERATORS>
