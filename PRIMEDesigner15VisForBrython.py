@@ -621,20 +621,20 @@ def render_state_svg_graphics(state):
 		APANEL <= outline
 	elif(state['Role'] == "Image Puzzle"):
 		prepareCanvas()	
-		if(state["Selected_Image"] != -1):
+		if(state["Selected_Image"] != ""):
 			puzzle = state["Image_Puzzles"][state["Selected_Image"]]
 			canMan.setURL(puzzle.url)
 			drawImagePuzzle(puzzle)
 	elif(state['Role'] == "Music Puzzle"):
+		
 		prepareMusicDisplay()
-		puzzle_num = state["Selected_Music"]
+		songName = state["Selected_Music"]
 		
 		songSelected = document.getElementById("songSelected")
 		playButton = document.getElementById("playButton")
 		
-		if(puzzle_num > -1):
-			songName = state["Music_Puzzles"][puzzle_num].name
-			songSelected.innerHTML = "Song number " + str(puzzle_num + 1) + " selected \"" + songName + "\""
+		if(songName != ""):
+			songSelected.innerHTML = "Song titled \"" + songName + "\" selected"
 			
 			# Bind the correct play song button to the button.
 			playButton.unbind('click')

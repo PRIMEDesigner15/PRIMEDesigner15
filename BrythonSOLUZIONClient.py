@@ -20,6 +20,9 @@ BACKTRACK_BUTTON = None
 overlayWindow = None
 Operators = None
 
+# Debug alert
+def dAlert(string):
+	alert(string)
 
 def printStack(state_stack):
 	if (len(state_stack) > 0 ):
@@ -73,7 +76,6 @@ def recieveNewState(state = None):
 def replaceCurrentState(new_state):
 	global current_state
 	current_state = new_state
-	console.log(render_state)
 	render_state(current_state)
 	finalize_state(current_state)
 
@@ -86,12 +88,11 @@ def handleApplyButtonClick(evt):
 	i = opSelect.selectedIndex
 	op = Operators[i]
 	#sendBack = recieveNewState
-	
+
 	if (type(op) is Operator): #Get state straight from the operator
 
 		new_state = op.state_transf(current_state)
-		replaceCurrentState(new_state)
-		
+		recieveNewState(new_state)
 	elif (type(op) is AsyncOperator): #Pass it function to get new state
 
 		try:	

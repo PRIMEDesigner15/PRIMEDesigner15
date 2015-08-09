@@ -37,15 +37,25 @@ from browser import document, window, alert, console, ajax
 from javascript import JSObject, JSConstructor
 import time, json
 
+# Debug string
+def dAlert(string):
+	alert(string)
 
 # Preforms a deep copy of the given state. 
 def copy_state(state):
+		
+	oldRooms = state["Rooms"]
+	oldDoors = state["Doors"]
+	oldImgPuzzles = state["Image_Puzzles"]
+	oldMusPuzzles = state["Music_Puzzles"]
+	
 	newState = {"Rooms": [], "Doors": []}
 	newRooms = []
 	newDoors = []
-	newImagePuzzles = []
-	newMusicPuzzles = []
-	
+	newImagePuzzles = {}
+	newMusicPuzzles = {}
+
+	'''
 	#Debug
 	print("image puzzles")
 	string = ""
@@ -57,32 +67,31 @@ def copy_state(state):
 	for puzzle in state["Music_Puzzles"]:
 		string += puzzle.name + " ,"
 	print(string)
-	
+	'''
 	
 	# Copy the rooms (without doors in their walls) and doors into the newState's dictionary.
-	for room in state["Rooms"]:
+	for room in oldRooms:
 		newRooms.append(room.copy())
-	for door in state["Doors"]:
+	for door in oldDoors:
 		newDoors.append(door.copy())
-	for imagePuzzle in state["Image_Puzzles"]:
-		newImagePuzzles.append(imagePuzzle.copy())
-	for musicPuzzle in state["Music_Puzzles"]:
-		newMusicPuzzles.append(musicPuzzle.copy())
-	
+	for name in oldImgPuzzles:
+		newImagePuzzles[name] = state["Image_Puzzles"][name].copy()
+	for name in oldMusPuzzles:
+		newMusicPuzzles[name] = state["Music_Puzzles"][name].copy()
 	
 	# Put the new lists into the new state's lists.
 	newState["Rooms"] = newRooms
 	newState["Doors"] = newDoors
 	newState["Image_Puzzles"] = newImagePuzzles
 	newState["Music_Puzzles"] = newMusicPuzzles
-	
 	newState["Rules"] = state["Rules"]
 	
 	# Primitives and operators do not need to be deep copied.
-	newState["Selected_Room"] = state["Selected_Room"]	
+	newState["Selected_Room"] = state["Selected_Room"]
 	newState["Selected_Image"] = state["Selected_Image"]
 	newState["Selected_Music"] = state["Selected_Music"]
 	newState["Role"] = state["Role"]
+
 	
 	# Operators is updated in set_operators.
 	newState["Operators"] = state["Operators"]
@@ -98,14 +107,14 @@ def copy_state(state):
 			if(oldWall.door is not None and newWall.door is None):
 				add_door_to_room(room_num, direction, newState, newState["Doors"][door_index])
 				door_index += 1
-			if(oldWall.puzzle is not None):
+			'''if(oldWall.puzzle is not None):
 				if(type(oldWall.puzzle) is ImagePuzzle):
 					add_puzzle_to_room(room_num,direction,newState,newState["Image_Puzzles"][image_index])
 					image_index += 1
 				if(type(oldWall.puzzle) is MusicPuzzle):
 					add_puzzle_to_room(room_num,direction,newState,newState["Music_Puzzles"][music_index])
 					music_index += 1
-					
+				'''
 	return newState
 		
 def describe_state(state):
@@ -129,7 +138,7 @@ def describe_state(state):
 
 ROOM_SIZE = 1
 	
-class Room:	
+class Room:
 
 	""" A room in the game contains 4 walls that could have wallpapers or doors
 		and a possible ambient soundtrack, and a possible puzzle. """
@@ -216,9 +225,8 @@ class Door:
 
 class ImagePuzzle:
 
-	def __init__(self, name = "defaultImageName", url = "images/metalfencing.jpg", transformList = []):
+	def __init__(self, url = "images/metalfencing.jpg", transformList = []):
 		
-		self.name = name
 		self.url = url
 		
 		# shallow copying a new list
@@ -228,13 +236,11 @@ class ImagePuzzle:
 		self.transformList.append(transform)
 	
 	def copy(self):
-		return ImagePuzzle(self.name,self.url, self.transformList)
+		return ImagePuzzle(self.url, self.transformList)
 		
 class MusicPuzzle:
 
-	def __init__(self, name = "defaultMusicName", notes = [], transformList = []):
-		
-		self.name = name
+	def __init__(self, notes = [], transformList = []):
 		
 		# shallow copying a new list
 		self.notes = notes[:]
@@ -251,7 +257,7 @@ class MusicPuzzle:
 		for note in self.notes:
 			noteCopy.append(note)
 
-		return MusicPuzzle(self.name, noteCopy, self.transformList)
+		return MusicPuzzle(noteCopy, self.transformList)
 	
 class Rule:
 	def __init__(self, name = "defaultName", causeCondition, effectCondition, isActive):
@@ -485,9 +491,9 @@ def change_room_selection(state, room_num):
 	newState["Selected_Room"] = room_num
 	return newState
 	
-def change_image_puzzle_selection(state, puzzle_num):
+def change_image_puzzle_selection(state, name):
 	newState = copy_state(state)
-	newState["Selected_Image"] = puzzle_num
+	newState["Selected_Image"] = name
 	return newState
 
 def change_music_puzzle_selection(state, puzzle_num):
@@ -506,28 +512,28 @@ def change_role(state, role):
 	return newState
 
 def create_image_puzzle(state):
-
 	# Prompt the user for a image url
 	url = window.prompt("Enter a complete URL for a picture. Say 'cancel' to cancel.", "images/force.jpg")
-
-	if(url_is_valid(url)):
+	if(url is None):
+		return None
+	elif(url_is_valid(url)):
 	
 		newState = copy_state(state)
 		name = getName(url)
-		newPuzzle = ImagePuzzle(name,url)
-		newState["Image_Puzzles"].append(newPuzzle)
-		newState["Selected_Image"] = len(newState["Image_Puzzles"]) - 1
+		newPuzzle = ImagePuzzle(url)
 		
+		# Add newPuzzle to dictionary
+		newState["Image_Puzzles"][name] = newPuzzle
+		
+		newState["Selected_Image"] = name
 		return newState
 		
-	elif(url != "cancel"):
+	else:
 	
 		alert("URL was not valid. Try again.")
 		# Recurse
-		create_image_puzzle(state)
-		
-	else: #url == "cancel"
-		return state
+		return create_image_puzzle(state)	
+	
 	
 # gets a name out of a url
 def getName(url):
@@ -644,13 +650,14 @@ def set_operators(state):
 		
 	elif(state['Role'] == "Image Puzzle"):
 		
-		numOfPuzzles = len(state["Image_Puzzles"])
-			
+		puzzles = state["Image_Puzzles"]
+		numOfPuzzles = len(puzzles)
+		
 		selection_operators =\
-			[Operator("Switch to puzzle " + str(num + 1) + ", \"" + state["Image_Puzzles"][num].name + ",\" for editing",
-				lambda state, n = num: n < len(state["Image_Puzzles"]) and len(state["Image_Puzzles"]) > 1 and n != state["Selected_Image"],
-				lambda state, n = num: change_image_puzzle_selection(state, n))
-			for num in range(numOfPuzzles)]
+			[Operator("Switch to puzzle \"" + name + "\" for editing",
+				lambda state, n = name: numOfPuzzles > 1 and puzzles[n] != state["Selected_Image"],
+				lambda state, n = name: change_image_puzzle_selection(state, n))
+			for name in puzzles.keys()]
 		
 		create_new_puzzle =\
 			Operator("Create a new image puzzle.",
@@ -658,26 +665,26 @@ def set_operators(state):
 				lambda state: create_image_puzzle(state))
 		horiz_flip =\
 			Operator("Flip the image horizontally.",
-				lambda state: state["Selected_Image"] > -1,
+				lambda state: state["Selected_Image"] != "",
 				lambda state, sb: addImageTransformation(state, "horizFlip"))
 		vert_flip =\
 			Operator("Flip the image vertically.",
-				lambda state: state["Selected_Image"] > -1,
+				lambda state: state["Selected_Image"] != "",
 				lambda state, sb: addImageTransformation(state, "vertFlip"))
 		shuff_rows =\
 			Operator("Shuffle the rows of the image.",
-				lambda state: state["Selected_Image"] > -1,
+				lambda state: state["Selected_Image"] != "",
 				lambda state, sb: addImageTransformation(state, "shuffleRows"))
 		invs_shuff_rows =\
 			Operator("Invert Row shuffling",
-				lambda state: state["Selected_Image"] > -1,
+				lambda state: state["Selected_Image"] != "",
 				lambda state, sb: addImageTransformation(state, "shuffleRowsInverse"))
 		shuff_cols =\
 			Operator("Shuffle the columns of the image.",
-				lambda state: state["Selected_Image"] > -1,
+				lambda state: state["Selected_Image"] != "",
 				lambda state, sb: addImageTransformation(state, "shuffleColumns"))
 				
-		OPERATORS = selection_operators + role_operators + create_new_puzzle + horiz_flip + vert_flip + shuff_rows + invs_shuff_rows + shuff_cols
+		OPERATORS =   selection_operators + create_new_puzzle + horiz_flip + vert_flip + shuff_rows + invs_shuff_rows + shuff_cols + role_operators
 		
 	elif(state['Role'] == "Music Puzzle"):
 		
@@ -744,26 +751,28 @@ def set_operators(state):
 INITIAL_STATE = {}
 INITIAL_STATE['Rooms'] = []
 INITIAL_STATE['Doors'] = []
-INITIAL_STATE['Image_Puzzles'] = []
-INITIAL_STATE['Music_Puzzles'] = []
+INITIAL_STATE['Image_Puzzles'] = {}
+INITIAL_STATE['Music_Puzzles'] = {}
 
 
 # ADD A BLANK MUSIC PUZZLE FOR DEBUG PURPOSES ONLY
-INITIAL_STATE["Music_Puzzles"].append(MusicPuzzle(name="1"))
+'''INITIAL_STATE["Music_Puzzles"].append(MusicPuzzle(name="1"))
 INITIAL_STATE["Music_Puzzles"].append(MusicPuzzle(name="2"))
 INITIAL_STATE["Music_Puzzles"].append(MusicPuzzle(name="3"))
 INITIAL_STATE["Music_Puzzles"].append(MusicPuzzle(name="4"))
 
 # ADD A BLANK IMAGE PUZZLE FOR DEBUG PURPOSES ONLY
 INITIAL_STATE["Image_Puzzles"].append(ImagePuzzle(name="5"))
-
+'''
 INITIAL_STATE['Rules'] = []
 #INITIAL_STATE['Causes'] = []
 #INITIAL_STATE['Effects'] = []
 INITIAL_STATE['Selected_Room'] = 0
-INITIAL_STATE['Selected_Image'] = -1
-INITIAL_STATE['Selected_Music'] = -1
-INITIAL_STATE['Role'] = "Architect"
+
+# Stores name of selected image and selected music
+INITIAL_STATE['Selected_Image'] = ""
+INITIAL_STATE['Selected_Music'] = ""
+INITIAL_STATE['Role'] = "Image Puzzle"
 INITIAL_STATE['Operators'] = set_operators(INITIAL_STATE)	
 
 
