@@ -404,6 +404,8 @@ def add_puzzle_to_room(room_num,side, state, puzzle = None):
 		puzzle = imagePuzzle()
 		state["Image_puzzles"]["defaultImagePuzzle"] = puzzle
 		
+		#Check if name is valid
+		
 	state["Rooms"][room_num].walls[side].puzzle = puzzle
 	
 # room_num, side parameters don't do anything..?
@@ -431,6 +433,7 @@ def puzzles_is_valid(state):
 			invalidCardinals.append(c)
 
 	return invalidCardinals
+
 
 
 def create_rule_operator(state, sendBack):
@@ -518,23 +521,16 @@ def create_image_puzzle(state):
 	
 		
 		newState = copy_state(state)
+		
+		# Get name, make sure there are no copies
 		name = getName(url)
-		
-		
-		puzzleNames = state["Image_Puzzles"]
-		
-		# Make sure there are no copies of the name in image puzzles
-		i = 1
-		newName = name
-		while(newName in puzzleNames):
-			newName = name + " (" + str(i) + ")"
-			i = i + 1
+		name = check_puzzle_name(name,state["Image_Puzzles"])
 	
 		newPuzzle = ImagePuzzle(url)
 		
 		# Add newPuzzle to dictionary
-		newState["Image_Puzzles"][newName] = newPuzzle
-		newState["Selected_Image"] = newName
+		newState["Image_Puzzles"][name] = newPuzzle
+		newState["Selected_Image"] = name
 
 		return newState
 		
@@ -563,12 +559,24 @@ def getName(url):
 		i = i + 1
 	
 	return name
+	
+def check_puzzle_name(name,puzzleNames):
+	# Make sure there are no copies of the name in image puzzles
+	i = 1
+	newName = name
+	while(newName in puzzleNames):
+		newName = name + " (" + str(i) + ")"
+		i = i + 1
+	dAlert("returning " + newName)
+	return newName
 
 # NOTE: This operators requires Brython as it uses a JSON object.
 def create_music_puzzle(state, sendBack):
+	
 	url = window.prompt("Enter a complete URL for a sheetMusic file. Say 'cancel' to cancel.", "music/twinkleTwinkle.txt")
+	
 	if(url_is_valid(url)):
-		alert("This fired")
+		
 		# Double nested to allow use of name parameter
 		def requestSuccess(name):
 			# When the request is recieved
@@ -594,18 +602,13 @@ def create_music_puzzle(state, sendBack):
 		# Show loading visualization
 		show_loading()
 		
+		# Get name, make sure there are no copies
 		name = getName(url)
-		puzzleNames = state["Music_Puzzles"]
-		# Make sure there are no copies of the name in music puzzles
-		i = 1
-		newName = name
-		while(newName in puzzleNames):
-			newName = name + " (" + str(i) + ")"
-			i = i + 1
+		name = check_puzzle_name(name,state["Music_Puzzles"])
 		
 		request = ajax.ajax()
 		request.open('GET',url,True)
-		request.bind("complete",requestSuccess(newName))
+		request.bind("complete",requestSuccess(name))
 		request.send()
 	
 	elif(url != "cancel"):
@@ -806,7 +809,7 @@ INITIAL_STATE['Selected_Room'] = 0
 # Stores name of selected image and selected music
 INITIAL_STATE['Selected_Image'] = ""
 INITIAL_STATE['Selected_Music'] = ""
-INITIAL_STATE['Role'] = "Architect"
+INITIAL_STATE['Role'] = "Music Puzzle"
 INITIAL_STATE['Operators'] = set_operators(INITIAL_STATE)	
 
 
