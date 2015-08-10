@@ -462,6 +462,11 @@ def change_music_puzzle_selection(state, name):
 	
 def change_role(state, role):
 	global OPERATORS
+	global stopAmbientMusic
+	
+	if(state["Role"] == "Architect"):
+		stopAmbientMusic()
+	
 	newState = copy_state(state)
 	newState['Role'] = role
 	
@@ -618,6 +623,11 @@ def play_ambient_music(state):
 		playAmbientMusic(music,doneLoading)
 		
 	return None
+
+# Stops the ambient music from playing
+def stop_ambient_music():
+	stopAmbientMusic()
+
 	
 def addImageTransformation(state, transformation):
 	newState = copy_state(state)
@@ -688,8 +698,13 @@ def set_operators(state):
 			Operator("Play the ambient music in current room.",
 				lambda state: state["Rooms"][state["Selected_Room"]].aMusic is not None,
 				lambda state: play_ambient_music(state))
+		
+		stop_ambient_music_operator =\
+			Operator("Stop all music from playing",
+				lambda state: True,
+				lambda state: stop_ambient_music())
 				
-		OPERATORS = selection_operators	+ add_door_operators + remove_door_operators + wallpaper_operators + add_puzzle_operators + add_ambient_music_operator + play_ambient_music_operator + role_operators
+		OPERATORS = selection_operators	+ add_door_operators + remove_door_operators + wallpaper_operators + add_puzzle_operators + add_ambient_music_operator + play_ambient_music_operator + stop_ambient_music_operator + role_operators
 	
 	elif(state['Role'] == "Image Puzzle"):
 		
