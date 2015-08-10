@@ -100,17 +100,18 @@ def copy_state(state):
 	door_index = 0
 	for room_num in range(9):
 		for direction in ['N', 'S', 'E', 'W']:
+			
 			oldWall = state["Rooms"][room_num].walls[direction]
 			newWall = newState["Rooms"][room_num].walls[direction]
+			
 			if(oldWall.door is not None and newWall.door is None):
 				add_door_to_room(room_num, direction, newState, newState["Doors"][door_index])
 				door_index += 1
-			if(oldWall.puzzle is not None):
-				if(type(oldWall.puzzle) is ImagePuzzle):
-					add_puzzle_to_room(room_num,direction,newState,newState["Image_Puzzles"][oldWall.puzzle])
-				if(type(oldWall.puzzle) is MusicPuzzle):
-					add_puzzle_to_room(room_num,direction,newState,newState["Music_Puzzles"][oldWall.puzzle])
-			
+				
+			newWall.puzzle = oldWall.puzzle
+			print(newWall.puzzle)
+	
+	
 	return newState
 		
 def describe_state(state):
