@@ -102,7 +102,7 @@ def copy_state(state):
 		for direction in ['N', 'S', 'E', 'W']:
 			oldWall = state["Rooms"][room_num].walls[direction]
 			newWall = newState["Rooms"][room_num].walls[direction]
-			''''if(oldWall.door is not None and newWall.door is None):
+			if(oldWall.door is not None and newWall.door is None):
 				add_door_to_room(room_num, direction, newState, newState["Doors"][door_index])
 				door_index += 1
 			if(oldWall.puzzle is not None):
@@ -110,7 +110,7 @@ def copy_state(state):
 					add_puzzle_to_room(room_num,direction,newState,newState["Image_Puzzles"][oldWall.puzzle])
 				if(type(oldWall.puzzle) is MusicPuzzle):
 					add_puzzle_to_room(room_num,direction,newState,newState["Music_Puzzles"][oldWall.puzzle])
-			'''	
+			
 	return newState
 		
 def describe_state(state):
@@ -397,23 +397,24 @@ def remove_doors_is_valid(state,side):
 	door = ROOMS[room_num].walls[side].door
 	return door is not None
 	
-# Adds the passed puzzle to the correct room and side of the 
+# Adds the passed puzzle name to the correct room and side of the 
 # passed state. Default is creation of new blank imagePuzzle.
-def add_puzzle_to_room(room_num,side, state, puzzle = None):
-	if puzzle is None:
-		puzzle = imagePuzzle()
-		state["Image_puzzles"]["defaultImagePuzzle"] = puzzle
+def add_puzzle_to_room(room_num,side, state, name = None):
+	if name is None:
 		
-		#Check if name is valid
+		# Create default name, make sure its unique
+		name = "defaultImagePuzzle"
+		name = check_puzzle_name(state,name)
+		puzzle = ImagePuzzle()
+		state["Image_puzzles"][name] = puzzle
 		
-	state["Rooms"][room_num].walls[side].puzzle = puzzle
+	state["Rooms"][room_num].walls[side].puzzle = name
 	
-# room_num, side parameters don't do anything..?
 def add_puzzle_operator(state, room_num, sendBack):
 	
-	def processMenu(state,side,puzzle):
+	def processMenu(state,side,puzzleName):
 		newState = copy_state(state)
-		add_puzzle_to_room(room_num,side,newState,puzzle)
+		add_puzzle_to_room(room_num,side,newState,puzzleName)
 		sendBack(newState)
 		
 	# Get banned directions
@@ -445,7 +446,6 @@ def create_rule_operator(state, sendBack):
 		
 	create_rule_menu(state, processMenu)
 		
-#def add_music_puzzle_to_room(state, room_num):
 		
 # takes a room num from 0 to 8 and prompts the user for a url for the wallpaper
 def add_wallpaper_to_room(state, sendBack, room_num):
@@ -524,7 +524,7 @@ def create_image_puzzle(state):
 		
 		# Get name, make sure there are no copies
 		name = getName(url)
-		name = check_puzzle_name(name,state["Image_Puzzles"])
+		name = check_puzzle_name(state,name)
 	
 		newPuzzle = ImagePuzzle(url)
 		
@@ -560,14 +560,15 @@ def getName(url):
 	
 	return name
 	
-def check_puzzle_name(name,puzzleNames):
+def check_puzzle_name(state,name):
 	# Make sure there are no copies of the name in image puzzles
+	imageNames = state["Image_Puzzles"]
+	musicNames = state["Music_Puzzles"]
 	i = 1
 	newName = name
-	while(newName in puzzleNames):
+	while(newName in imageNames or newName in musicNames):
 		newName = name + " (" + str(i) + ")"
 		i = i + 1
-	dAlert("returning " + newName)
 	return newName
 
 # NOTE: This operators requires Brython as it uses a JSON object.
@@ -604,7 +605,8 @@ def create_music_puzzle(state, sendBack):
 		
 		# Get name, make sure there are no copies
 		name = getName(url)
-		name = check_puzzle_name(name,state["Music_Puzzles"])
+		dAlert("about to call check puzzle name")
+		name = check_puzzle_name(state,name)
 		
 		request = ajax.ajax()
 		request.open('GET',url,True)

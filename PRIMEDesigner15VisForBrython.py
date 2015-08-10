@@ -149,8 +149,8 @@ def create_direction_form(bannedDirections = None):
 	
 	return directionForm
 
-# Creates an image puzzle list and a music puzzle list.
-# Returns a div containing both the lists
+# Creates an image puzzle name list and a music puzzle name list.
+# Returns a div containing both the lists.
 def create_puzzle_lists(imagePuzzles,musicPuzzles):
 
 	lists = html.DIV(id = "create_puzzle_lists")
@@ -267,7 +267,7 @@ def add_puzzle_menu(state, sendBack, bannedDirections = None):
 	direction = "N"
 	
 	
-	# Create the list of puzzles for the user to chose from
+	# Create the list of puzzle names for the user to chose from
 	lists = create_puzzle_lists(imagePuzzles,musicPuzzles)
 	
 	# Create Direction Form
@@ -301,6 +301,7 @@ def add_puzzle_menu(state, sendBack, bannedDirections = None):
 			
 			# Send back information and destroy the state
 			destroy_menu("addPuzzleMenu")
+			
 			sendBack(state,direction,chosen)
 		else:
 			alert("No puzzle selected")	
@@ -638,7 +639,7 @@ def render_state_svg_graphics(state):
 		playButton = document.getElementById("playButton")
 		
 		if(songName != ""):
-			songSelected.innerHTML = "Song titled \"" + songName + "\" selected"
+			songSelected.innerHTML = "Song: \"" + songName + "\" selected"
 			
 			# Bind the correct play song button to the button.
 			playButton.unbind('click')
