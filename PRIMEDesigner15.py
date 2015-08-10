@@ -43,15 +43,13 @@ def dAlert(string):
 
 # Preforms a deep copy of the given state. 
 def copy_state(state):
-		
+
 	oldRooms = state["Rooms"]
-	oldDoors = state["Doors"]
 	oldImgPuzzles = state["Image_Puzzles"]
 	oldMusPuzzles = state["Music_Puzzles"]
 	
-	newState = {"Rooms": [], "Doors": []}
+	newState = {}
 	newRooms = []
-	newDoors = []
 	newImagePuzzles = {}
 	newMusicPuzzles = {}
 
@@ -72,8 +70,6 @@ def copy_state(state):
 	# Copy the rooms (without doors in their walls) and doors into the newState's dictionary.
 	for room in oldRooms:
 		newRooms.append(room.copy())
-	for door in oldDoors:
-		newDoors.append(door.copy())
 	for name in oldImgPuzzles:
 		newImagePuzzles[name] = state["Image_Puzzles"][name].copy()
 	for name in oldMusPuzzles:
@@ -81,7 +77,6 @@ def copy_state(state):
 	
 	# Put the new lists into the new state's lists.
 	newState["Rooms"] = newRooms
-	newState["Doors"] = newDoors
 	newState["Image_Puzzles"] = newImagePuzzles
 	newState["Music_Puzzles"] = newMusicPuzzles
 	newState["Rules"] = state["Rules"]
@@ -95,21 +90,7 @@ def copy_state(state):
 	
 	# Operators is updated in set_operators.
 	newState["Operators"] = state["Operators"]
-	
-	# Add in doors/puzzles to the walls in the rooms.
-	door_index = 0
-	for room_num in range(9):
-		for direction in ['N', 'S', 'E', 'W']:
-			
-			oldWall = state["Rooms"][room_num].walls[direction]
-			newWall = newState["Rooms"][room_num].walls[direction]
-			
-			if(oldWall.door is not None and newWall.door is None):
-				add_door_to_room(room_num, direction, newState, newState["Doors"][door_index])
-				door_index += 1
-				
-			newWall.puzzle = oldWall.puzzle
-	
+
 	return newState
 		
 def describe_state(state):
@@ -159,6 +140,7 @@ class Room:
 		self.music = None
 		
 	def copy(self):
+	
 		newRoom = Room(self.x1, self.y1, self.x2, self.y2)
 		for direction in ['N','S','W','E']:
 			newRoom.walls[direction] = self.walls[direction].copy()
@@ -172,24 +154,26 @@ class Room:
 """ A wall could contain a door and a wallpaper """	
 class Wall:
 
-	def __init__(self, x1, y1, x2, y2, loc): 
+	def __init__(self, x1, y1, x2, y2, loc, hasDoor = False, doorOpen = None, puzzle = None): 
 		self.x1 = x1
 		self.y1 = y1
 		self.x2 = x2
 		self.y2 = y2
 		self.loc = loc
 		
-		self.door = None
+		# Whether the wall contains a door and if its open or not
+		self.hasDoor = hasDoor
+		self.doorOpen = doorOpen
 		
 		# Possible puzzle
-		self.puzzle = None
+		self.puzzle = puzzle
 		
 		# Creates a wallpaper, default picture is wall.jpg
 		self.wallpaper = Wallpaper()
 		
 	# Returns a copy of itself. Does not copy its door.
 	def copy(self):
-		newWall = Wall(self.x1,self.y1,self.x2,self.y2,self.loc)
+		newWall = Wall(self.x1,self.y1,self.x2,self.y2,self.loc, self.hasDoor, self.doorOpen)
 		return newWall
 		
 # Default url is wall.jpg
@@ -202,7 +186,7 @@ class Wallpaper:
 	# Returns a copy of itself.
 	def copy(self):
 		return Wallpaper(self.url)
-
+'''
 class Door:
 	
 	def __init__(self, isOpen = False, url="images/door.jpg"):
@@ -217,7 +201,7 @@ class Door:
 	# Returns a deep copy of itself.
 	def copy(self):
 		return Door(self.isOpen, self.url)
-
+'''
 class ImagePuzzle:
 
 	def __init__(self, url = "images/metalfencing.jpg", transformList = []):
@@ -275,26 +259,20 @@ If enter room then message
 # Takes a room num from 0 to 8 and a side for the door to be on, [N, S, E, W]
 # Optional newDoor parameter which allows you to pass which door the walls will point to.
 # Is default set to the creation of a new door.
-def add_door_to_room(room_num, side, state, newDoor = None):
+def add_door_to_room(room_num, side, state):
 	ROOMS = state["Rooms"]
-	DOORS = state["Doors"]
 	
-	if(newDoor is None):
-		newDoor = Door()
-		DOORS.append(newDoor)
-	
-	ROOMS[room_num].walls[side].door = newDoor
+	ROOMS[room_num].walls[side].hasDoor = True
 	if side == 'N':
-		ROOMS[room_num - 3].walls['S'].door = newDoor
+		ROOMS[room_num - 3].walls['S'].hasDoor = True
 	elif side == 'S':
-		ROOMS[room_num + 3].walls['N'].door = newDoor
+		ROOMS[room_num + 3].walls['N'].hasDoor = True
 	elif side == 'E':
-		ROOMS[room_num + 1].walls['W'].door = newDoor
+		ROOMS[room_num + 1].walls['W'].hasDoor = True
 	elif side == 'W':
-		ROOMS[room_num - 1].walls['E'].door = newDoor
+		ROOMS[room_num - 1].walls['E'].hasDoor = True
 	else:
 		alert("Error: Invalid direction passed to add_door")
-		DOORS.pop()
 
 
 # Operator version of add door that returns new state
@@ -305,26 +283,21 @@ def add_door_operator(state, room_num, side):
 	
 	return newState
 
-# Removes the reference to a door from the a wall shared 
-# by two rooms.
+# Removes the door between two walls
 def remove_door_from_room(room_num, side, state):
 	
 	ROOMS = state["Rooms"]
-	DOORS = state["Doors"]
-	ROOMS[room_num].walls[side].door = None
+	ROOMS[room_num].walls[side].hasDoor = False
 	if side == 'N':
-		ROOMS[room_num - 3].walls['S'].door = None
+		ROOMS[room_num - 3].walls['S'].hasDoor = False
 	elif side == 'S':
-		ROOMS[room_num + 3].walls['N'].door = None
+		ROOMS[room_num + 3].walls['N'].hasDoor = False
 	elif side == 'E':
-		ROOMS[room_num + 1].walls['W'].door = None
+		ROOMS[room_num + 1].walls['W'].hasDoor = False
 	elif side == 'W':
-		ROOMS[room_num - 1].walls['E'].door = None
+		ROOMS[room_num - 1].walls['E'].hasDoor = False
 	else:
 		alert("Error: Invalid direction passed to add_door")
-
-	# Remove a doors from the list so there are two fewer doors
-	DOORS.pop()
 
 # Operator version of remove door that returns new state
 def remove_door_operator(state, room_num, side):
@@ -336,16 +309,13 @@ def remove_door_operator(state, room_num, side):
 # Checks if a door can be placed on a wall, meaning a door cannot already be on a wall
 # and a puzzle cannot be on the wall or on the other side of the wall.
 def add_doors_is_valid(state, side):
-	
 	ROOMS = state["Rooms"]
-	DOORS = state["Doors"]
 	room_num = state["Selected_Room"]
-	
 	if side == 'N':
 		north_room = room_num - 3
 		if (north_room < 0):
 			return False
-		elif (ROOMS[room_num].walls['N'].door is not None 
+		elif (ROOMS[room_num].walls['N'].hasDoor == True
 				or ROOMS[room_num].walls['N'].puzzle is not None
 				or ROOMS[north_room].walls['S'].puzzle is not None):
 			return False
@@ -355,7 +325,7 @@ def add_doors_is_valid(state, side):
 		south_room = room_num + 3
 		if (south_room > 8):
 			return False
-		elif (ROOMS[room_num].walls['S'].door is not None 
+		elif (ROOMS[room_num].walls['S'].hasDoor == True 
 				or ROOMS[room_num].walls['S'].puzzle is not None
 				or ROOMS[south_room].walls['N'].puzzle is not None):
 			return False
@@ -365,7 +335,7 @@ def add_doors_is_valid(state, side):
 		east_room = room_num + 1
 		if (room_num + 1) % 3 is 0:
 			return False
-		elif (ROOMS[room_num].walls['E'].door is not None 
+		elif (ROOMS[room_num].walls['E'].hasDoor == True 
 				or ROOMS[room_num].walls['E'].puzzle is not None
 				or ROOMS[east_room].walls['W'].puzzle is not None): 	
 			return False
@@ -375,7 +345,7 @@ def add_doors_is_valid(state, side):
 		west_room = room_num - 1
 		if (room_num + 1) % 3 is 1:
 			return False
-		elif (ROOMS[room_num].walls['W'].door is not None 
+		elif (ROOMS[room_num].walls['W'].hasDoor == True
 				or ROOMS[room_num].walls['W'].puzzle is not None
 				or ROOMS[west_room].walls['E'].puzzle is not None):	
 			return False
@@ -386,13 +356,8 @@ def add_doors_is_valid(state, side):
 
 # Return true if a door can be removed and false if it cant
 def remove_doors_is_valid(state,side):
-	
-	ROOMS = state["Rooms"]
-	DOORS = state["Doors"]
-	room_num = state["Selected_Room"]
-
-	door = ROOMS[room_num].walls[side].door
-	return door is not None
+	room = state['Rooms'][state["Selected_Room"]]
+	return room.walls[side].hasDoor
 	
 # Adds the passed puzzle name to the correct room and side of the 
 # passed state. Default is creation of new blank imagePuzzle.
@@ -427,7 +392,7 @@ def puzzles_is_valid(state):
 	selectedRoom = state["Rooms"][room_num]
 	
 	for c in ['N','S','E','W']:
-		if (selectedRoom.walls[c].puzzle is not None or selectedRoom.walls[c].door is not None):
+		if (selectedRoom.walls[c].puzzle is not None or selectedRoom.walls[c].hasDoor == True):
 			invalidCardinals.append(c)
 
 	return invalidCardinals
@@ -580,9 +545,7 @@ def create_music_puzzle(state, sendBack):
 			# When the request is recieved
 			def requestSuccess2(req):
 				if(req.status == 200 or req.status == 0):
-					
 					newState = copy_state(state)
-					
 					# Assign name to song using data from JSON object
 					song = json.loads(req.responseText)
 					newPuzzle = MusicPuzzle(song["notes"])
@@ -602,7 +565,6 @@ def create_music_puzzle(state, sendBack):
 		
 		# Get name, make sure there are no copies
 		name = getName(url)
-		dAlert("about to call check puzzle name")
 		name = check_puzzle_name(state,name)
 		
 		request = ajax.ajax()
@@ -641,7 +603,7 @@ def set_operators(state):
 
 	# Sendback is the function given by the client which receives the modified state
 	sb = None
-	
+
 	role_operators =\
 		[Operator("Change Role to " + role + ".",
 			lambda state, r = role: state['Role'] is not r,
@@ -677,7 +639,6 @@ def set_operators(state):
 				lambda state, sb: add_puzzle_operator(state, state["Selected_Room"], sb))
 				
 		OPERATORS = selection_operators	+ add_door_operators + remove_door_operators + wallpaper_operators + add_puzzle_operators +  role_operators
-		
 	elif(state['Role'] == "Image Puzzle"):
 		
 		puzzles = state["Image_Puzzles"]
@@ -783,7 +744,6 @@ def set_operators(state):
 #<INITIAL_STATE> The game is a list of 9 rooms stored a list.
 INITIAL_STATE = {}
 INITIAL_STATE['Rooms'] = []
-INITIAL_STATE['Doors'] = []
 INITIAL_STATE['Image_Puzzles'] = {}
 INITIAL_STATE['Music_Puzzles'] = {}
 
@@ -808,7 +768,7 @@ INITIAL_STATE['Selected_Room'] = 0
 # Stores name of selected image and selected music
 INITIAL_STATE['Selected_Image'] = None
 INITIAL_STATE['Selected_Music'] = None
-INITIAL_STATE['Role'] = "Music Puzzle"
+INITIAL_STATE['Role'] = "Architect"
 INITIAL_STATE['Operators'] = set_operators(INITIAL_STATE)	
 
 

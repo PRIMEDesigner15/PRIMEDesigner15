@@ -464,7 +464,7 @@ def create_rule_menu(state, sendBack):
 			followUpForm <= "Pick a door:"
 			for index, room in enumerate(state["Rooms"]):
 				for wall in room.walls.values():
-					if wall.door is not None:
+					if wall.hasDoor:
 						doorOp = html.OPTION("Open Door in room " + str(index + 1) + " on " + wall.loc + " wall.")
 						eFollowUpSelect <= doorOp
 			followUpForm <= eFollowUpSelect
@@ -473,7 +473,7 @@ def create_rule_menu(state, sendBack):
 			followUpForm <= "Pick a door:"
 			for index, room in enumerate(state["Rooms"]):
 				for wall in room.walls.values():
-					if wall.door is not None:
+					if wall.hasDoor:
 						doorOp = html.OPTION("Close Door in room " + str(index + 1) + " on " + wall.loc + " wall.")
 						eFollowUpSelect <= doorOp
 			followUpForm <= eFollowUpSelect
@@ -614,7 +614,7 @@ def render_state_svg_graphics(state):
 		for room in state['Rooms']:
 			drawRoom(room,room_num)
 			room_num += 1
-			
+		
 		THICKNESS = 1.5
 		selected_room = state['Rooms'][state['Selected_Room']]
 			
@@ -626,7 +626,7 @@ def render_state_svg_graphics(state):
 		APANEL <= outline
 	elif(state['Role'] == "Image Puzzle"):
 		prepareCanvas()	
-		if(state["Selected_Image"] != ""):
+		if(state["Selected_Image"] is not None):
 			puzzle = state["Image_Puzzles"][state["Selected_Image"]]
 			canMan.setURL(puzzle.url)
 			drawImagePuzzle(puzzle)
@@ -729,7 +729,7 @@ def drawWall(wall,x3,y3,x4,y4,room_num):
 
 	drawWallpaper(wall,x3,y3,x4,y4,room_num)
 	
-	if (wall.door is not None):
+	if (wall.hasDoor):
 		drawDoor(wall,x3,y3,x4,y4)
 
 	if (wall.puzzle is not None):
@@ -793,7 +793,7 @@ def drawDoor(wall,x3,y3,x4,y4):
 	(dx1,dy1,dx2,dy2,dx3,dy3,dx4,dy4) = (fx1,fy1,fx2,fy2,fx3,fy3,fx4,fy4)
 	
 	# Map (d)oor coordinates based off (f)rame's
-	if(wall.door.isOpen):
+	if(wall.doorOpen):
 		if(wall.loc == 'E'):
 			dx2 = fx4 - DOOR_SIZE * (1/5)
 			dy2 = fy1
@@ -827,7 +827,7 @@ def drawDoor(wall,x3,y3,x4,y4):
 	pattern = svg.pattern(id="door",height="100%",width = "100%")
 	window.addAttribute(pattern,"patternContentUnits","objectBoundingBox")
 	
-	img = svg.image(xlink_href=wall.door.url, x="0",y="0", height="1", width="1")
+	img = svg.image(xlink_href="images/door.jpg", x="0",y="0", height="1", width="1")
 	window.addAttribute(img,"preserveAspectRatio","none")
 	
 	pattern <= img

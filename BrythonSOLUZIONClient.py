@@ -55,7 +55,7 @@ def repopulate_operator_choices(current_state):
 	opSelect.innerHTML = ''
 	for i, elt in enumerate(Operators):
 		opSelect <= html.OPTION(elt.name, value = i)
-	
+
 	#magic ziperino
 	for item in opSelect:
 		if Operators[int(item.value)].precond(current_state):
@@ -66,6 +66,7 @@ def repopulate_operator_choices(current_state):
 		else:
 			item.disabled = True
 			item.selected = False
+
 
 def recieveNewState(state = None):
 	if(state is not None):
