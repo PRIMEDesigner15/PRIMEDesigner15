@@ -422,7 +422,8 @@ as specified by the volume envelope and filter envelope **/
         wad.gain[0].gain.linearRampToValueAtTime(wad.volume * wad.env.sustain, arg.exactTime + wad.env.attack + wad.env.decay + 0.00002);
         wad.gain[0].gain.linearRampToValueAtTime(wad.volume * wad.env.sustain, arg.exactTime + wad.env.attack + wad.env.decay + wad.env.hold + 0.00003);
         wad.gain[0].gain.linearRampToValueAtTime(0.0001, arg.exactTime + wad.env.attack + wad.env.decay + wad.env.hold + wad.env.release + 0.00004);
-        wad.soundSource.start(arg.exactTime);
+		
+		wad.soundSource.start(arg.exactTime);
         wad.soundSource.stop(arg.exactTime + wad.env.attack + wad.env.decay + wad.env.hold + wad.env.release);
     };
 
@@ -683,7 +684,7 @@ set properties on those nodes according to the constructor arguments and play() 
 plug the nodes into each other with plugEmIn(),
 then finally play the sound by calling playEnv() **/
     Wad.prototype.play = function(arg){
-        arg = arg || { arg : null };
+		arg = arg || { arg : null };
         if ( this.playable < 1 ) {
             this.playOnLoad    = true;
             this.playOnLoadArg = arg;
@@ -766,7 +767,7 @@ then finally play the sound by calling playEnv() **/
             plugEmIn(this, arg);
 
             if ( this.filter && this.filter[0].env ) { filterEnv(this, arg); }
-            playEnv(this, arg);
+			playEnv(this, arg);
 
             //sets up vibrato LFO
             if ( this.vibrato ) { setUpVibratoOnPlay(this, arg); }
@@ -775,6 +776,7 @@ then finally play the sound by calling playEnv() **/
             if ( this.tremolo ) { setUpTremoloOnPlay(this, arg); }
         }
         if ( arg.callback ) { arg.callback(this); }
+		
         return this;
     };
 //////////////////////////////////////////////////////////////////////////////////////////

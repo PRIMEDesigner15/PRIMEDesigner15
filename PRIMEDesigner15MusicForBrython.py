@@ -8,6 +8,9 @@ from browser import document, window, alert, console, ajax, timer
 import time
 from javascript import JSObject, JSConstructor
 
+# debug alert
+def dAlert(string):
+	alert(string)
 
 # Wad object used for playing sounds.
 Wad = JSConstructor(window.Wad)
@@ -221,21 +224,32 @@ def readChords(notes):
 			notes2.append(note)
 	
 	return notes2
-
-def playAmbientMusic(url):
+	
+oldUrl = None
+def playAmbientMusic(url, callback = None):
 	global Wad
 	global aMusic
-	
-	# Will play Ambient music for 10 minutes
-	aMusic = Wad({'source' : url, 'env' : {'hold' : '600'}})
-	aMusic.play()
+	global oldUrl
+	if(url is not None):
+		
+		# Will play Ambient music for 10 minutes
+		if(url != oldUrl):
+			oldUrl = url
+			aMusic = Wad({'source' : url, 'env' : {'hold' : 600}, 'callback' : callback})
+		else:
+			if(callback is not None):
+				callback()
+		aMusic.play()
+	else:
+		alert("no url provided")
 
 def stopAmbientMusic():
 	if(aMusic is not None):
 		aMusic.stop()
-	else:
-		alert("ambient music player has not been set")
+
 	
+#playAmbientMusic("music/testAmbient.mp3")
+
 # Plays a song given some sheetMusic in JSON format
 def playSong(state):
 	

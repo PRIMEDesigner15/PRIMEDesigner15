@@ -30,6 +30,7 @@ BRYTHON = True
 
 if(BRYTHON):
 	from PRIMEDesigner15VisForBrython import hide_loading, show_loading, add_puzzle_menu, create_rule_menu
+	from PRIMEDesigner15MusicForBrython import playAmbientMusic, stopAmbientMusic
 	from templateRoot.PRIMEDesigner15Operator import Operator as Operator
 	from templateRoot.PRIMEDesigner15Operator import AsyncOperator as AsyncOperator
 	
@@ -141,7 +142,7 @@ class Room:
 		self.walls['E'] = Wall(x2 ,y1 ,x2 ,y2, 'E') #right
 		
 	def copy(self):
-	
+			
 		newRoom = Room(self.x1, self.y1, self.x2, self.y2, self.aMusic)
 		for direction in ['N','S','W','E']:
 			newRoom.walls[direction] = self.walls[direction].copy()
@@ -578,7 +579,7 @@ def create_music_puzzle(state, sendBack):
 # Adds ambient music to a room. The rule designer chose when and if these play.		
 def add_ambient_music(state):
 
-	url = window.prompt("Enter a url for an mp3 to attach ambient music to a room", "defaultAmbient.mp3")
+	url = window.prompt("Enter a url for an mp3 to attach ambient music to a room", "music\defaultAmbient.mp3")
 	if(url is None):
 	
 		return None
@@ -601,6 +602,22 @@ def add_ambient_music(state):
 		# Recurse
 		return add_ambient_music(state)
 	
+# Plays the ambient music in the selected room
+def play_ambient_music(state):
+	global show_loading, hide_loading
+	global playAmbientMusic
+	
+	music = state["Rooms"][state["Selected_Room"]].aMusic
+
+	def doneLoading():
+		hide_loading()
+
+	if(music is not None):
+		show_loading()
+		stopAmbientMusic()
+		playAmbientMusic(music,doneLoading)
+		
+	return None
 	
 def addImageTransformation(state, transformation):
 	newState = copy_state(state)
@@ -629,7 +646,7 @@ def set_operators(state):
 	sb = None
 
 	role_operators =\
-		[Operator("Change Role to " + role + ".",
+		[Operator("Change Role to " + role + " Designer.",
 			lambda state, r = role: state['Role'] is not r,
 			lambda state, r = role: change_role(state, r))
 		for role in ["Architect", "Image Puzzle", "Music Puzzle", "Rules"]] 
@@ -666,8 +683,13 @@ def set_operators(state):
 			Operator("Add ambient music to current room.",
 				lambda state: True,
 				lambda state: add_ambient_music(state))
+		
+		play_ambient_music_operator =\
+			Operator("Play the ambient music in current room.",
+				lambda state: state["Rooms"][state["Selected_Room"]].aMusic is not None,
+				lambda state: play_ambient_music(state))
 				
-		OPERATORS = selection_operators	+ add_door_operators + remove_door_operators + wallpaper_operators + add_puzzle_operators + add_ambient_music_operator + role_operators
+		OPERATORS = selection_operators	+ add_door_operators + remove_door_operators + wallpaper_operators + add_puzzle_operators + add_ambient_music_operator + play_ambient_music_operator + role_operators
 	
 	elif(state['Role'] == "Image Puzzle"):
 		
@@ -806,6 +828,10 @@ INITIAL_STATE['Operators'] = set_operators(INITIAL_STATE)
 for j in range(3):
 	for i in range(3):
 		INITIAL_STATE['Rooms'].append( Room(i, j, i + 1, j + 1) )	
+
+# Temporary addition for debug purposes
+INITIAL_STATE["Rooms"][0].aMusic = "music\defaultAmbient.mp3"
+		
 # Now initialize operators.
 OPERATORS = INITIAL_STATE['Operators']
 #</INITIAL_STATE>
