@@ -79,6 +79,8 @@ def copy_state(state):
 	newState["Rooms"] = newRooms
 	newState["Image_Puzzles"] = newImagePuzzles
 	newState["Music_Puzzles"] = newMusicPuzzles
+	
+	# Doesn't this need a deep copy?
 	newState["Rules"] = state["Rules"]
 	
 	# Primitives and operators do not need to be deep copied.
@@ -86,7 +88,6 @@ def copy_state(state):
 	newState["Selected_Image"] = state["Selected_Image"]
 	newState["Selected_Music"] = state["Selected_Music"]
 	newState["Role"] = state["Role"]
-
 	
 	# Operators is updated in set_operators.
 	newState["Operators"] = state["Operators"]
@@ -118,13 +119,16 @@ class Room:
 
 	""" A room in the game contains 4 walls that could have wallpapers or doors
 		and a possible ambient soundtrack, and a possible puzzle. """
-	def __init__(self, x1, y1, x2, y2):
+	def __init__(self, x1, y1, x2, y2, aMusic = None):
 		
 		# Coordinates for display of the room.
 		self.x1 = x1
 		self.y1 = y1
 		self.x2 = x2
 		self.y2 = y2
+		
+		# Ambient music, contains a url to a piece of music mp3
+		self.aMusic = aMusic
 		
 		# 4 walls. 
 		self.walls = {}
@@ -135,19 +139,12 @@ class Room:
 		# Vertical walls.
 		self.walls['W'] = Wall(x1 ,y1 ,x1 ,y2, 'W') #left
 		self.walls['E'] = Wall(x2 ,y1 ,x2 ,y2, 'E') #right
-	
-		# Possible ambient soundtrack.
-		self.music = None
 		
 	def copy(self):
 	
-		newRoom = Room(self.x1, self.y1, self.x2, self.y2)
+		newRoom = Room(self.x1, self.y1, self.x2, self.y2, self.aMusic)
 		for direction in ['N','S','W','E']:
 			newRoom.walls[direction] = self.walls[direction].copy()
-		if(self.music is None):
-			newRoom.music = None
-		else:
-			newRoom.music = self.music.copy()
 		
 		return newRoom
 		
@@ -173,7 +170,7 @@ class Wall:
 		
 	# Returns a copy of itself. Does not copy its door.
 	def copy(self):
-		newWall = Wall(self.x1,self.y1,self.x2,self.y2,self.loc, self.hasDoor, self.doorOpen)
+		newWall = Wall(self.x1,self.y1,self.x2,self.y2,self.loc, self.hasDoor, self.doorOpen, self.puzzle)
 		return newWall
 		
 # Default url is wall.jpg
@@ -578,6 +575,33 @@ def create_music_puzzle(state, sendBack):
 	else:
 		sendBack()
 
+# Adds ambient music to a room. The rule designer chose when and if these play.		
+def add_ambient_music(state):
+
+	url = window.prompt("Enter a url for an mp3 to attach ambient music to a room", "defaultAmbient.mp3")
+	if(url is None):
+	
+		return None
+		
+	elif(url_is_valid(url)):
+	
+		
+		newState = copy_state(state)
+		room_num = newState["Selected_Room"]
+		
+		# Add ambient music to room
+		newState["Rooms"][room_num].aMusic = url
+
+		return newState
+		
+	else:
+	
+		alert("URL was not valid. Try again.")
+		
+		# Recurse
+		return add_ambient_music(state)
+	
+	
 def addImageTransformation(state, transformation):
 	newState = copy_state(state)
 	
@@ -638,7 +662,13 @@ def set_operators(state):
 				lambda state: puzzles_is_valid(state) != ['N','S','E','W'],
 				lambda state, sb: add_puzzle_operator(state, state["Selected_Room"], sb))
 				
-		OPERATORS = selection_operators	+ add_door_operators + remove_door_operators + wallpaper_operators + add_puzzle_operators +  role_operators
+		add_ambient_music_operator =\
+			Operator("Add ambient music to current room.",
+				lambda state: True,
+				lambda state: add_ambient_music(state))
+				
+		OPERATORS = selection_operators	+ add_door_operators + remove_door_operators + wallpaper_operators + add_puzzle_operators + add_ambient_music_operator + role_operators
+	
 	elif(state['Role'] == "Image Puzzle"):
 		
 		puzzles = state["Image_Puzzles"]
@@ -768,7 +798,7 @@ INITIAL_STATE['Selected_Room'] = 0
 # Stores name of selected image and selected music
 INITIAL_STATE['Selected_Image'] = None
 INITIAL_STATE['Selected_Music'] = None
-INITIAL_STATE['Role'] = "Rules"
+INITIAL_STATE['Role'] = "Architect"
 INITIAL_STATE['Operators'] = set_operators(INITIAL_STATE)	
 
 

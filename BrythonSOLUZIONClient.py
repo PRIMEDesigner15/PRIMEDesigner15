@@ -92,7 +92,6 @@ def handleApplyButtonClick(evt):
 	#sendBack = recieveNewState
 
 	if (type(op) is Operator): # Get state straight from the operator
-
 		new_state = op.state_transf(current_state)
 		recieveNewState(new_state)
 		

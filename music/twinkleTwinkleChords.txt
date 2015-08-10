@@ -1,4 +1,4 @@
-{"name" : "twinkletwinkle Chords", "notes" :[
+{"notes" :[
 
 	{"wait": 0.5, "pitch" : "C3", "hold" : 0.5},
 	{"wait": 0, "pitch" : "C3", "hold" : 0.5},

@@ -8,8 +8,12 @@ from browser import document, window, alert, console, ajax, timer
 import time
 from javascript import JSObject, JSConstructor
 
-#Wad object used for playing sounds.
+
+# Wad object used for playing sounds.
 Wad = JSConstructor(window.Wad)
+
+
+# Instrument used for playing music puzzles
 piano = Wad({
     'source' : 'square', 
     'env' : {
@@ -29,6 +33,9 @@ piano = Wad({
         }
     }
 })
+
+# Instrument used for playing ambient music
+aMusic = None
 
 # This object is a mapping of note names to frequencies
 Pitches = {
@@ -214,6 +221,20 @@ def readChords(notes):
 			notes2.append(note)
 	
 	return notes2
+
+def playAmbientMusic(url):
+	global Wad
+	global aMusic
+	
+	# Will play Ambient music for 10 minutes
+	aMusic = Wad({'source' : url, 'env' : {'hold' : '600'}})
+	aMusic.play()
+
+def stopAmbientMusic():
+	if(aMusic is not None):
+		aMusic.stop()
+	else:
+		alert("ambient music player has not been set")
 	
 # Plays a song given some sheetMusic in JSON format
 def playSong(state):
