@@ -340,11 +340,11 @@ def create_rule_form(state):
 		causesSelect <= causeOpt 
 	
 	for puzzle in state["Music_Puzzles"]:
-		causeOpt = html.OPTION("Solve: " + puzzle.name)
+		causeOpt = html.OPTION("Solve: " + puzzle)
 		causesSelect <= causeOpt 
 	
 	for puzzle in state["Image_Puzzles"]:
-		causeOpt = html.OPTION("Solve: " + puzzle.name)
+		causeOpt = html.OPTION("Solve: " + puzzle)
 		causesSelect <= causeOpt 
 		
 	for effect in Effects:
