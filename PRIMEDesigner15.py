@@ -109,8 +109,6 @@ def copy_state(state):
 				door_index += 1
 				
 			newWall.puzzle = oldWall.puzzle
-			print(newWall.puzzle)
-	
 	
 	return newState
 		
@@ -338,8 +336,6 @@ def remove_door_operator(state, room_num, side):
 # Checks if a door can be placed on a wall, meaning a door cannot already be on a wall
 # and a puzzle cannot be on the wall or on the other side of the wall.
 def add_doors_is_valid(state, side):
-	
-	# Reduce magic constants.
 	
 	ROOMS = state["Rooms"]
 	DOORS = state["Doors"]
@@ -700,23 +696,23 @@ def set_operators(state):
 				
 		horiz_flip =\
 			Operator("Flip the image horizontally.",
-				lambda state: state["Selected_Image"] != "",
+				lambda state: state["Selected_Image"] is not None,
 				lambda state: addImageTransformation(state, "horizFlip"))
 		vert_flip =\
 			Operator("Flip the image vertically.",
-				lambda state: state["Selected_Image"] != "",
+				lambda state: state["Selected_Image"] is not None,
 				lambda state: addImageTransformation(state, "vertFlip"))
 		shuff_rows =\
 			Operator("Shuffle the rows of the image.",
-				lambda state: state["Selected_Image"] != "",
+				lambda state: state["Selected_Image"] is not None,
 				lambda state: addImageTransformation(state, "shuffleRows"))
 		invs_shuff_rows =\
 			Operator("Invert Row shuffling",
-				lambda state: state["Selected_Image"] != "",
+				lambda state: state["Selected_Image"] is not None,
 				lambda state: addImageTransformation(state, "shuffleRowsInverse"))
 		shuff_cols =\
 			Operator("Shuffle the columns of the image.",
-				lambda state: state["Selected_Image"] != "",
+				lambda state: state["Selected_Image"] is not None,
 				lambda state: addImageTransformation(state, "shuffleColumns"))
 				
 		OPERATORS =   selection_operators + create_new_puzzle + horiz_flip + vert_flip + shuff_rows + invs_shuff_rows + shuff_cols + role_operators
@@ -739,32 +735,32 @@ def set_operators(state):
 		
 		increase_pitch =\
 			Operator("Increase pitch of song",
-				lambda state: state["Selected_Music"] != "",
+				lambda state: state["Selected_Music"] is not None,
 				lambda state: addMusicTransformation(state, "increasePitch"))
 		
 		decrease_pitch =\
 			Operator("Decrease pitch of song",
-				lambda state: state["Selected_Music"] != "",
+				lambda state: state["Selected_Music"] is not None,
 				lambda state: addMusicTransformation(state, "decreasePitch"))
 		
 		increase_tempo =\
 			Operator("Increase tempo of song",
-				lambda state: state["Selected_Music"] != "",
+				lambda state: state["Selected_Music"] is not None,
 				lambda state: addMusicTransformation(state, "increaseTempo"))
 		
 		decrease_tempo =\
 			Operator("Decrease tempo of song",
-				lambda state: state["Selected_Music"] != "",
+				lambda state: state["Selected_Music"] is not None,
 				lambda state: addMusicTransformation(state, "decreaseTempo"))
 
 		shuffle_notes =\
 			Operator("Shuffle notes of song",
-				lambda state: state["Selected_Music"] != "",
+				lambda state: state["Selected_Music"] is not None,
 				lambda state: addMusicTransformation(state, "shuffleNotes"))
 
 		reverse_notes =\
 			Operator("Reverse notes of song",
-				lambda state: state["Selected_Music"] != "",
+				lambda state: state["Selected_Music"] is not None,
 				lambda state: addMusicTransformation(state, "reverseNotes"))
 		
 		OPERATORS = selection_operators + role_operators  + create_new_puzzle + increase_tempo + decrease_tempo + shuffle_notes + increase_pitch + decrease_pitch + reverse_notes        
@@ -810,8 +806,8 @@ INITIAL_STATE['Rules'] = []
 INITIAL_STATE['Selected_Room'] = 0
 
 # Stores name of selected image and selected music
-INITIAL_STATE['Selected_Image'] = ""
-INITIAL_STATE['Selected_Music'] = ""
+INITIAL_STATE['Selected_Image'] = None
+INITIAL_STATE['Selected_Music'] = None
 INITIAL_STATE['Role'] = "Music Puzzle"
 INITIAL_STATE['Operators'] = set_operators(INITIAL_STATE)	
 

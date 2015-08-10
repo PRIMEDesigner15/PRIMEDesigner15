@@ -638,7 +638,7 @@ def render_state_svg_graphics(state):
 		songSelected = document.getElementById("songSelected")
 		playButton = document.getElementById("playButton")
 		
-		if(songName != ""):
+		if(songName is not None):
 			songSelected.innerHTML = "Song: \"" + songName + "\" selected"
 			
 			# Bind the correct play song button to the button.
