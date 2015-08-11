@@ -221,8 +221,11 @@ def create_puzzle_lists(imagePuzzles,musicPuzzles):
 	
 # Removes any menu from the gui
 def destroy_menu(menuName):
-	menu = document.getElementById(menuName)
-	gui.removeChild(menu)
+	try:
+		menu = document.getElementById(menuName)
+		gui.removeChild(menu)
+	except:
+		console.log("Destroy menu was called on a nonexistent object.")
 
 # Creates an architect menu with choices of which puzzle to select.
 # The band direction will be disabled when the user tries to choose it.
@@ -331,9 +334,14 @@ def create_rule_form(state):
 	console.log("Inside create rule form")
 	
 	# List comprehension to construct inputs
-	ruleForm = html.FORM()
+	ruleForm = html.FORM(id = "ruleForm")
 	causesSelect = html.SELECT(id = "causesSelect")
 	effectsSelect = html.SELECT(id = "effectsSelect")
+	
+	causeOpt = html.OPTION("Nothing Selected")
+	causesSelect <= causeOpt
+	effectOpt = html.OPTION("Nothing Selected")
+	effectsSelect <= effectOpt
 	
 	for cause in Causes:
 		causeOpt = html.OPTION(cause)
@@ -351,6 +359,9 @@ def create_rule_form(state):
 		effectOpt = html.OPTION(effect)
 		effectsSelect <= effectOpt
 	
+	causesSelect.onchange = cFollowUp
+	effectsSelect.onchange = lambda e: eFollowUp(state)
+	
 	ruleDiv = html.DIV()
 	
 	ruleDiv <= "Cause: "
@@ -362,6 +373,79 @@ def create_rule_form(state):
 	ruleForm <= ruleDiv
 	
 	return ruleForm
+
+def cFollowUp():
+
+	cFollowUp = document.getElementById("cFollowUp")
+	
+	if (cFollowUp is not None):
+		cFollowUp.parentNode.removeChild(cFollowUp)
+
+	
+	cFollowUp = html.DIV(id="cFollowUp", style = {"margin-top" : '0'})
+	
+	ruleForm = document.getElementById("ruleForm")
+	
+	cause = document.getElementById("causesSelect").value
+	
+	cFollowUpSelect = html.SELECT(id = "cFollowUpSelect")	
+
+	if(cause == "Enter Room"):
+		cFollowUp <= "Pick a room:"
+		for num in range(1,10):
+			roomNum = html.OPTION("Enter Room " + str(num))
+			cFollowUpSelect <= roomNum
+
+		cFollowUp <= cFollowUpSelect
+		ruleForm <= cFollowUp
+	else:
+		console.log("Debug: No Cause Follow Up expected")
+
+def eFollowUp(state):
+
+	eFollowUp = document.getElementById("eFollowUp")
+	
+	if (eFollowUp is not None):
+		eFollowUp.parentNode.removeChild(eFollowUp)
+	
+	eFollowUp = html.DIV(id="eFollowUp", style = {"margin-top" : '0'})
+
+	ruleForm = document.getElementById("ruleForm")
+	
+	effect = document.getElementById("effectsSelect").value
+	
+	eFollowUpSelect = html.SELECT(id = "eFollowUpSelect")
+	
+	if(effect == "Open Door"):
+		eFollowUp <= "Pick a door:"
+		for index, room in enumerate(state["Rooms"]):
+			for wall in room.walls.values():
+				if wall.hasDoor:
+					doorOp = html.OPTION("Open Door in room " + str(index + 1) + " on " + wall.loc + " wall.")
+					eFollowUpSelect <= doorOp
+		eFollowUp <= eFollowUpSelect
+		ruleForm <= eFollowUp
+		
+	elif(effect == "Close Door"):
+		eFollowUp <= "Pick a door:"
+		for index, room in enumerate(state["Rooms"]):
+			for wall in room.walls.values():
+				if wall.hasDoor:
+					doorOp = html.OPTION("Close Door in room " + str(index + 1) + " on " + wall.loc + " wall.")
+					eFollowUpSelect <= doorOp
+		eFollowUp <= eFollowUpSelect
+		ruleForm <= eFollowUp
+		
+	elif(effect == "Play Music"):
+		console.log("What do if play music? Paul help pls")
+	elif(effect == "Display Message"):
+		eFollowUp <= "Enter your message:"
+		textInput = html.INPUT(type="text", id="textInput")
+		eFollowUp <= textInput
+		ruleForm <= eFollowUp
+		
+	else:
+		console.log("Debug: No Effect Follow Up expected")
 	
 def create_rule_menu(state, sendBack):
 	console.log("inside create rule menu")
@@ -388,124 +472,58 @@ def create_rule_menu(state, sendBack):
 								'overflow' : 'auto'
 							})
 
-	title1 = html.P(id="createRuleTitle1", style = {"margin-top" : '0'})
-	title1.innerHTML = "New Rule:"							
+	ruleTitle = html.P(id="createRuleruleTitle", style = {"margin-top" : '0'})
+	ruleTitle.innerHTML = "New Rule:"							
 	
+	#Create and populate causesSelect and effectsSelect
 	ruleForm = create_rule_form(state)
-	
-	
-	def evaluateOutput():
-		console.log("inside evaluateOutput")
-		def destroyAndSendBack():
-			causeF  = document.getElementById("cFollowUpSelect").value
-			
-			if(textInput is None):
-				effectF = document.getElementById("eFollowUpSelect").value
-			else:
-				effectF = "Message: " + textInput.value
-			
-			destroy_menu("followUpMenu")
-			destroy_menu("createRuleMenu")
-			
-			sendBack(state, causeF, effectF)	
-		
-		##########
-		
-		cause = document.getElementById("causesSelect").value
-		effect = document.getElementById("effectsSelect").value
-		
-		followUpMenu = html.DIV(id="followUpMenu",
-								style = {
-								#'display' : 'none',
-								'position' : 'fixed',
-								#'width' : str(width) + "px",
-								#'height' : str(height) + "px",
-								'padding' : '10px',
-								'background' : 'white',
-								'border-radius' : '10px',
-								'border' : '5px solid grey',
-								'left' : '50%',
-								'top' : '50%',
-								'margin-top' : "-" + str(1/2 * height) + 'px',
-								'margin-left' : "-" + str(1/2 * width) + 'px',
-								'z-index' : '1003',
-								'overflow' : 'auto'
-							})
-		followUpForm = html.DIV()		
-
-		cFollowUpSelect = html.SELECT(id = "cFollowUpSelect")
-		eFollowUpSelect = html.SELECT(id = "eFollowUpSelect")
-		
-		textInput = None
-		
-		submitButton = html.BUTTON(id = "SubmitFollowUp")
-		submitButton.innerHTML = "Submit"
-		submitButton.onclick = destroyAndSendBack
-		
-		cancelButton = html.BUTTON(id = "CancelFollowUp")
-		cancelButton.innerHTML = "Cancel"
-		cancelButton.onclick = lambda e: destroy_menu("followUpMenu")
-			
-		console.log("pre-processing")
-		#process possible causes
-		if(cause == "Enter Room"):
-			followUpForm <= "Pick a room:"
-			for num in range(1,10):
-				roomNum = html.OPTION("Enter Room " + str(num))
-				cFollowUpSelect <= roomNum
-			followUpForm <= cFollowUpSelect
-		else:
-			alert("RIP")
-			
-		console.log("causes set up")	
-		
-		#process possible effects
-		if(effect == "Open Door"):
-			followUpForm <= "Pick a door:"
-			for index, room in enumerate(state["Rooms"]):
-				for wall in room.walls.values():
-					if wall.hasDoor:
-						doorOp = html.OPTION("Open Door in room " + str(index + 1) + " on " + wall.loc + " wall.")
-						eFollowUpSelect <= doorOp
-			followUpForm <= eFollowUpSelect
-			
-		elif(effect == "Close Door"):
-			followUpForm <= "Pick a door:"
-			for index, room in enumerate(state["Rooms"]):
-				for wall in room.walls.values():
-					if wall.hasDoor:
-						doorOp = html.OPTION("Close Door in room " + str(index + 1) + " on " + wall.loc + " wall.")
-						eFollowUpSelect <= doorOp
-			followUpForm <= eFollowUpSelect
-		elif(effect == "Play Music"):
-			pass
-		elif(effect == "Display Message"):
-			followUpForm <= "Enter your message:"
-			textInput = html.INPUT(type="text", id="textInput")
-			followUpForm <= textInput
-			
-		else:
-			alert("RIP")
-		
-		console.log("effects set up")
-		
-		followUpMenu <= followUpForm
-		followUpMenu <= submitButton
-		followUpMenu <= cancelButton
-		gui <= followUpMenu
 	
 	okButton = html.BUTTON(id = "createRuleOkButton")
 	okButton.innerHTML = "Create Rule"
-	okButton.onclick = evaluateOutput
+	okButton.onclick = destroyAndSendBack
 	
 	cancelButton = html.BUTTON(id = "createRuleCancelButton")
 	cancelButton.innerHTML = "Cancel"
 	cancelButton.onclick = lambda e: destroy_menu("createRuleMenu")
-
-	menu <= title1
+	
+	menu <= ruleTitle
 	menu <= ruleForm
 	menu <= okButton
 	menu <= cancelButton
+	'''
+	textInput = None
+		
+	console.log("pre-processing")
+	#process possible causes
+	
+		
+	console.log("causes set up")	
+	
+	#process possible effects
+	
+	'''
+	
+	
+	def destroyAndSendBack():
+		cause = document.getElementById("causesSelect").value
+		effect = document.getElementById("effectsSelect").value
+		causeF  = document.getElementById("cFollowUpSelect").value
+		effectF  = document.getElementById("eFollowUpSelect").value
+		textF = document.getElementById("textInput").value
+		
+		if(textInput is None):
+			effectF = document.getElementById("eFollowUpSelect").value
+		else:
+			effectF = "Message: " + textInput.value
+		
+		destroy_menu("followUpMenu")
+		destroy_menu("createRuleMenu")
+		
+		sendBack(state, causeF, effectF)	
+	
+
+
+
 	gui <= menu
 	console.log("everything appended")
 	
