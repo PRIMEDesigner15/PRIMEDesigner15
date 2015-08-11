@@ -722,6 +722,20 @@ def drawRoom(room,room_num):
 	x4 = x3
 	y4 = wall.y1 + THICKNESS/pow(2,1/2)
 	drawWall(wall,x3,y3,x4,y4,room_num)
+	
+	# Create a pattern for image representation.
+	pattern = svg.pattern(id="ambientMusic" + str(room_num),width = "100%",height = "100%")
+	window.addAttribute(pattern,"patternContentUnits","objectBoundingBox")
+	
+	img = svg.image(xlink_href=wall.wallpaper.url, x= "0" ,y = "0", width = '1', height = '1', transform = transform)
+	window.addAttribute(img,"preserveAspectRatio","none")
+	#WallpaperDiv = create_polygon(wall.x1, wall.y1, wall.x2, wall.y2, x3, y3, x4, y4,
+	#							  fill="url(#wallpaper" + str(room_num) + wall.loc  + ")", id = wall.loc)
+	
+	
+	# Append
+	pattern <= img
+	APANEL <= pattern
 		
 # draws a wall, requires 2 more points to form trapezoidal 3d shape.
 # Temporary optional color for walls.

@@ -152,12 +152,17 @@ class Room:
 """ A wall could contain a door and a wallpaper """	
 class Wall:
 
-	def __init__(self, x1, y1, x2, y2, loc, hasDoor = False, doorOpen = None, puzzle = None): 
+	def __init__(self, x1, y1, x2, y2, loc, wallpaper = None, hasDoor = False, doorOpen = None, puzzle = None): 
 		self.x1 = x1
 		self.y1 = y1
 		self.x2 = x2
 		self.y2 = y2
 		self.loc = loc
+		self.wallpaper = wallpaper
+		
+		if(self.wallpaper is None):
+			# Creates a wallpaper, default picture is wall.jpg
+			self.wallpaper = Wallpaper()
 		
 		# Whether the wall contains a door and if its open or not
 		self.hasDoor = hasDoor
@@ -166,12 +171,9 @@ class Wall:
 		# Possible puzzle
 		self.puzzle = puzzle
 		
-		# Creates a wallpaper, default picture is wall.jpg
-		self.wallpaper = Wallpaper()
-		
 	# Returns a copy of itself. Does not copy its door.
 	def copy(self):
-		newWall = Wall(self.x1,self.y1,self.x2,self.y2,self.loc, self.hasDoor, self.doorOpen, self.puzzle)
+		newWall = Wall(self.x1,self.y1,self.x2,self.y2,self.loc, self.wallpaper.copy(), self.hasDoor, self.doorOpen, self.puzzle)
 		return newWall
 		
 # Default url is wall.jpg
@@ -179,10 +181,13 @@ class Wall:
 class Wallpaper:
 	
 	def __init__(self, url = "images/wall.jpg"):
+		
+		# url of image to be displayed on the wallpaper, automatically set to wall.jpg
 		self.url = url
 	
 	# Returns a copy of itself.
 	def copy(self):
+		
 		return Wallpaper(self.url)
 '''
 class Door:
@@ -281,27 +286,34 @@ def add_door_operator(state, room_num, side):
 	
 	return newState
 
-# Removes the door between two walls
-def remove_door_from_room(room_num, side, state):
-	
-	ROOMS = state["Rooms"]
-	ROOMS[room_num].walls[side].hasDoor = False
-	if side == 'N':
-		ROOMS[room_num - 3].walls['S'].hasDoor = False
-	elif side == 'S':
-		ROOMS[room_num + 3].walls['N'].hasDoor = False
-	elif side == 'E':
-		ROOMS[room_num + 1].walls['W'].hasDoor = False
-	elif side == 'W':
-		ROOMS[room_num - 1].walls['E'].hasDoor = False
+# Removes the door between two walls or a puzzle on a wall
+def remove_wall_object_from_room(state, side):
+	room_num = state["Selected_Room"]
+	rooms = state["Rooms"]
+	wall = state["Rooms"][room_num].walls[side]
+	if(wall.hasDoor):
+		wall.hasDoor = False
+		if side == 'N':
+			dAlert(side)
+			wall = rooms[room_num - 3].walls['S']
+		elif side == 'S':
+			wall = rooms[room_num + 3].walls['N']
+		elif side == 'E':
+			wall = rooms[room_num + 1].walls['W']
+		elif side == 'W':
+			wall = rooms[room_num - 1].walls['E']
+		wall.hasDoor = False
+	elif(wall.puzzle is not None):
+		wall.puzzle = None
 	else:
-		alert("Error: Invalid direction passed to add_door")
+		alert("no puzzle or door to remove")
+		
 
 # Operator version of remove door that returns new state
-def remove_door_operator(state, room_num, side):
+def remove_wall_object_operator(state, side):
 
 	newState = copy_state(state)
-	remove_door_from_room(room_num,side,newState)
+	remove_wall_object_from_room(newState,side)
 	return newState
 	
 # Checks if a door can be placed on a wall, meaning a door cannot already be on a wall
@@ -353,9 +365,10 @@ def add_doors_is_valid(state, side):
 		return False
 
 # Return true if a door can be removed and false if it cant
-def remove_doors_is_valid(state,side):
+def remove_wall_object_is_valid(state,side):
 	room = state['Rooms'][state["Selected_Room"]]
-	return room.walls[side].hasDoor
+	wall = room.walls[side]
+	return wall.hasDoor or wall.puzzle is not None
 	
 # Adds the passed puzzle name to the correct room and side of the 
 # passed state. Default is creation of new blank imagePuzzle.
@@ -408,30 +421,30 @@ def create_rule_operator(state, sendBack):
 		
 		
 # takes a room num from 0 to 8 and prompts the user for a url for the wallpaper
-def add_wallpaper_to_room(state, sendBack, room_num):
+def add_wallpaper_to_room(state):
 	
 	# Prompt the user for wallpaper url 
 	url = window.prompt("Enter a complete URL for a wallpaper. Say 'cancel' to cancel.", "images/wall.jpg")
-	if(url_is_valid(url)):	
+	if(url is None):
 	
-		# Copy state
+		return None
+		
+	elif(url_is_valid(url)):
+	
 		newState = copy_state(state)
+		room = newState["Rooms"][newState["Selected_Room"]]
+		for loc in room.walls:
+			room.walls[loc].wallpaper.url = url
 		
-		ROOMS = newState["Rooms"]
-		picked = ROOMS[room_num]
+		return newState
 		
-		for loc in picked.walls:
-			picked.walls[loc].wallpaper.url = url
-		
-		sendBack(newState)
+	else:
 	
-	elif(url != "cancel"):
-		alert("URL was not valid")
+		alert("URL was not valid. Try again.")
 		
 		# Recurse
-		add_wallpaper_to_room(state,sendBack,room_num)
-	else: #url == "cancel"
-		sendBack()
+		return add_wallpaper_to_room(state)
+
 	
 def url_is_valid(url):	
 	# Note: Only works with Brython Implemented
@@ -672,17 +685,17 @@ def set_operators(state):
 				lambda state, c = cardinal: add_doors_is_valid(state, c),
 				lambda state, c = cardinal: add_door_operator(state, state["Selected_Room"], c))
 			for cardinal in ['N', 'S', 'E', 'W']]
-			
-		remove_door_operators =\
-			[Operator("Remove door from current room on " + cardinal + " wall.",
-				lambda state, c = cardinal: remove_doors_is_valid(state, c),
-				lambda state, c = cardinal: remove_door_operator(state, state["Selected_Room"], c))
-			for cardinal in ['N', 'S', 'E', 'W']]
+		
+		remove_object_operators =\
+			[Operator("Remove puzzle or door from room on " + cardinal + " wall.",
+				lambda state, c = cardinal: remove_wall_object_is_valid(state, c[0]),
+				lambda state, c = cardinal: remove_wall_object_operator(state, c[0]))
+			for cardinal in ['North', 'South', 'East', 'West']]
 			
 		wallpaper_operators =\
-			AsyncOperator("Add wallpaper to current room.",
+			Operator("Add wallpaper to current room.",
 				lambda state: True,
-				lambda state, sb: add_wallpaper_to_room(state, sb, state["Selected_Room"]))
+				lambda state: add_wallpaper_to_room(state))
 				
 		add_puzzle_operators =\
 			AsyncOperator("Add a puzzle to current room",
@@ -704,7 +717,7 @@ def set_operators(state):
 				lambda state: True,
 				lambda state: stop_ambient_music())
 				
-		OPERATORS = selection_operators	+ add_door_operators + remove_door_operators + wallpaper_operators + add_puzzle_operators + add_ambient_music_operator + play_ambient_music_operator + stop_ambient_music_operator + role_operators
+		OPERATORS = selection_operators	+ add_door_operators + remove_object_operators + wallpaper_operators + add_puzzle_operators + add_ambient_music_operator + play_ambient_music_operator + stop_ambient_music_operator + role_operators
 	
 	elif(state['Role'] == "Image Puzzle"):
 		

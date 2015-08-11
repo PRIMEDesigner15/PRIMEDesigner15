@@ -247,8 +247,6 @@ def stopAmbientMusic():
 	if(aMusic is not None):
 		aMusic.stop()
 
-	
-#playAmbientMusic("music/testAmbient.mp3")
 
 # Plays a song given some sheetMusic in JSON format
 def playSong(state):
