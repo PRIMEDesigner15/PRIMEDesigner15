@@ -418,6 +418,10 @@ def eFollowUp(state):
 	
 	if(effect == "Open Door"):
 		eFollowUp <= "Pick a door:"
+		
+		doorOp = html.OPTION("Nothing Selected")
+		eFollowUpSelect <= doorOp
+		
 		for index, room in enumerate(state["Rooms"]):
 			for wall in room.walls.values():
 				if wall.hasDoor:
@@ -428,6 +432,10 @@ def eFollowUp(state):
 		
 	elif(effect == "Close Door"):
 		eFollowUp <= "Pick a door:"
+		
+		doorOp = html.OPTION("Nothing Selected")
+		eFollowUpSelect <= doorOp
+		
 		for index, room in enumerate(state["Rooms"]):
 			for wall in room.walls.values():
 				if wall.hasDoor:
@@ -478,18 +486,7 @@ def create_rule_menu(state, sendBack):
 	#Create and populate causesSelect and effectsSelect
 	ruleForm = create_rule_form(state)
 	
-	okButton = html.BUTTON(id = "createRuleOkButton")
-	okButton.innerHTML = "Create Rule"
-	okButton.onclick = destroyAndSendBack
-	
-	cancelButton = html.BUTTON(id = "createRuleCancelButton")
-	cancelButton.innerHTML = "Cancel"
-	cancelButton.onclick = lambda e: destroy_menu("createRuleMenu")
-	
-	menu <= ruleTitle
-	menu <= ruleForm
-	menu <= okButton
-	menu <= cancelButton
+
 	'''
 	textInput = None
 		
@@ -505,24 +502,85 @@ def create_rule_menu(state, sendBack):
 	
 	
 	def destroyAndSendBack():
-		cause = document.getElementById("causesSelect").value
-		effect = document.getElementById("effectsSelect").value
-		causeF  = document.getElementById("cFollowUpSelect").value
-		effectF  = document.getElementById("eFollowUpSelect").value
-		textF = document.getElementById("textInput").value
-		
-		if(textInput is None):
+	
+		if (document.getElementById("causesSelect") is not None):
+			cause = document.getElementById("causesSelect").value
+		else:
+			cause = None
+
+		if (document.getElementById("effectsSelect") is not None):
+			effect = document.getElementById("effectsSelect").value
+		else:
+			effect = None
+
+		if (document.getElementById("cFollowUpSelect") is not None):
+			causeF = document.getElementById("cFollowUpSelect").value
+		else:
+			causeF = None
+
+		if (document.getElementById("eFollowUpSelect") is not None):
 			effectF = document.getElementById("eFollowUpSelect").value
 		else:
-			effectF = "Message: " + textInput.value
+			effectF = None
+
+		if (document.getElementById("textInput") is not None):
+			textF = document.getElementById("textInput").value
+		else:
+			textF = None
+			
+		console.log(cause)
+		console.log(effect)
+		console.log(causeF)
+		console.log(effectF)
+		console.log(textF)
 		
-		destroy_menu("followUpMenu")
+		cFollowUp = False
+		eFollowUp = False
+		if (cause is None or cause == "Nothing Selected"):
+			alert("No Cause was selected.")
+		elif (effect is None or effect == "Nothing Selected"):
+			alert("No Effect was selected.")
+		else:
+			if (causeF is not None and causeF != 'Nothing Selected'):
+				cFollowUp = True
+			if ((textF is not None and textF.strip() != '') or (effectF is not None and effectF != 'Nothing Selected')):
+				eFollowUp = True	
+			
+			if (cause == "Enter Room" and cFollowUp is False
+				or effect == "Open Door" and eFollowUp is False
+				or effect == "Close Door" and eFollowUp is False
+				or effect == "Display Message" and eFollowUp is False):
+				alert("Not enough information was entered.")
+			else:
+				console.log("Debug: Enough info was given.")
+				
+				destroy_menu("createRuleMenu")
+				
+				if(textF is not None and textF.strip() != ''):
+					effectF = "Message: " + textF
+				console.log("e")
+				sendBack(state, causeF, effectF)
+		'''
+		Causes = ["Enter Room"]
+		Effects = ["Open Door", "Close Door", "Play Music", "Display Message"]
+		'''
+		'''
 		destroy_menu("createRuleMenu")
-		
 		sendBack(state, causeF, effectF)	
+		'''
+
+	okButton = html.BUTTON(id = "createRuleOkButton")
+	okButton.innerHTML = "Create Rule"
+	okButton.onclick = destroyAndSendBack
 	
-
-
+	cancelButton = html.BUTTON(id = "createRuleCancelButton")
+	cancelButton.innerHTML = "Cancel"
+	cancelButton.onclick = lambda e: destroy_menu("createRuleMenu")
+	
+	menu <= ruleTitle
+	menu <= ruleForm
+	menu <= okButton
+	menu <= cancelButton
 
 	gui <= menu
 	console.log("everything appended")

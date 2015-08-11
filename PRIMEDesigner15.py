@@ -46,11 +46,13 @@ def dAlert(string):
 def copy_state(state):
 
 	oldRooms = state["Rooms"]
+	oldRules = state["Rules"]
 	oldImgPuzzles = state["Image_Puzzles"]
 	oldMusPuzzles = state["Music_Puzzles"]
 	
 	newState = {}
 	newRooms = []
+	newRules = []
 	newImagePuzzles = {}
 	newMusicPuzzles = {}
 
@@ -75,14 +77,14 @@ def copy_state(state):
 		newImagePuzzles[name] = state["Image_Puzzles"][name].copy()
 	for name in oldMusPuzzles:
 		newMusicPuzzles[name] = state["Music_Puzzles"][name].copy()
-	
+	for rule in oldRules:
+		newRules.append(rule.copy())
+		
 	# Put the new lists into the new state's lists.
 	newState["Rooms"] = newRooms
+	newState["Rules"] = newRules
 	newState["Image_Puzzles"] = newImagePuzzles
 	newState["Music_Puzzles"] = newMusicPuzzles
-	
-	# Doesn't this need a deep copy?
-	newState["Rules"] = state["Rules"]
 	
 	# Primitives and operators do not need to be deep copied.
 	newState["Selected_Room"] = state["Selected_Room"]
@@ -240,24 +242,20 @@ class MusicPuzzle:
 			noteCopy.append(note)
 
 		return MusicPuzzle(noteCopy, self.transformList)
-	
+
+#Paul, wtf is an isActive?
 class Rule:
-	def __init__(self, name = "defaultName", causeCondition, effectCondition, isActive):
+	def __init__(self, name = "defaultName", causeCondition, effectCondition):
 		
 		self.name = name
 		
 		self.causeCondition = causeCondition
 		
 		self.effectCondition = effectCondition
-		
-		self.isActive = isActive
-'''
-If solve puzzle then open/close door
-If enter room then open/close door
-If solve puzzle then message
-If enter room then message
+	
+	def copy(self):
+		return Rule(self.name, self.causeCondition, self.effectCondition)
 
-'''		
 
 # Takes a room num from 0 to 8 and a side for the door to be on, [N, S, E, W]
 # Optional newDoor parameter which allows you to pass which door the walls will point to.
@@ -810,7 +808,7 @@ def set_operators(state):
 		create_rule =\
 			AsyncOperator("Create new Rule.",
 				lambda state: True,
-				lambda state: create_rule_operator(state))
+				lambda state, sb: create_rule_operator(state, sb))
 				
 		OPERATORS = role_operators + create_rule
 	else:
@@ -841,8 +839,6 @@ INITIAL_STATE["Music_Puzzles"].append(MusicPuzzle(name="4"))
 INITIAL_STATE["Image_Puzzles"].append(ImagePuzzle(name="5"))
 '''
 INITIAL_STATE['Rules'] = []
-#INITIAL_STATE['Causes'] = []
-#INITIAL_STATE['Effects'] = []
 INITIAL_STATE['Selected_Room'] = 0
 
 # Stores name of selected image and selected music
