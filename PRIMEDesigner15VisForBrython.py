@@ -781,10 +781,29 @@ def prepareRuleDisplay():
 	
 # draws a room.		
 def drawRoom(room,room_num):
+	
+	if(room.aMusic is not None):
+		# Create a pattern for image representation.
+		pattern = svg.pattern(id="ambientMusic",width = "100%",height = "100%")
+		window.addAttribute(pattern,"patternContentUnits","objectBoundingBox")
+		
+		img = svg.image(xlink_href="images/note.png", x= "0" ,y = "0", width = '1', height = '1')
+		window.addAttribute(img,"preserveAspectRatio","none")
+		(x1,y1) = mapCoordsToDIV(room.walls['N'].x1,room.walls['E'].y1)
+		(x2,y2) = mapCoordsToDIV(room.walls['N'].x2,room.walls['E'].y2)
+		ambientDiv = svg.rect(x = x1, y = y1, width = x2 - x1, height = y2 - y1, fill = "url(#ambientMusic)")
+		
+		
+		# Append
+		pattern <= img
+		APANEL <= pattern
+		APANEL <= ambientDiv
+	
 	# thickness of a room's walls.
 	THICKNESS = .3
 	#(x3,y3) and (x4,y4) make up the shorter end of the trapezoid
 	# draws north wall
+	
 	wall = room.walls['N']
 	x3 = wall.x2 - THICKNESS/pow(2,1/2)
 	y3 = wall.y1 + THICKNESS/pow(2,1/2)
@@ -816,19 +835,7 @@ def drawRoom(room,room_num):
 	y4 = wall.y1 + THICKNESS/pow(2,1/2)
 	drawWall(wall,x3,y3,x4,y4,room_num)
 	
-	# Create a pattern for image representation.
-	#pattern = svg.pattern(id="ambientMusic" + str(room_num),width = "100%",height = "100%")
-	#window.addAttribute(pattern,"patternContentUnits","objectBoundingBox")
-	
-	#img = svg.image(xlink_href=wall.wallpaper.url, x= "0" ,y = "0", width = '1', height = '1', transform = transform)
-	#window.addAttribute(img,"preserveAspectRatio","none")
-	#WallpaperDiv = create_polygon(wall.x1, wall.y1, wall.x2, wall.y2, x3, y3, x4, y4,
-	#							  fill="url(#wallpaper" + str(room_num) + wall.loc  + ")", id = wall.loc)
-	
-	
-	# Append
-	#pattern <= img
-	#APANEL <= pattern
+
 		
 # draws a wall, requires 2 more points to form trapezoidal 3d shape.
 # Temporary optional color for walls.

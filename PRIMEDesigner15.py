@@ -550,7 +550,7 @@ def check_puzzle_name(state,name):
 # NOTE: This operators requires Brython as it uses a JSON object.
 def create_music_puzzle(state, sendBack):
 	
-	url = window.prompt("Enter a complete URL for a sheetMusic file. Say 'cancel' to cancel.", "music/twinkleTwinkle.txt")
+	url = window.prompt("Enter a complete URL for a json music file. Say 'cancel' to cancel.", "music/twinkleTwinkle.txt")
 	
 	if(url_is_valid(url)):
 		
@@ -827,17 +827,8 @@ INITIAL_STATE['Music_Puzzles'] = {}
 
 
 # ADD A BLANK MUSIC PUZZLE FOR DEBUG PURPOSES ONLY
-
 INITIAL_STATE["Music_Puzzles"]["test puzzle1"] = MusicPuzzle()
-'''
-INITIAL_STATE["Music_Puzzles"].append(MusicPuzzle(name="1"))
-INITIAL_STATE["Music_Puzzles"].append(MusicPuzzle(name="2"))
-INITIAL_STATE["Music_Puzzles"].append(MusicPuzzle(name="3"))
-INITIAL_STATE["Music_Puzzles"].append(MusicPuzzle(name="4"))
 
-# ADD A BLANK IMAGE PUZZLE FOR DEBUG PURPOSES ONLY
-INITIAL_STATE["Image_Puzzles"].append(ImagePuzzle(name="5"))
-'''
 INITIAL_STATE['Rules'] = []
 INITIAL_STATE['Selected_Room'] = 0
 
