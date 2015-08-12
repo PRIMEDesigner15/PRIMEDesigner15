@@ -558,7 +558,7 @@ def create_rule_menu(state, sendBack):
 				
 				if(textF is not None and textF.strip() != ''):
 					effectF = "Message: " + textF
-				console.log("e")
+				
 				sendBack(state, causeF, effectF)
 		'''
 		Causes = ["Enter Room"]

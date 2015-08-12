@@ -245,7 +245,7 @@ class MusicPuzzle:
 
 #Paul, wtf is an isActive?
 class Rule:
-	def __init__(self, name = "defaultName", causeCondition, effectCondition):
+	def __init__(self, causeCondition, effectCondition, name = "defaultName"):
 		
 		self.name = name
 		
@@ -405,8 +405,6 @@ def puzzles_is_valid(state):
 			invalidCardinals.append(c)
 
 	return invalidCardinals
-
-
 
 def create_rule_operator(state, sendBack):
 	def processMenu(state, cause, effect):
