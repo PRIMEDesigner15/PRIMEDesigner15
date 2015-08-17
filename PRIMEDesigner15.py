@@ -245,16 +245,18 @@ class MusicPuzzle:
 
 #Paul, wtf is an isActive?
 class Rule:
-	def __init__(self, causeCondition, effectCondition, name = "defaultName"):
+	def __init__(self, causeCondition, effectCondition):
 		
-		self.name = name
+		
 		
 		self.causeCondition = causeCondition
 		
 		self.effectCondition = effectCondition
+		
+		self.name = "Cause: " + self.causeCondition "; Effect: " + self.effectCondition
 	
 	def copy(self):
-		return Rule(self.name, self.causeCondition, self.effectCondition)
+		return Rule(self.causeCondition, self.effectCondition)
 
 
 # Takes a room num from 0 to 8 and a side for the door to be on, [N, S, E, W]

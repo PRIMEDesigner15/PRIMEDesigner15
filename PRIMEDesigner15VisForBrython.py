@@ -33,6 +33,9 @@ ctx = None
 # The display div used for the music role display
 musicDisplay = None
 
+# The display div used for the rule role display
+ruleDisplay = None
+
 LAST_STATE = None # cache of current state for use in 
 				#refresh of display after selection hiding button click.
 
@@ -330,9 +333,7 @@ def add_puzzle_menu(state, sendBack, bannedDirections = None):
 
 def create_rule_form(state):
 	global causes, effects
-	
-	console.log("Inside create rule form")
-	
+
 	# List comprehension to construct inputs
 	ruleForm = html.FORM(id = "ruleForm")
 	causesSelect = html.SELECT(id = "causesSelect")
@@ -399,7 +400,7 @@ def cFollowUp():
 		cFollowUp <= cFollowUpSelect
 		ruleForm <= cFollowUp
 	else:
-		console.log("Debug: No Cause Follow Up expected")
+		pass #console.log("Debug: No Cause Follow Up expected")
 
 def eFollowUp(state):
 
@@ -453,10 +454,9 @@ def eFollowUp(state):
 		ruleForm <= eFollowUp
 		
 	else:
-		console.log("Debug: No Effect Follow Up expected")
+		pass #console.log("Debug: No Effect Follow Up expected")
 	
 def create_rule_menu(state, sendBack):
-	console.log("inside create rule menu")
 
 	rules = state["Rules"]
 	
@@ -486,21 +486,6 @@ def create_rule_menu(state, sendBack):
 	#Create and populate causesSelect and effectsSelect
 	ruleForm = create_rule_form(state)
 	
-
-	'''
-	textInput = None
-		
-	console.log("pre-processing")
-	#process possible causes
-	
-		
-	console.log("causes set up")	
-	
-	#process possible effects
-	
-	'''
-	
-	
 	def destroyAndSendBack():
 	
 		if (document.getElementById("causesSelect") is not None):
@@ -527,12 +512,6 @@ def create_rule_menu(state, sendBack):
 			textF = document.getElementById("textInput").value
 		else:
 			textF = None
-			
-		console.log(cause)
-		console.log(effect)
-		console.log(causeF)
-		console.log(effectF)
-		console.log(textF)
 		
 		cFollowUp = False
 		eFollowUp = False
@@ -552,7 +531,7 @@ def create_rule_menu(state, sendBack):
 				or effect == "Display Message" and eFollowUp is False):
 				alert("Not enough information was entered.")
 			else:
-				console.log("Debug: Enough info was given.")
+				#console.log("Debug: Enough info was given.")
 				
 				destroy_menu("createRuleMenu")
 				
@@ -583,7 +562,6 @@ def create_rule_menu(state, sendBack):
 	menu <= cancelButton
 
 	gui <= menu
-	console.log("everything appended")
 	
 # Display the black overlay
 def show_overlay():
@@ -629,7 +607,7 @@ def render_state():
 	# Create music divs
 	global musicDisplay
 	musicDisplay = html.DIV(id ="musicDisplay")
-	musicDisplay.style = { 'width' : str(GAME_WIDTH) + "px", 
+	musicDisplay.style = {  'width' : str(GAME_WIDTH) + "px", 
 							'height' : str(GAME_HEIGHT) + "px",
 							"backgroundColor":"black",
 							'display' : 'none',
@@ -653,14 +631,28 @@ def render_state():
 	songSelected.style = {'margin' : 0}
 	songSelected.innerHTML = "No Song Selected"
 	
-		
+	# Create rule divs
+	global ruleDisplay
+	ruleDisplay = html.DIV(id="ruleDisplay")
+	ruleDisplay.style = {  'width' : str(GAME_WIDTH) + "px", 
+							'height' : str(GAME_HEIGHT) + "px",
+							"backgroundColor":"black",
+							'display' : 'none',
+							'color' : 'white',
+							'text-align' : 'center', 
+							'font-weight' : 'bold',
+							'font-size' : '28pt'}
+	rulesTitle = html.P(id="rulesTitle")
+	
 	board <= APANEL	
 	boarddiv <= board
 	boarddiv <= roleCanvas
 	musicDisplay <= songSelected
 	musicDisplay <= playButton
+	ruleDisplay <= rulesTitle
 	
 	boarddiv <= musicDisplay
+	boarddiv <= ruleDisplay
 	
 	gui <= boarddiv
 	
@@ -675,7 +667,7 @@ def setCanvasManager():
 		
 # draws the game
 def render_state_svg_graphics(state):
-	global roleCanvas, ctx, APANEL, selected_image, musicDisplay
+	global roleCanvas, ctx, APANEL, selected_image, musicDisplay, ruleDisplay
 	# Clear svg panel
 	while APANEL.lastChild is not None:
 		APANEL.removeChild(APANEL.elt.lastChild)
@@ -691,6 +683,7 @@ def render_state_svg_graphics(state):
 			drawRoom(room,room_num)
 			room_num += 1
 		
+		#add outline to selected room
 		THICKNESS = 1.5
 		selected_room = state['Rooms'][state['Selected_Room']]
 			
@@ -726,41 +719,65 @@ def render_state_svg_graphics(state):
 			playButton.disabled = True
 		
 	elif(state['Role'] == "Rules"):
-		prepareSVG()
+		prepareRuleDisplay()
+		
+		rulesTitle = document.getElementById("rulesTitle")
+		
+		# If no rules then display message
+		if(len(state["Rules"]) == 0):
+			rulesTitle.innerHTML = "There are no Rules."
+		# Otherwise display all rules with delete buttons
+		else:	
+			rulesTitle.innerHTML = "Rules:"
+		
+		ruleDisplay <= rulesTitle
 	else:
 		pass
 		
 def prepareSVG():
-	global roleCanvas, board, musicDisplay
+	global roleCanvas, board, musicDisplay, ruleDisplay
 	
 	# Hide canvas, musicDisplay
 	roleCanvas.elt.style.display = "none"
 	musicDisplay.elt.style.display = "none" 
+	ruleDisplay.elt.style.display = "none" 
 	
 	# Make sure svg stuff visible
 	board.elt.style.display = "block"	
 
 def prepareCanvas():
-	global roleCanvas, board, musicDisplay
+	global roleCanvas, board, musicDisplay, ruleDisplay
 	
 	# Hide svg, musicDisplay
 	board.elt.style.display = "none"
 	musicDisplay.elt.style.display = "none"
+	ruleDisplay.elt.style.display = "none"
 	
 	# Make canvas visible, call its JavaScript manager
 	roleCanvas.elt.style.display = "block"
 	setCanvasManager()
 	
 def prepareMusicDisplay():
-	global roleCanvas, board, musicDisplay
+	global roleCanvas, board, musicDisplay, ruleDisplay
 	
 	# Hide svg, roleCanvas
 	board.elt.style.display = "none"
 	roleCanvas.elt.style.display = "none"
+	ruleDisplay.elt.style.display = "none"
 	
 	# Make musicDisplay visible
 	musicDisplay.style.display = "block"
+
+def prepareRuleDisplay():
+	global roleCanvas, board, musicDisplay, ruleDisplay
 	
+	# Hide svg, roleCanvas
+	board.elt.style.display = "none"
+	roleCanvas.elt.style.display = "none"
+	musicDisplay.elt.style.display = "none"
+	
+	# Make ruleDisplay visible
+	ruleDisplay.style.display = "block"
 	
 # draws a room.		
 def drawRoom(room,room_num):
@@ -825,6 +842,7 @@ def drawWall(wall,x3,y3,x4,y4,room_num):
 	if (wall.puzzle is not None):
 		type = "imagePuzzle"
 		drawPuzzle(wall,type,x3,y3,x4,y4)
+
 # draws a wallpaper, requires 2 more points to form trapezoidal 3d shape.	
 def drawWallpaper(wall,x3,y3,x4,y4,room_num):
 	global LINE_WIDTH, APANEL, board
