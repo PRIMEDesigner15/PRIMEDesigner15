@@ -543,10 +543,6 @@ def create_rule_menu(state, sendBack):
 		Causes = ["Enter Room"]
 		Effects = ["Open Door", "Close Door", "Play Music", "Display Message"]
 		'''
-		'''
-		destroy_menu("createRuleMenu")
-		sendBack(state, causeF, effectF)	
-		'''
 
 	okButton = html.BUTTON(id = "createRuleOkButton")
 	okButton.innerHTML = "Create Rule"
@@ -726,13 +722,27 @@ def render_state_svg_graphics(state):
 		# If no rules then display message
 		if(len(state["Rules"]) == 0):
 			rulesTitle.innerHTML = "There are no Rules."
+			ruleDisplay <= rulesTitle
 		# Otherwise display all rules with delete buttons
 		else:	
 			rulesTitle.innerHTML = "Rules:"
+			ruleDisplay <= rulesTitle
+			populateRuleDisplay(state)
+			
 		
-		ruleDisplay <= rulesTitle
 	else:
 		pass
+
+def populateRuleDisplay(state):
+	global ruleDisplay
+	
+	for rule in state["Rules"]:
+		ruleItem = html.DIV()
+		ruleName = html.P(rule.name)
+		ruleDelete = html.BUTTON("Delete", id = "delete" + str(rule.name))
+		ruleItem <= ruleName
+		ruleItem <= ruleDelete
+		ruleDisplay <= ruleItem
 		
 def prepareSVG():
 	global roleCanvas, board, musicDisplay, ruleDisplay
