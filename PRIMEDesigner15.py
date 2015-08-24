@@ -654,6 +654,12 @@ def addMusicTransformation(state, transformation):
 	# Add transform to newState list
 	newState["Music_Puzzles"][newState["Selected_Music"]].add_transform(transformation)
 	return newState
+
+def deleteRule(state, index):
+	newState = copy_state(state)
+	del newState["Rules"][index]
+	
+	return newState
 	
 #</COMMON_CODE>		
 
@@ -809,8 +815,13 @@ def set_operators(state):
 			AsyncOperator("Create new Rule.",
 				lambda state: True,
 				lambda state, sb: create_rule_operator(state, sb))
-				
-		OPERATORS = role_operators + create_rule
+		delete_rules =\
+			[Operator("Delete Rule " + str(index),
+				lambda state: True,
+				lambda state: deleteRule(state, index))
+			for index, rule in enumerate(state["Rules"])]
+			
+		OPERATORS = role_operators + create_rule + delete_rules
 	else:
 		alert("unsupported role")
 	

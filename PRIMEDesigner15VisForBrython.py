@@ -537,8 +537,23 @@ def create_rule_menu(state, sendBack):
 				
 				if(textF is not None and textF.strip() != ''):
 					effectF = "Message: " + textF
-				
-				sendBack(state, causeF, effectF)
+		
+				if causeF is not None:
+					if effectF is not None:
+						sendBack(state, causeF, effectF)
+					elif effect is not None:
+						sendBack(state, causeF, effect)
+					else:
+						console.log("No effect caught")
+				elif cause is not None:
+					if effectF is not None:
+						sendBack(state, cause, effectF)
+					elif effect is not None:
+						sendBack(state, cause, effect)
+					else:
+						console.log("No effect caught")
+				else:
+					console.log("No cause caught")
 		'''
 		Causes = ["Enter Room"]
 		Effects = ["Open Door", "Close Door", "Play Music", "Display Message"]
@@ -638,14 +653,13 @@ def render_state():
 							'text-align' : 'center', 
 							'font-weight' : 'bold',
 							'font-size' : '28pt'}
-	rulesTitle = html.P(id="rulesTitle")
+	
 	
 	board <= APANEL	
 	boarddiv <= board
 	boarddiv <= roleCanvas
 	musicDisplay <= songSelected
 	musicDisplay <= playButton
-	ruleDisplay <= rulesTitle
 	
 	boarddiv <= musicDisplay
 	boarddiv <= ruleDisplay
@@ -669,7 +683,10 @@ def render_state_svg_graphics(state):
 		APANEL.removeChild(APANEL.elt.lastChild)
 	# Clear the roleCanvas
 	ctx.clearRect(0,0, GAME_WIDTH, GAME_HEIGHT)
-
+	# Clear the ruleDisplay
+	while ruleDisplay.lastChild is not None:
+		ruleDisplay.removeChild(ruleDisplay.childNodes[0])
+		
 	if(state['Role'] == "Architect"):
 		prepareSVG()
 		
@@ -717,7 +734,7 @@ def render_state_svg_graphics(state):
 	elif(state['Role'] == "Rules"):
 		prepareRuleDisplay()
 		
-		rulesTitle = document.getElementById("rulesTitle")
+		rulesTitle = html.P(id="rulesTitle")
 		
 		# If no rules then display message
 		if(len(state["Rules"]) == 0):
@@ -728,20 +745,15 @@ def render_state_svg_graphics(state):
 			rulesTitle.innerHTML = "Rules:"
 			ruleDisplay <= rulesTitle
 			populateRuleDisplay(state)
-			
-		
 	else:
 		pass
 
 def populateRuleDisplay(state):
 	global ruleDisplay
 	
-	for rule in state["Rules"]:
-		ruleItem = html.DIV()
-		ruleName = html.P(rule.name)
-		ruleDelete = html.BUTTON("Delete", id = "delete" + str(rule.name))
-		ruleItem <= ruleName
-		ruleItem <= ruleDelete
+	for index, rule in enumerate(state["Rules"]):
+		ruleItem = html.DIV(str(index) + ": " + str(rule.name))
+		
 		ruleDisplay <= ruleItem
 		
 def prepareSVG():
