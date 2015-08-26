@@ -337,6 +337,7 @@ def create_rule_form(state):
 	# List comprehension to construct inputs
 	ruleForm = html.FORM(id = "ruleForm")
 	causesSelect = html.SELECT(id = "causesSelect")
+	causesSelect.style = {'margin-right' : '10px'}
 	effectsSelect = html.SELECT(id = "effectsSelect")
 	
 	causeOpt = html.OPTION("Nothing Selected")
@@ -383,13 +384,13 @@ def cFollowUp():
 		cFollowUp.parentNode.removeChild(cFollowUp)
 
 	
-	cFollowUp = html.DIV(id="cFollowUp", style = {"margin-top" : '0'})
+	cFollowUp = html.DIV(id="cFollowUp", style = {"margin" : '10px'})
 	
 	ruleForm = document.getElementById("ruleForm")
 	
 	cause = document.getElementById("causesSelect").value
 	
-	cFollowUpSelect = html.SELECT(id = "cFollowUpSelect")	
+	cFollowUpSelect = html.SELECT(id = "cFollowUpSelect", style = {"margin-left" : "10px"})	
 
 	if(cause == "Enter Room"):
 		cFollowUp <= "Pick a room:"
@@ -409,13 +410,13 @@ def eFollowUp(state):
 	if (eFollowUp is not None):
 		eFollowUp.parentNode.removeChild(eFollowUp)
 	
-	eFollowUp = html.DIV(id="eFollowUp", style = {"margin-top" : '0'})
+	eFollowUp = html.DIV(id="eFollowUp", style = {"margin" : '10px'})
 
 	ruleForm = document.getElementById("ruleForm")
 	
 	effect = document.getElementById("effectsSelect").value
 	
-	eFollowUpSelect = html.SELECT(id = "eFollowUpSelect")
+	eFollowUpSelect = html.SELECT(id = "eFollowUpSelect", style = {"margin-left" : "10px"})
 	
 	if(effect == "Open Door"):
 		eFollowUp <= "Pick a door:"
@@ -446,10 +447,11 @@ def eFollowUp(state):
 		ruleForm <= eFollowUp
 		
 	elif(effect == "Play Music"):
-		console.log("What do if play music? Paul help pls")
+		console.log("What do if play music? Paul help pls") #Talk with paul about this more
+		
 	elif(effect == "Display Message"):
 		eFollowUp <= "Enter your message:"
-		textInput = html.INPUT(type="text", id="textInput")
+		textInput = html.INPUT(type="text", id="textInput", style = {"margin-left" : "10px"})
 		eFollowUp <= textInput
 		ruleForm <= eFollowUp
 		
@@ -466,8 +468,6 @@ def create_rule_menu(state, sendBack):
 							style = {
 								#'display' : 'none',
 								'position' : 'fixed',
-								#'width' : str(width) + "px",
-								#'height' : str(height) + "px",
 								'padding' : '10px',
 								'background' : 'white',
 								'border-radius' : '10px',
@@ -481,7 +481,7 @@ def create_rule_menu(state, sendBack):
 							})
 
 	ruleTitle = html.P(id="createRuleruleTitle", style = {"margin-top" : '0'})
-	ruleTitle.innerHTML = "New Rule:"							
+	ruleTitle.innerHTML = "Create Rule:"							
 	
 	#Create and populate causesSelect and effectsSelect
 	ruleForm = create_rule_form(state)
@@ -535,27 +535,18 @@ def create_rule_menu(state, sendBack):
 				
 				destroy_menu("createRuleMenu")
 				
+				if(causeF is not None):
+					cause = causeF
+					
 				if(textF is not None and textF.strip() != ''):
-					effectF = "Message: " + textF
-		
-				if causeF is not None:
-					if effectF is not None:
-						sendBack(state, causeF, effectF)
-					elif effect is not None:
-						sendBack(state, causeF, effect)
-					else:
-						console.log("No effect caught")
-				elif cause is not None:
-					if effectF is not None:
-						sendBack(state, cause, effectF)
-					elif effect is not None:
-						sendBack(state, cause, effect)
-					else:
-						console.log("No effect caught")
-				else:
-					console.log("No cause caught")
+					effectF = "Display Message: " + "\"" + textF + "\""
+				
+				if(effectF is not None):
+					effect = effectF
+				
+				sendBack(state, cause, effect)
 		'''
-		Causes = ["Enter Room"]
+		Causes = ["Enter Room", "Solve: ..."]
 		Effects = ["Open Door", "Close Door", "Play Music", "Display Message"]
 		'''
 
@@ -752,7 +743,7 @@ def populateRuleDisplay(state):
 	global ruleDisplay
 	
 	for index, rule in enumerate(state["Rules"]):
-		ruleItem = html.DIV(str(index) + ": " + str(rule.name))
+		ruleItem = html.DIV(str(index) + ": " + str(rule.name), style = {"font-size" : "13px"})
 		
 		ruleDisplay <= ruleItem
 		

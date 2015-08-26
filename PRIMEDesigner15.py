@@ -245,18 +245,19 @@ class MusicPuzzle:
 
 #Paul, wtf is an isActive?
 class Rule:
-	def __init__(self, causeCondition, effectCondition):
+	def __init__(self, cause, effect, defunct = False):
 		
+		self.cause = cause
 		
+		self.effect = effect
 		
-		self.causeCondition = causeCondition
+		# Whether the rule still applies to the current architecture.
+		self.defunct = defunct		
 		
-		self.effectCondition = effectCondition
-		
-		self.name = "Cause: " + self.causeCondition "; Effect: " + self.effectCondition
+		self.name = self.cause + "; " + self.effect
 	
 	def copy(self):
-		return Rule(self.causeCondition, self.effectCondition)
+		return Rule(self.cause, self.effect, self.defunct)
 
 
 # Takes a room num from 0 to 8 and a side for the door to be on, [N, S, E, W]
@@ -818,7 +819,7 @@ def set_operators(state):
 		delete_rules =\
 			[Operator("Delete Rule " + str(index),
 				lambda state: True,
-				lambda state: deleteRule(state, index))
+				lambda state, i = index: deleteRule(state, i))
 			for index, rule in enumerate(state["Rules"])]
 			
 		OPERATORS = role_operators + create_rule + delete_rules
