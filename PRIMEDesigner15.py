@@ -243,9 +243,9 @@ class MusicPuzzle:
 
 		return MusicPuzzle(noteCopy, self.transformList)
 
-#Paul, wtf is an isActive?
+# Defaults are the strings none
 class Rule:
-	def __init__(self, cause, effect, defunct = False):
+	def __init__(self, cause = "None", effect = "None", defunct = False):
 		
 		self.cause = cause
 		
@@ -254,7 +254,7 @@ class Rule:
 		# Whether the rule still applies to the current architecture.
 		self.defunct = defunct		
 		
-		self.name = self.cause + "; " + self.effect
+		self.name = self.cause + ", " + self.effect
 	
 	def copy(self):
 		return Rule(self.cause, self.effect, self.defunct)
@@ -837,17 +837,35 @@ INITIAL_STATE['Rooms'] = []
 INITIAL_STATE['Image_Puzzles'] = {}
 INITIAL_STATE['Music_Puzzles'] = {}
 
-
 # ADD A BLANK MUSIC PUZZLE FOR DEBUG PURPOSES ONLY
 INITIAL_STATE["Music_Puzzles"]["test puzzle1"] = MusicPuzzle()
 
 INITIAL_STATE['Rules'] = []
+
+# ADD BLANK RULES FOR DEBUG PURPOSES ONLY
+INITIAL_STATE['Rules'].append(Rule())
+INITIAL_STATE['Rules'].append(Rule())
+INITIAL_STATE['Rules'].append(Rule())
+INITIAL_STATE['Rules'].append(Rule())
+INITIAL_STATE['Rules'].append(Rule())
+INITIAL_STATE['Rules'].append(Rule())
+INITIAL_STATE['Rules'].append(Rule())
+INITIAL_STATE['Rules'].append(Rule())
+INITIAL_STATE['Rules'].append(Rule())
+INITIAL_STATE['Rules'].append(Rule())
+INITIAL_STATE['Rules'].append(Rule())
+INITIAL_STATE['Rules'].append(Rule())
+INITIAL_STATE['Rules'].append(Rule())
+INITIAL_STATE['Rules'].append(Rule())
+
+
+
 INITIAL_STATE['Selected_Room'] = 0
 
 # Stores name of selected image and selected music
 INITIAL_STATE['Selected_Image'] = None
 INITIAL_STATE['Selected_Music'] = None
-INITIAL_STATE['Role'] = "Architect"
+INITIAL_STATE['Role'] = "Rules"
 INITIAL_STATE['Operators'] = set_operators(INITIAL_STATE)	
 
 

@@ -155,7 +155,8 @@ def create_direction_form(bannedDirections = None):
 # Creates an image puzzle name list and a music puzzle name list.
 # Returns a div containing both the lists.
 def create_puzzle_lists(imagePuzzles,musicPuzzles):
-
+	
+	
 	lists = html.DIV(id = "create_puzzle_lists")
 	imageList = html.DIV(id = "create_puzzle_image_list")
 	musicList = html.DIV(id = "Create_puzzle_music_list")
@@ -224,6 +225,14 @@ def create_puzzle_lists(imagePuzzles,musicPuzzles):
 	
 # Removes any menu from the gui
 def destroy_menu(menuName):
+	
+	# Enable op controls
+	opSel = document.getElementById("theoptselect")
+	applyButton = document.getElementById("applyButtonID")
+	
+	opSel.disabled = False
+	applyButton.disabled = False
+	
 	try:
 		menu = document.getElementById(menuName)
 		gui.removeChild(menu)
@@ -234,6 +243,13 @@ def destroy_menu(menuName):
 # The band direction will be disabled when the user tries to choose it.
 # calls a callback function, sendBack, when the user hits a button.
 def add_puzzle_menu(state, sendBack, bannedDirections = None):
+
+	# Disable operator controls
+	opSel = document.getElementById("theoptselect")
+	applyButton = document.getElementById("applyButtonID")
+	
+	opSel.disabled = True
+	applyButton.disabled = True
 
 	# Convert to list for easy indexing
 	musicPuzzles = list(state["Music_Puzzles"])
@@ -282,8 +298,6 @@ def add_puzzle_menu(state, sendBack, bannedDirections = None):
 	
 	
 	def destroyAndSendBack():
-		
-		#http://cdn.meme.am/instances2/500x/980344.jpg
 		
 		# Get which direction is checked in the directionForm
 		for element in directionForm:
@@ -334,6 +348,13 @@ def add_puzzle_menu(state, sendBack, bannedDirections = None):
 def create_rule_form(state):
 	global causes, effects
 
+	# Disable operator controls
+	opSel = document.getElementById("theoptselect")
+	applyButton = document.getElementById("applyButtonID")
+	
+	opSel.disabled = True
+	applyButton.disabled = True
+	
 	# List comprehension to construct inputs
 	ruleForm = html.FORM(id = "ruleForm")
 	causesSelect = html.SELECT(id = "causesSelect")
@@ -550,7 +571,7 @@ def create_rule_menu(state, sendBack):
 		Effects = ["Open Door", "Close Door", "Play Music", "Display Message"]
 		'''
 
-	okButton = html.BUTTON(id = "createRuleOkButton")
+	okButton = html.BUTTON(id = "createRuleOkButton", style = {'margin' : '10px'})
 	okButton.innerHTML = "Create Rule"
 	okButton.onclick = destroyAndSendBack
 	
@@ -725,7 +746,7 @@ def render_state_svg_graphics(state):
 	elif(state['Role'] == "Rules"):
 		prepareRuleDisplay()
 		
-		rulesTitle = html.P(id="rulesTitle")
+		rulesTitle = html.P(id="rulesTitle", style = {'margin' : 0, 'border-bottom' : '5px solid white'})
 		
 		# If no rules then display message
 		if(len(state["Rules"]) == 0):
@@ -742,11 +763,38 @@ def render_state_svg_graphics(state):
 def populateRuleDisplay(state):
 	global ruleDisplay
 	
+	rHeight = ruleDisplay.height
+	tHeight = document.getElementById("rulesTitle").height
+	
+	tableWrapper = html.DIV(id="tableWrapper", style = {'position' : 'relative', 'height' : 'auto'})
+	scrollDiv = html.DIV(id="tableScroll", style = {'height' : str(rHeight - tHeight) + 'px', 'overflow' : 'auto'})
+	ruleTable = html.TABLE(id="ruleTable", style = {'width' : '100%', 'font-size' : '13px'})
+	headerRow = html.TR(id="ruleHeaders")
+	
+	headerRow <= html.TH("Number")
+	headerRow <= html.TH("Cause")
+	headerRow <= html.TH("Effect")
+	
+	ruleTable <= headerRow
+	
 	for index, rule in enumerate(state["Rules"]):
-		ruleItem = html.DIV(str(index) + ": " + str(rule.name), style = {"font-size" : "13px"})
 		
-		ruleDisplay <= ruleItem
+		newRow = html.TR(id = "ruleRow" + str(index +1))
+		newRow <= html.TD(str(index+1))
+		newRow <= html.TD(rule.cause)
+		newRow <= html.TD(rule.effect)
+
 		
+		#ruleItem = html.DIV(str(index) + ": " + str(rule.name), style = {"font-size" : "13px"})
+		#ruleDisplay <= ruleItem
+		
+		ruleTable <= newRow
+	
+	ruleTable.border = '10px solid white'
+	scrollDiv <= ruleTable
+	tableWrapper <= scrollDiv
+	ruleDisplay <= tableWrapper
+	
 def prepareSVG():
 	global roleCanvas, board, musicDisplay, ruleDisplay
 	
