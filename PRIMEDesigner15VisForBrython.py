@@ -224,8 +224,22 @@ def create_puzzle_lists(imagePuzzles,musicPuzzles):
 	return lists
 	
 # Removes any menu from the gui
-def destroy_menu(menuName):
+def destroy_menu(menuName):	
+	try:
+		menu = document.getElementById(menuName)
+		gui.removeChild(menu)
+	except:
+		console.log("Destroy menu was called on a nonexistent object.")
+
+def disableOpSelect():
+	# Disable operator controls
+	opSel = document.getElementById("theoptselect")
+	applyButton = document.getElementById("applyButtonID")
 	
+	opSel.disabled = True
+	applyButton.disabled = True
+
+def enableOpSelect():		
 	# Enable op controls
 	opSel = document.getElementById("theoptselect")
 	applyButton = document.getElementById("applyButtonID")
@@ -233,23 +247,12 @@ def destroy_menu(menuName):
 	opSel.disabled = False
 	applyButton.disabled = False
 	
-	try:
-		menu = document.getElementById(menuName)
-		gui.removeChild(menu)
-	except:
-		console.log("Destroy menu was called on a nonexistent object.")
-
 # Creates an architect menu with choices of which puzzle to select.
 # The band direction will be disabled when the user tries to choose it.
 # calls a callback function, sendBack, when the user hits a button.
 def add_puzzle_menu(state, sendBack, bannedDirections = None):
 
-	# Disable operator controls
-	opSel = document.getElementById("theoptselect")
-	applyButton = document.getElementById("applyButtonID")
-	
-	opSel.disabled = True
-	applyButton.disabled = True
+	disableOpSelect()
 
 	# Convert to list for easy indexing
 	musicPuzzles = list(state["Music_Puzzles"])
@@ -322,6 +325,8 @@ def add_puzzle_menu(state, sendBack, bannedDirections = None):
 			# Send back information and destroy the state
 			destroy_menu("addPuzzleMenu")
 			
+			enableOpSelect()
+			
 			sendBack(state,direction,chosen)
 		else:
 			alert("No puzzle selected")	
@@ -332,7 +337,7 @@ def add_puzzle_menu(state, sendBack, bannedDirections = None):
 	
 	cancelButton = html.BUTTON(id = "addPuzzleCancelButton", style = {"margin-top" : "10px"})
 	cancelButton.innerHTML = "Cancel"
-	cancelButton.onclick = lambda e: destroy_menu("addPuzzleMenu")
+	cancelButton.onclick = lambda e: cancelAddPuzzle()
 	
 	# Append
 	menu <= title1
@@ -343,17 +348,15 @@ def add_puzzle_menu(state, sendBack, bannedDirections = None):
 	menu <= okButton
 	menu <= cancelButton
 	gui <= menu
-	
+
+def cancelAddPuzzle():
+	destroy_menu("addPuzzleMenu")
+	enableOpSelect()	
 
 def create_rule_form(state):
 	global causes, effects
-
-	# Disable operator controls
-	opSel = document.getElementById("theoptselect")
-	applyButton = document.getElementById("applyButtonID")
 	
-	opSel.disabled = True
-	applyButton.disabled = True
+	disableOpSelect()
 	
 	# List comprehension to construct inputs
 	ruleForm = html.FORM(id = "ruleForm")
@@ -556,6 +559,8 @@ def create_rule_menu(state, sendBack):
 				
 				destroy_menu("createRuleMenu")
 				
+				enableOpSelect()
+				
 				if(causeF is not None):
 					cause = causeF
 					
@@ -577,7 +582,7 @@ def create_rule_menu(state, sendBack):
 	
 	cancelButton = html.BUTTON(id = "createRuleCancelButton")
 	cancelButton.innerHTML = "Cancel"
-	cancelButton.onclick = lambda e: destroy_menu("createRuleMenu")
+	cancelButton.onclick = lambda e: cancelRule()
 	
 	menu <= ruleTitle
 	menu <= ruleForm
@@ -585,6 +590,10 @@ def create_rule_menu(state, sendBack):
 	menu <= cancelButton
 
 	gui <= menu
+
+def cancelRule():
+	destroy_menu("createRuleMenu")
+	enableOpSelect()
 	
 # Display the black overlay
 def show_overlay():
