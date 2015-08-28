@@ -787,9 +787,11 @@ def populateRuleDisplay(state):
 	ruleTable <= headerRow
 	
 	for index, rule in enumerate(state["Rules"]):
-		
+		color = 'white'
+		if(rule.defunct):
+			color = 'red'
 		newRow = html.TR(id = "ruleRow" + str(index +1))
-		newRow <= html.TD(str(index+1))
+		newRow <= html.TD(str(index+1), style = {'color' : color})
 		newRow <= html.TD(rule.cause)
 		newRow <= html.TD(rule.effect)
 
