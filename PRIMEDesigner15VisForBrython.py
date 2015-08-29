@@ -712,10 +712,8 @@ def render_state_svg_graphics(state):
 		prepareSVG()
 		
 		# Draw all the rooms.
-		room_num = 1
-		for room in state['Rooms']:
+		for room_num, room in enumerate(state['Rooms']):
 			drawRoom(room,room_num)
-			room_num += 1
 		
 		#add outline to selected room
 		THICKNESS = 1.5
@@ -755,17 +753,23 @@ def render_state_svg_graphics(state):
 	elif(state['Role'] == "Rules"):
 		prepareRuleDisplay()
 		
+		# Draw all the rooms in architect view.
+		for room_num, room in enumerate(state['Rooms']):
+			drawRoom(room,room_num)
+		
 		rulesTitle = html.P(id="rulesTitle", style = {'margin' : 0, 'border-bottom' : '5px solid white'})
 		
 		# If no rules then display message
 		if(len(state["Rules"]) == 0):
 			rulesTitle.innerHTML = "There are no Rules."
 			ruleDisplay <= rulesTitle
+			
 		# Otherwise display all rules with delete buttons
 		else:	
 			rulesTitle.innerHTML = "Rules:"
 			ruleDisplay <= rulesTitle
 			populateRuleDisplay(state)
+
 	else:
 		pass
 
@@ -781,8 +785,8 @@ def populateRuleDisplay(state):
 	headerRow = html.TR(id="ruleHeaders")
 	
 	headerRow <= html.TH("Number")
-	headerRow <= html.TH("Cause")
-	headerRow <= html.TH("Effect")
+	headerRow <= html.TH("Conditions")
+	headerRow <= html.TH("Actions")
 	
 	ruleTable <= headerRow
 	
@@ -790,8 +794,8 @@ def populateRuleDisplay(state):
 		
 		newRow = html.TR(id = "ruleRow" + str(index +1))
 		newRow <= html.TD(str(index+1))
-		newRow <= html.TD(rule.cause)
-		newRow <= html.TD(rule.effect)
+		newRow <= html.TD(rule.conditions)
+		newRow <= html.TD(rule.actions)
 
 		
 		#ruleItem = html.DIV(str(index) + ": " + str(rule.name), style = {"font-size" : "13px"})
@@ -841,13 +845,14 @@ def prepareMusicDisplay():
 def prepareRuleDisplay():
 	global roleCanvas, board, musicDisplay, ruleDisplay
 	
-	# Hide svg, roleCanvas
-	board.elt.style.display = "none"
+	# Hide music and image displays
 	roleCanvas.elt.style.display = "none"
 	musicDisplay.elt.style.display = "none"
 	
 	# Make ruleDisplay visible
 	ruleDisplay.style.display = "block"
+	# Make Architect display visible
+	board.elt.style.display = "block"
 	
 # draws a room.		
 def drawRoom(room,room_num):

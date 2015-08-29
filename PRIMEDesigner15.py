@@ -245,19 +245,19 @@ class MusicPuzzle:
 
 # Defaults are the strings none
 class Rule:
-	def __init__(self, cause = "None", effect = "None", defunct = False):
+	def __init__(self, conditions = [], actions = [], defunct = False):
 		
-		self.cause = cause
+		self.conditions = conditions
 		
-		self.effect = effect
+		self.actions = actions
 		
 		# Whether the rule still applies to the current architecture.
 		self.defunct = defunct		
 		
-		self.name = self.cause + ", " + self.effect
+		self.name = self.conditions + ", " + self.actions
 	
 	def copy(self):
-		return Rule(self.cause, self.effect, self.defunct)
+		return Rule(self.conditions, self.actions, self.defunct)
 
 
 # Takes a room num from 0 to 8 and a side for the door to be on, [N, S, E, W]
@@ -410,9 +410,9 @@ def puzzles_is_valid(state):
 	return invalidCardinals
 
 def create_rule_operator(state, sendBack):
-	def processMenu(state, cause, effect):
+	def processMenu(state, conditions, actions):
 		newState = copy_state(state)
-		newRule = Rule(cause, effect)
+		newRule = Rule(conditions, actions)
 		newState["Rules"].append(newRule)
 		sendBack(newState)
 		
@@ -843,6 +843,7 @@ INITIAL_STATE["Music_Puzzles"]["test puzzle1"] = MusicPuzzle()
 INITIAL_STATE['Rules'] = []
 
 # ADD BLANK RULES FOR DEBUG PURPOSES ONLY
+'''INITIAL_STATE['Rules'].append(Rule())
 INITIAL_STATE['Rules'].append(Rule())
 INITIAL_STATE['Rules'].append(Rule())
 INITIAL_STATE['Rules'].append(Rule())
@@ -856,8 +857,7 @@ INITIAL_STATE['Rules'].append(Rule())
 INITIAL_STATE['Rules'].append(Rule())
 INITIAL_STATE['Rules'].append(Rule())
 INITIAL_STATE['Rules'].append(Rule())
-INITIAL_STATE['Rules'].append(Rule())
-
+'''
 
 
 INITIAL_STATE['Selected_Room'] = 0
