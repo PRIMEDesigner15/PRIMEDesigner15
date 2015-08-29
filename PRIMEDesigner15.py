@@ -101,6 +101,32 @@ def describe_state(state):
 	""" Produces a textual description of a state.
     Might not be needed in normal operation with GUIs."""	
 	
+# Goes through the rules of a state and marks the ones 
+# refer to non-existent objects as defunct.
+def check_rules(state):
+	
+	# Checks the string
+	rules = state["Rules"]
+	defunct = True
+	for rule in rules:
+		
+		# Check cause
+		cause = rules.cause.split(" ")
+		if(cause[0] == "Solve:"):
+			if(state["Music_Puzzles"][cause[1]] is not None or state["Image_Puzzles"][cause[1]] is not None):
+				defunct = False
+
+		# Check effect
+		effect = rules.effect.split(" ")
+		if(effect[0] == "Open" or effect[0] == "Close"):
+			roomNum = effect[4]
+			dir = effect[6]
+			
+			# False if no door
+			defunct = not state["Rooms"][roomNum]["Walls"][dir].door
+			
+		rule.defunct = defunct
+		
 #Template JSON Stuff	
 #try:
 #  from browser import window, alert
@@ -817,7 +843,7 @@ def set_operators(state):
 				lambda state: True,
 				lambda state, sb: create_rule_operator(state, sb))
 		delete_rules =\
-			[Operator("Delete Rule " + str(index),
+			[Operator("Delete Rule " + str(index + 1) + ", \"" + rule.name + "\"",
 				lambda state: True,
 				lambda state, i = index: deleteRule(state, i))
 			for index, rule in enumerate(state["Rules"])]
@@ -845,10 +871,10 @@ INITIAL_STATE['Rules'] = []
 # ADD BLANK RULES FOR DEBUG PURPOSES ONLY
 '''INITIAL_STATE['Rules'].append(Rule())
 INITIAL_STATE['Rules'].append(Rule())
+INITIAL_STATE['Rules'].append(Rule("Cool bean","cool cream", True))
 INITIAL_STATE['Rules'].append(Rule())
 INITIAL_STATE['Rules'].append(Rule())
-INITIAL_STATE['Rules'].append(Rule())
-INITIAL_STATE['Rules'].append(Rule())
+INITIAL_STATE['Rules'].append(Rule("not cool bean"))
 INITIAL_STATE['Rules'].append(Rule())
 INITIAL_STATE['Rules'].append(Rule())
 INITIAL_STATE['Rules'].append(Rule())
