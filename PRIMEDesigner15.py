@@ -111,19 +111,23 @@ def check_rules(state):
 	for rule in rules:
 		
 		# Check cause
-		cause = rules.cause.split(" ")
-		if(cause[0] == "Solve:"):
-			if(state["Music_Puzzles"][cause[1]] is not None or state["Image_Puzzles"][cause[1]] is not None):
-				defunct = False
-
-		# Check effect
-		effect = rules.effect.split(" ")
-		if(effect[0] == "Open" or effect[0] == "Close"):
-			roomNum = effect[4]
-			dir = effect[6]
-			
-			# False if no door
-			defunct = not state["Rooms"][roomNum]["Walls"][dir].door
+		for condition in rule.conditions:
+			cdSplit = condition.split(" ")
+			if(cdSplit[0] == "Solve:"):
+				# Look for attached puzzle name inside both dictionaries of puzzles
+				if(state["Music_Puzzles"][cause[1]] is not None or state["Image_Puzzles"][cause[1]] is not None):
+					defunct = False
+		
+		for action in rule.actions:
+			# Check action
+			acSplit = rule.action.split(" ")
+			if(acSplit[0] == "Open" or acSplit[0] == "Close"):
+				roomNum = acSplit[4]
+				dir = acSplit[6]
+				
+				# False if no door (Paul, it's True for the whole statement if there is no door, right? 
+				#You mean it's false without the not?)
+				defunct = not state["Rooms"][roomNum]["Walls"][dir].hasDoor
 			
 		rule.defunct = defunct
 		

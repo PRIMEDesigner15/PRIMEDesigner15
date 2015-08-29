@@ -374,11 +374,11 @@ def create_rule_form(state):
 		causesSelect <= causeOpt 
 	
 	for puzzle in state["Music_Puzzles"]:
-		causeOpt = html.OPTION("Solve: " + puzzle)
+		causeOpt = html.OPTION("Solve: " + puzzle.name)
 		causesSelect <= causeOpt 
 	
 	for puzzle in state["Image_Puzzles"]:
-		causeOpt = html.OPTION("Solve: " + puzzle)
+		causeOpt = html.OPTION("Solve: " + puzzle.name)
 		causesSelect <= causeOpt 
 		
 	for effect in Effects:
@@ -471,7 +471,7 @@ def eFollowUp(state):
 		ruleForm <= eFollowUp
 		
 	elif(effect == "Play Music"):
-		console.log("What do if play music? Paul help pls") #Talk with paul about this more
+		console.log("What do if play music? Paul help pls") #Paul, should this just be a room selection? Since music is bound to rooms
 		
 	elif(effect == "Display Message"):
 		eFollowUp <= "Enter your message:"
