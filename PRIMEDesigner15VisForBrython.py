@@ -41,8 +41,6 @@ LAST_STATE = None # cache of current state for use in
 
 LINE_WIDTH = 4
 
-Causes = ["Enter Room"]
-Effects = ["Open Door", "Close Door", "Play Music", "Display Message"]
 
 # Should've done this a million years ago. Makes it easy
 # to remove debug alerts.
@@ -353,55 +351,42 @@ def cancelAddPuzzle():
 	destroy_menu("addPuzzleMenu")
 	enableOpSelect()	
 
-def create_rule_form(state):
-	global causes, effects
-	
-	disableOpSelect()
+def add_condition_form(state):		
+
+	conditions = state['ConditionMaster']	
 	
 	# List comprehension to construct inputs
-	ruleForm = html.FORM(id = "ruleForm")
-	causesSelect = html.SELECT(id = "causesSelect")
-	causesSelect.style = {'margin-right' : '10px'}
-	effectsSelect = html.SELECT(id = "effectsSelect")
+	conditionForm = html.FORM(id = "conditionForm")
+	conditionSelect = html.SELECT(id = "conditionSelect")
+	conditionSelect.style = {'margin-right' : '10px'}
 	
-	causeOpt = html.OPTION("Nothing Selected")
-	causesSelect <= causeOpt
-	effectOpt = html.OPTION("Nothing Selected")
-	effectsSelect <= effectOpt
+	conditionOpt = html.OPTION("Nothing Selected")
+	conditionSelect <= conditionOpt
 	
-	for cause in Causes:
-		causeOpt = html.OPTION(cause)
-		causesSelect <= causeOpt 
+	for condition in conditions:
+		conditionOpt = html.OPTION(condition)
+		conditionSelect <= conditionOpt 
 	
 	for puzzle in state["Music_Puzzles"]:
-		causeOpt = html.OPTION("Solve: " + puzzle.name)
-		causesSelect <= causeOpt 
+		conditionOpt = html.OPTION("Solve: " + puzzle)
+		conditionSelect <= conditionOpt 
 	
 	for puzzle in state["Image_Puzzles"]:
-		causeOpt = html.OPTION("Solve: " + puzzle.name)
-		causesSelect <= causeOpt 
-		
-	for effect in Effects:
-		effectOpt = html.OPTION(effect)
-		effectsSelect <= effectOpt
+		conditionOpt = html.OPTION("Solve: " + puzzle)
+		conditionSelect <= conditionOpt 
 	
-	causesSelect.onchange = cFollowUp
-	effectsSelect.onchange = lambda e: eFollowUp(state)
+	conditionSelect.onchange = cFollowUp
 	
-	ruleDiv = html.DIV()
+	conditionDiv = html.DIV()
 	
-	ruleDiv <= "Cause: "
-	ruleDiv <= causesSelect
+	conditionDiv <= "Condition: "
+	conditionDiv <= conditionSelect
 	
-	ruleDiv <= "Effect: "
-	ruleDiv <= effectsSelect
+	conditionForm <= conditionDiv
 	
-	ruleForm <= ruleDiv
+	return conditionForm	
 	
-	return ruleForm
-
 def cFollowUp():
-
 	cFollowUp = document.getElementById("cFollowUp")
 	
 	if (cFollowUp is not None):
@@ -410,85 +395,27 @@ def cFollowUp():
 	
 	cFollowUp = html.DIV(id="cFollowUp", style = {"margin" : '10px'})
 	
-	ruleForm = document.getElementById("ruleForm")
+	conditionForm = document.getElementById("conditionForm")
 	
-	cause = document.getElementById("causesSelect").value
+	condition = document.getElementById("conditionSelect").value
 	
 	cFollowUpSelect = html.SELECT(id = "cFollowUpSelect", style = {"margin-left" : "10px"})	
 
-	if(cause == "Enter Room"):
+	if(condition == "Enter Room"):
 		cFollowUp <= "Pick a room:"
 		for num in range(1,10):
 			roomNum = html.OPTION("Enter Room " + str(num))
 			cFollowUpSelect <= roomNum
 
 		cFollowUp <= cFollowUpSelect
-		ruleForm <= cFollowUp
+		conditionForm <= cFollowUp
 	else:
-		pass #console.log("Debug: No Cause Follow Up expected")
-
-def eFollowUp(state):
-
-	eFollowUp = document.getElementById("eFollowUp")
-	
-	if (eFollowUp is not None):
-		eFollowUp.parentNode.removeChild(eFollowUp)
-	
-	eFollowUp = html.DIV(id="eFollowUp", style = {"margin" : '10px'})
-
-	ruleForm = document.getElementById("ruleForm")
-	
-	effect = document.getElementById("effectsSelect").value
-	
-	eFollowUpSelect = html.SELECT(id = "eFollowUpSelect", style = {"margin-left" : "10px"})
-	
-	if(effect == "Open Door"):
-		eFollowUp <= "Pick a door:"
+		pass #console.log("Debug: No Condition Follow Up expected")	
 		
-		doorOp = html.OPTION("Nothing Selected")
-		eFollowUpSelect <= doorOp
-		
-		for index, room in enumerate(state["Rooms"]):
-			for wall in room.walls.values():
-				if wall.hasDoor:
-					doorOp = html.OPTION("Open Door in room " + str(index + 1) + " on " + wall.loc + " wall.")
-					eFollowUpSelect <= doorOp
-		eFollowUp <= eFollowUpSelect
-		ruleForm <= eFollowUp
-		
-	elif(effect == "Close Door"):
-		eFollowUp <= "Pick a door:"
-		
-		doorOp = html.OPTION("Nothing Selected")
-		eFollowUpSelect <= doorOp
-		
-		for index, room in enumerate(state["Rooms"]):
-			for wall in room.walls.values():
-				if wall.hasDoor:
-					doorOp = html.OPTION("Close Door in room " + str(index + 1) + " on " + wall.loc + " wall.")
-					eFollowUpSelect <= doorOp
-		eFollowUp <= eFollowUpSelect
-		ruleForm <= eFollowUp
-		
-	elif(effect == "Play Music"):
-		console.log("What do if play music? Paul help pls") #Paul, should this just be a room selection? Since music is bound to rooms
-		
-	elif(effect == "Display Message"):
-		eFollowUp <= "Enter your message:"
-		textInput = html.INPUT(type="text", id="textInput", style = {"margin-left" : "10px"})
-		eFollowUp <= textInput
-		ruleForm <= eFollowUp
-		
-	else:
-		pass #console.log("Debug: No Effect Follow Up expected")
-	
-def create_rule_menu(state, sendBack):
-
-	rules = state["Rules"]
-	
+def add_condition_menu(state, sendBack):
 	width = 200
 	height = 200
-	menu = html.DIV(id = "createRuleMenu",
+	menu = html.DIV(id = "addConditionMenu",
 							style = {
 								#'display' : 'none',
 								'position' : 'fixed',
@@ -504,95 +431,230 @@ def create_rule_menu(state, sendBack):
 								'overflow' : 'auto'
 							})
 
-	ruleTitle = html.P(id="createRuleruleTitle", style = {"margin-top" : '0'})
-	ruleTitle.innerHTML = "Create Rule:"							
+	conditionTitle = html.P(id="addConditionMenuTitle", style = {"margin-top" : '0'})
+	conditionTitle.innerHTML = "Add Condition:"							
 	
-	#Create and populate causesSelect and effectsSelect
-	ruleForm = create_rule_form(state)
+	disableOpSelect()
+	
+	#Create and populate conditionSelect
+	conditionForm = add_condition_form(state)	
 	
 	def destroyAndSendBack():
 	
-		if (document.getElementById("causesSelect") is not None):
-			cause = document.getElementById("causesSelect").value
+		if (document.getElementById("conditionSelect") is not None):
+			condition = document.getElementById("conditionSelect").value
 		else:
-			cause = None
-
-		if (document.getElementById("effectsSelect") is not None):
-			effect = document.getElementById("effectsSelect").value
-		else:
-			effect = None
+			condition = None
 
 		if (document.getElementById("cFollowUpSelect") is not None):
-			causeF = document.getElementById("cFollowUpSelect").value
+			conditionF = document.getElementById("cFollowUpSelect").value
 		else:
-			causeF = None
+			conditionF = None
+		
+		cFollowUp = False
+		if (condition is None or condition == "Nothing Selected"):
+			alert("No Condition was selected.")
+		else:
+			if (conditionF is not None and conditionF != 'Nothing Selected'):
+				cFollowUp = True
+			
+			if (condition == "Enter Room" and cFollowUp is False):
+				alert("Not enough information was entered.")
+			else:
+				#console.log("Debug: Enough info was given.")
+				
+				destroy_menu("addConditionMenu")
+				
+				enableOpSelect()
+				
+				if(conditionF is not None):
+					condition = conditionF
+					
+				sendBack(condition)	
+	
+	okButton = html.BUTTON(id = "addConditionOkButton", style = {'margin' : '10px'})
+	okButton.innerHTML = "Add"
+	okButton.onclick = destroyAndSendBack
+	
+	cancelButton = html.BUTTON(id = "addConditionCancelButton")
+	cancelButton.innerHTML = "Cancel"
+	cancelButton.onclick = lambda e: cancelMenu(menu.id)
+
+	menu <= conditionTitle
+	menu <= conditionForm
+	menu <= okButton
+	menu <= cancelButton
+
+	gui <= menu
+
+def add_action_form(state):
+	actions = state["ActionMaster"]
+	
+	# List comprehension to construct inputs
+	actionForm = html.FORM(id = "actionForm")
+	actionSelect = html.SELECT(id = "actionSelect")
+	actionSelect.style = {'margin-right' : '10px'}
+	
+	actionOpt = html.OPTION("Nothing Selected")
+	actionSelect <= actionOpt
+	
+	for action in actions:
+		actionOpt = html.OPTION(action)
+		actionSelect <= actionOpt
+	
+	actionSelect.onchange = lambda e: aFollowUp(state)
+	
+	actionDiv = html.DIV()
+	
+	actionDiv <= "Action: "
+	actionDiv <= actionSelect
+	
+	actionForm <= actionDiv
+	
+	return actionForm
+
+def aFollowUp(state):
+
+	aFollowUp = document.getElementById("aFollowUp")
+	
+	if (aFollowUp is not None):
+		aFollowUp.parentNode.removeChild(aFollowUp)
+	
+	aFollowUp = html.DIV(id="aFollowUp", style = {"margin" : '10px'})
+
+	actionForm = document.getElementById("actionForm")
+	
+	action = document.getElementById("actionSelect").value
+	
+	aFollowUpSelect = html.SELECT(id = "aFollowUpSelect", style = {"margin-left" : "10px"})
+	
+	if(action == "Open Door"):
+		aFollowUp <= "Pick a door:"
+		
+		doorOp = html.OPTION("Nothing Selected")
+		aFollowUpSelect <= doorOp
+		
+		for index, room in enumerate(state["Rooms"]):
+			for wall in room.walls.values():
+				if wall.hasDoor:
+					doorOp = html.OPTION("Open Door in room " + str(index + 1) + " on " + wall.loc + " wall.")
+					aFollowUpSelect <= doorOp
+		aFollowUp <= aFollowUpSelect
+		actionForm <= aFollowUp
+		
+	elif(action == "Close Door"):
+		aFollowUp <= "Pick a door:"
+		
+		doorOp = html.OPTION("Nothing Selected")
+		aFollowUpSelect <= doorOp
+		
+		for index, room in enumerate(state["Rooms"]):
+			for wall in room.walls.values():
+				if wall.hasDoor:
+					doorOp = html.OPTION("Close Door in room " + str(index + 1) + " on " + wall.loc + " wall.")
+					aFollowUpSelect <= doorOp
+		aFollowUp <= aFollowUpSelect
+		actionForm <= aFollowUp
+		
+	elif(action == "Play Music"):
+		console.log("What do if play music? Paul help pls") #Paul, should this just be a room selection? Since music is bound to rooms
+		
+	elif(action == "Display Message"):
+		aFollowUp <= "Enter your message:"
+		textInput = html.INPUT(type="text", id="textInput", style = {"margin-left" : "10px"})
+		aFollowUp <= textInput
+		actionForm <= aFollowUp
+		
+	else:
+		pass #console.log("Debug: No Action Follow Up expected")	
+	
+def add_action_menu(state, sendBack):
+	width = 200
+	height = 200
+	menu = html.DIV(id = "addActionMenu",
+							style = {
+								#'display' : 'none',
+								'position' : 'fixed',
+								'padding' : '10px',
+								'background' : 'white',
+								'border-radius' : '10px',
+								'border' : '5px solid grey',
+								'left' : '50%',
+								'top' : '50%',
+								'margin-top' : "-" + str(1/2 * height) + 'px',
+								'margin-left' : "-" + str(1/2 * width) + 'px',
+								'z-index' : '1003',
+								'overflow' : 'auto'
+							})
+
+	actionTitle = html.P(id="addActionMenuTitle", style = {"margin-top" : '0'})
+	actionTitle.innerHTML = "Add Action:"							
+	
+	disableOpSelect()
+	
+	#Create and populate actionSelect
+	actionForm = add_action_form(state)	
+	
+	def destroyAndSendBack():
+
+		if (document.getElementById("actionSelect") is not None):
+			action = document.getElementById("actionSelect").value
+		else:
+			action = None
 
 		if (document.getElementById("eFollowUpSelect") is not None):
-			effectF = document.getElementById("eFollowUpSelect").value
+			actionF = document.getElementById("eFollowUpSelect").value
 		else:
-			effectF = None
+			actionF = None
 
 		if (document.getElementById("textInput") is not None):
 			textF = document.getElementById("textInput").value
 		else:
 			textF = None
 		
-		cFollowUp = False
-		eFollowUp = False
-		if (cause is None or cause == "Nothing Selected"):
-			alert("No Cause was selected.")
-		elif (effect is None or effect == "Nothing Selected"):
-			alert("No Effect was selected.")
+		aFollowUp = False
+		if (action is None or action == "Nothing Selected"):
+			alert("No Action was selected.")
 		else:
-			if (causeF is not None and causeF != 'Nothing Selected'):
-				cFollowUp = True
-			if ((textF is not None and textF.strip() != '') or (effectF is not None and effectF != 'Nothing Selected')):
-				eFollowUp = True	
+			if ((textF is not None and textF.strip() != '') or (actionF is not None and actionF != 'Nothing Selected')):
+				aFollowUp = True	
 			
-			if (cause == "Enter Room" and cFollowUp is False
-				or effect == "Open Door" and eFollowUp is False
-				or effect == "Close Door" and eFollowUp is False
-				or effect == "Display Message" and eFollowUp is False):
+			if (action == "Open Door" and aFollowUp is False
+				or action == "Close Door" and aFollowUp is False
+				or action == "Display Message" and aFollowUp is False):
 				alert("Not enough information was entered.")
 			else:
 				#console.log("Debug: Enough info was given.")
 				
-				destroy_menu("createRuleMenu")
+				destroy_menu("addActionMenu")
 				
 				enableOpSelect()
 				
-				if(causeF is not None):
-					cause = causeF
-					
 				if(textF is not None and textF.strip() != ''):
-					effectF = "Display Message: " + "\"" + textF + "\""
+					actionF = "Display Message: " + "\"" + textF + "\""
 				
-				if(effectF is not None):
-					effect = effectF
+				if(actionF is not None):
+					action = actionF
 				
-				sendBack(state, cause, effect)
-		'''
-		Causes = ["Enter Room", "Solve: ..."]
-		Effects = ["Open Door", "Close Door", "Play Music", "Display Message"]
-		'''
-
-	okButton = html.BUTTON(id = "createRuleOkButton", style = {'margin' : '10px'})
-	okButton.innerHTML = "Create Rule"
+				sendBack(action)	
+	
+	okButton = html.BUTTON(id = "addActionOkButton", style = {'margin' : '10px'})
+	okButton.innerHTML = "Add"
 	okButton.onclick = destroyAndSendBack
 	
-	cancelButton = html.BUTTON(id = "createRuleCancelButton")
+	cancelButton = html.BUTTON(id = "addActionCancelButton")
 	cancelButton.innerHTML = "Cancel"
-	cancelButton.onclick = lambda e: cancelRule()
+	cancelButton.onclick = lambda e: cancelMenu(menu.id)
 	
-	menu <= ruleTitle
-	menu <= ruleForm
+	menu <= actionTitle
+	menu <= actionForm
 	menu <= okButton
 	menu <= cancelButton
 
 	gui <= menu
-
-def cancelRule():
-	destroy_menu("createRuleMenu")
+	
+def cancelMenu(id):
+	destroy_menu(id)
 	enableOpSelect()
 	
 # Display the black overlay
@@ -789,15 +851,16 @@ def populateRuleDisplay(state):
 	headerRow <= html.TH("Actions")
 	
 	ruleTable <= headerRow
-	
+
 	for index, rule in enumerate(state["Rules"]):
 		color = 'white'
 		if(rule.defunct):
 			color = 'red'
+			
 		newRow = html.TR(id = "ruleRow" + str(index + 1))
 		newRow <= html.TD(str(index+1), style = {'color' : color})
-		newRow <= html.TD(rule.conditions)
-		newRow <= html.TD(rule.actions)
+		newRow <= html.TD(str(rule.conditions))
+		newRow <= html.TD(str(rule.actions))
 
 		
 		#ruleItem = html.DIV(str(index) + ": " + str(rule.name), style = {"font-size" : "13px"})

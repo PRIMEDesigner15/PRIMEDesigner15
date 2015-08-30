@@ -29,7 +29,7 @@ PROBLEM_DESC=\
 BRYTHON = True
 
 if(BRYTHON):
-	from PRIMEDesigner15VisForBrython import hide_loading, show_loading, add_puzzle_menu, create_rule_menu
+	from PRIMEDesigner15VisForBrython import hide_loading, show_loading, add_puzzle_menu, add_condition_menu, add_action_menu
 	from PRIMEDesigner15MusicForBrython import playAmbientMusic, stopAmbientMusic
 	from templateRoot.PRIMEDesigner15Operator import Operator as Operator
 	from templateRoot.PRIMEDesigner15Operator import AsyncOperator as AsyncOperator
@@ -92,9 +92,13 @@ def copy_state(state):
 	newState["Selected_Music"] = state["Selected_Music"]
 	newState["Role"] = state["Role"]
 	
+	# These are constant so the pointer can be passed up.
+	newState['ConditionMaster'] = state['ConditionMaster']
+	newState['ActionMaster'] = state['ActionMaster']
+	
 	# Operators is updated in set_operators.
 	newState["Operators"] = state["Operators"]
-
+	
 	return newState
 		
 def describe_state(state):
@@ -284,10 +288,19 @@ class Rule:
 		# Whether the rule still applies to the current architecture.
 		self.defunct = defunct		
 		
-		self.name = self.conditions + ", " + self.actions
+		self.name = "C: " + str(self.conditions) + ", " + "A: " + str(self.actions)
 	
 	def copy(self):
-		return Rule(self.conditions, self.actions, self.defunct)
+	
+		newConditions = []
+		newActions = []
+		
+		for condition in self.conditions:
+			newConditions.append(condition)
+		for action in self.actions:
+			newActions.append(action)
+		
+		return Rule(newConditions, newActions, self.defunct)
 
 
 # Takes a room num from 0 to 8 and a side for the door to be on, [N, S, E, W]
@@ -437,17 +450,7 @@ def puzzles_is_valid(state):
 		if (selectedRoom.walls[c].puzzle is not None or selectedRoom.walls[c].hasDoor == True):
 			invalidCardinals.append(c)
 
-	return invalidCardinals
-
-def create_rule_operator(state, sendBack):
-	def processMenu(state, conditions, actions):
-		newState = copy_state(state)
-		newRule = Rule(conditions, actions)
-		newState["Rules"].append(newRule)
-		sendBack(newState)
-		
-	create_rule_menu(state, processMenu)
-		
+	return invalidCardinals		
 		
 # takes a room num from 0 to 8 and prompts the user for a url for the wallpaper
 def add_wallpaper_to_room(state):
@@ -686,11 +689,36 @@ def addMusicTransformation(state, transformation):
 	newState["Music_Puzzles"][newState["Selected_Music"]].add_transform(transformation)
 	return newState
 
+def createRule(state):
+	newState = copy_state(state)
+	newRule = Rule()
+	newState["Rules"].append(newRule)
+	
+	return newState
+
 def deleteRule(state, index):
 	newState = copy_state(state)
 	del newState["Rules"][index]
 	
 	return newState
+
+def addCondition(state, index, sendBack):
+
+	def processCondition(condition):
+		newState = copy_state(state)
+		newState["Rules"][index].conditions.append(condition)
+		sendBack(newState)
+	
+	add_condition_menu(state, processCondition)
+	
+def addAction(state, index, sendBack):
+	
+	def processAction(action):
+		newState = copy_state(state)
+		newState["Rules"][index].actions.append(action)
+		sendBack(newState)
+	
+	add_action_menu(state, processAction)	
 	
 #</COMMON_CODE>		
 
@@ -843,16 +871,29 @@ def set_operators(state):
 	
 	elif(state['Role'] == "Rules"):
 		create_rule =\
-			AsyncOperator("Create new Rule.",
+			Operator("Create new Rule.",
 				lambda state: True,
-				lambda state, sb: create_rule_operator(state, sb))
+				lambda state: createRule(state))
+				
 		delete_rules =\
 			[Operator("Delete Rule " + str(index + 1) + ", \"" + rule.name + "\"",
 				lambda state: True,
 				lambda state, i = index: deleteRule(state, i))
 			for index, rule in enumerate(state["Rules"])]
+		
+		add_condition =\
+			[AsyncOperator("Add Condition to Rule " + str(index + 1) + ".",
+				lambda state, r = rule: not r.defunct, #If defunct is false then valid
+				lambda state, sb, i = index: addCondition(state, i, sb))
+			for index, rule in enumerate(state["Rules"])]
+		
+		add_action =\
+			[AsyncOperator("Add Action to Rule " + str(index + 1) + ".",
+				lambda state, r = rule: not r.defunct, #If defunct is false then valid
+				lambda state, sb, i = index: addAction(state, i, sb))
+			for index, rule in enumerate(state["Rules"])]		
 			
-		OPERATORS = role_operators + create_rule + delete_rules
+		OPERATORS = role_operators + create_rule + delete_rules + add_condition + add_action
 	else:
 		alert("unsupported role")
 	
@@ -897,7 +938,8 @@ INITIAL_STATE['Selected_Image'] = None
 INITIAL_STATE['Selected_Music'] = None
 INITIAL_STATE['Role'] = "Rules"
 INITIAL_STATE['Operators'] = set_operators(INITIAL_STATE)	
-
+INITIAL_STATE['ConditionMaster'] = ["Enter Room"]
+INITIAL_STATE['ActionMaster'] = ["Open Door", "Close Door", "Play Music", "Display Message"]
 
 # Create 9 rooms, add them to the the state.
 for j in range(3):
