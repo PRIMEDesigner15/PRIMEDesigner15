@@ -23,7 +23,7 @@ ROOM_SIZE = 100
 GAME_WIDTH = ROOM_SIZE * 3
 GAME_HEIGHT = ROOM_SIZE * 3
 
-# The svg element used for the archetect role
+# The svg element used for the architect role
 board = None
 
 # The canvas and its context will go here when initialized for manipulation
@@ -367,15 +367,10 @@ def add_condition_form(state):
 		conditionOpt = html.OPTION(condition)
 		conditionSelect <= conditionOpt 
 	
-	for puzzle in state["Music_Puzzles"]:
-		conditionOpt = html.OPTION("Solve: " + puzzle)
-		conditionSelect <= conditionOpt 
+	conditionOpt = html.OPTION("Solve Puzzle")
+	conditionSelect <= conditionOpt 
 	
-	for puzzle in state["Image_Puzzles"]:
-		conditionOpt = html.OPTION("Solve: " + puzzle)
-		conditionSelect <= conditionOpt 
-	
-	conditionSelect.onchange = cFollowUp
+	conditionSelect.onchange = cFollowUp(state)
 	
 	conditionDiv = html.DIV()
 	
@@ -386,32 +381,50 @@ def add_condition_form(state):
 	
 	return conditionForm	
 	
-def cFollowUp():
-	cFollowUp = document.getElementById("cFollowUp")
+def cFollowUp(state):
 	
-	if (cFollowUp is not None):
-		cFollowUp.parentNode.removeChild(cFollowUp)
-
-	
-	cFollowUp = html.DIV(id="cFollowUp", style = {"margin" : '10px'})
-	
-	conditionForm = document.getElementById("conditionForm")
-	
-	condition = document.getElementById("conditionSelect").value
-	
-	cFollowUpSelect = html.SELECT(id = "cFollowUpSelect", style = {"margin-left" : "10px"})	
-
-	if(condition == "Enter Room"):
-		cFollowUp <= "Pick a room:"
-		for num in range(1,10):
-			roomNum = html.OPTION("Enter Room " + str(num))
-			cFollowUpSelect <= roomNum
-
-		cFollowUp <= cFollowUpSelect
-		conditionForm <= cFollowUp
-	else:
-		pass #console.log("Debug: No Condition Follow Up expected")	
+	def cFollowUp2():
+		cFollowUp = document.getElementById("cFollowUp")
 		
+		if (cFollowUp is not None):
+			cFollowUp.parentNode.removeChild(cFollowUp)
+
+		
+		cFollowUp = html.DIV(id="cFollowUp", style = {"margin" : '10px'})
+		
+		conditionForm = document.getElementById("conditionForm")
+		
+		condition = document.getElementById("conditionSelect").value
+		cFollowUpSelect = html.SELECT(id = "cFollowUpSelect", style = {"margin-left" : "10px"})	
+		if(condition == "Enter Room"):
+			cFollowUp <= "Pick a room:"
+			for num in range(1,10):
+				roomNum = html.OPTION("Enter Room " + str(num))
+				cFollowUpSelect <= roomNum
+
+			cFollowUp <= cFollowUpSelect
+			conditionForm <= cFollowUp
+		elif(condition == "Solve Puzzle"):
+		
+			cFollowUp <= "Pick a puzzle:"			
+			puzzleOp = html.OPTION("Nothing Selected")
+			cFollowUpSelect <= puzzleOp
+			
+			# Puzzles are gathered by searching rooms that have been placed
+			# so the rules designer has context for which puzzles to attach conditions too
+			for index, room in enumerate(state["Rooms"]):
+				for wall in room.walls.values():
+					if wall.puzzle is not None:
+						puzzleOp = html.OPTION("Solve: " + wall.puzzle + " in room " + str(index + 1) + " on " + wall.loc + " wall.")
+						cFollowUpSelect <= puzzleOp
+					
+			cFollowUp <= cFollowUpSelect
+			conditionForm <= cFollowUp
+		else:
+			pass #console.log("Debug: No Condition Follow Up expected")	
+	
+	return cFollowUp2
+	
 def add_condition_menu(state, sendBack):
 	width = 200
 	height = 200
@@ -457,8 +470,8 @@ def add_condition_menu(state, sendBack):
 		else:
 			if (conditionF is not None and conditionF != 'Nothing Selected'):
 				cFollowUp = True
-			
-			if (condition == "Enter Room" and cFollowUp is False):
+				
+			if (condition == "Enter Room" or condition == "Solve Puzzle" and cFollowUp is False):
 				alert("Not enough information was entered.")
 			else:
 				#console.log("Debug: Enough info was given.")
@@ -859,8 +872,8 @@ def populateRuleDisplay(state):
 			
 		newRow = html.TR(id = "ruleRow" + str(index + 1))
 		newRow <= html.TD(str(index+1), style = {'color' : color})
-		newRow <= html.TD(str(rule.conditions))
-		newRow <= html.TD(str(rule.actions))
+		newRow <= html.TD(str(rule.conditions)[1:-1], style = {'color' : color})
+		newRow <= html.TD(str(rule.actions)[1:-1], style = {'color' : color})
 
 		
 		#ruleItem = html.DIV(str(index) + ": " + str(rule.name), style = {"font-size" : "13px"})

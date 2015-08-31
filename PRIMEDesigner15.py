@@ -108,10 +108,10 @@ def describe_state(state):
 # Goes through the rules of a state and marks the ones 
 # refer to non-existent objects as defunct.
 def check_rules(state):
-	
+	dAlert("checking rules")
 	# Checks the string
 	rules = state["Rules"]
-	defunct = True
+	defunct = False
 	for rule in rules:
 		
 		# Check cause
@@ -119,8 +119,8 @@ def check_rules(state):
 			cdSplit = condition.split(" ")
 			if(cdSplit[0] == "Solve:"):
 				# Look for attached puzzle name inside both dictionaries of puzzles
-				if(state["Music_Puzzles"][cause[1]] is not None or state["Image_Puzzles"][cause[1]] is not None):
-					defunct = False
+				if(state["Music_Puzzles"][cause[1]] is None or state["Image_Puzzles"][cause[1]] is None):
+					defunct = True
 		
 		for action in rule.actions:
 			# Check action
@@ -129,9 +129,9 @@ def check_rules(state):
 				roomNum = acSplit[4]
 				dir = acSplit[6]
 				
-				# False if no door (Paul, it's True for the whole statement if there is no door, right? 
-				#You mean it's false without the not?)
-				defunct = not state["Rooms"][roomNum]["Walls"][dir].hasDoor
+				# True if no door 
+				if(state["Rooms"][roomNum]["Walls"][dir].hasDoor):
+					defunct = True
 			
 		rule.defunct = defunct
 		
@@ -145,12 +145,6 @@ def check_rules(state):
 #except Exception as e:dsa
 #  print("There was an exception when trying to communicate back from Python to Javascript.")
 #  print(e)
-
-
-""" A note on the coordinate system used: 
-	Each room is of size 1. The game is thus of width 3 and height 3"""
-
-ROOM_SIZE = 1
 	
 class Room:
 
@@ -277,30 +271,22 @@ class MusicPuzzle:
 
 		return MusicPuzzle(noteCopy, self.transformList)
 
-# Defaults are the strings none
+# Defaults are empty lists
 class Rule:
 	def __init__(self, conditions = [], actions = [], defunct = False):
-		
-		self.conditions = conditions
-		
-		self.actions = actions
+			
+		self.conditions = conditions[:]
+		self.actions = actions[:]
 		
 		# Whether the rule still applies to the current architecture.
 		self.defunct = defunct		
 		
 		self.name = "C: " + str(self.conditions) + ", " + "A: " + str(self.actions)
 	
+	# Copies the rule, list is used to return a new list
 	def copy(self):
-	
-		newConditions = []
-		newActions = []
 		
-		for condition in self.conditions:
-			newConditions.append(condition)
-		for action in self.actions:
-			newActions.append(action)
-		
-		return Rule(newConditions, newActions, self.defunct)
+		return Rule(list(self.conditions), list(self.actions), self.defunct)
 
 
 # Takes a room num from 0 to 8 and a side for the door to be on, [N, S, E, W]
@@ -347,8 +333,10 @@ def remove_wall_object_from_room(state, side):
 		elif side == 'W':
 			wall = rooms[room_num - 1].walls['E']
 		wall.hasDoor = False
+		check_rules(state)
 	elif(wall.puzzle is not None):
 		wall.puzzle = None
+		check_rules(state)
 	else:
 		alert("no puzzle or door to remove")
 		
@@ -914,12 +902,13 @@ INITIAL_STATE["Music_Puzzles"]["test puzzle1"] = MusicPuzzle()
 INITIAL_STATE['Rules'] = []
 
 # ADD BLANK RULES FOR DEBUG PURPOSES ONLY
+
+INITIAL_STATE['Rules'].append(Rule())
 '''INITIAL_STATE['Rules'].append(Rule())
+INITIAL_STATE['Rules'].append(Rule(["Cool bean",'fdafsasdfadfasfdaf','aaaaaaaaa'],["cool cream"], True))
 INITIAL_STATE['Rules'].append(Rule())
-INITIAL_STATE['Rules'].append(Rule("Cool bean","cool cream", True))
 INITIAL_STATE['Rules'].append(Rule())
-INITIAL_STATE['Rules'].append(Rule())
-INITIAL_STATE['Rules'].append(Rule("not cool bean"))
+INITIAL_STATE['Rules'].append(Rule(["not cool bean"]))
 INITIAL_STATE['Rules'].append(Rule())
 INITIAL_STATE['Rules'].append(Rule())
 INITIAL_STATE['Rules'].append(Rule())
