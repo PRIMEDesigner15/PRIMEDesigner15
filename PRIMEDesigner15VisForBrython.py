@@ -471,7 +471,7 @@ def add_condition_menu(state, sendBack):
 			if (conditionF is not None and conditionF != 'Nothing Selected'):
 				cFollowUp = True
 				
-			if (condition == "Enter Room" or condition == "Solve Puzzle" and cFollowUp is False):
+			if ((condition == "Enter Room" or condition == "Solve Puzzle") and cFollowUp is False):
 				alert("Not enough information was entered.")
 			else:
 				#console.log("Debug: Enough info was given.")
@@ -615,8 +615,8 @@ def add_action_menu(state, sendBack):
 		else:
 			action = None
 
-		if (document.getElementById("eFollowUpSelect") is not None):
-			actionF = document.getElementById("eFollowUpSelect").value
+		if (document.getElementById("aFollowUpSelect") is not None):
+			actionF = document.getElementById("aFollowUpSelect").value
 		else:
 			actionF = None
 
@@ -631,7 +631,6 @@ def add_action_menu(state, sendBack):
 		else:
 			if ((textF is not None and textF.strip() != '') or (actionF is not None and actionF != 'Nothing Selected')):
 				aFollowUp = True	
-			
 			if (action == "Open Door" and aFollowUp is False
 				or action == "Close Door" and aFollowUp is False
 				or action == "Display Message" and aFollowUp is False):
