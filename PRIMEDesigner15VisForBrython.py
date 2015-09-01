@@ -47,6 +47,17 @@ LINE_WIDTH = 4
 def dAlert(string):
 	alert(string)
 
+def url_is_valid(url):	
+	# Note: Only works with Brython Implemented
+	# if not, only returns true
+	try:
+		fileContents = open(url)
+		return True
+	except OSError:
+		return False
+	else:
+		return False	
+	
 # Sets up the gui
 def set_up_gui(opselectdiv, reset_and_backtrack_div):
 	global gui
@@ -597,8 +608,8 @@ def aFollowUp(state):
 		aFollowUp <= aFollowUpSelect
 		actionForm <= aFollowUp
 		
-	elif(action == "Play Music"):
-		aFollowUp <= "Music Link:"
+	elif(action == "Play Sound"):
+		aFollowUp <= "Sound Link:"
 		textInput = html.INPUT(type="text", id="textInput", style = {"margin-left" : "10px"})
 		aFollowUp <= textInput
 		actionForm <= aFollowUp
@@ -674,24 +685,26 @@ def add_action_menu(state, sendBack):
 				or action == "Close Door" and aFollowUp is False
 				or action == "Display Message" and aFollowUp is False):
 				alert("Not enough information was entered.")
+			elif(action == "Play Sound" and not url_is_valid(textF)):
+				alert("File link was invalid.")
 			else:
 				#console.log("Debug: Enough info was given.")
 				
 				destroy_menu("addActionMenu")
 				
 				enableOpSelect()
+				
 				# Make sure something was actually put into the text box
 				if(textF is not None and textF.strip() != ''):
 					# Change display of text box information based on action.
-					if(action == "Play Music"):
-						actionF = "Play music from link: \"" + textF + "\""
-					elif(action == "Display Message"):
+					if(action == "Display Message"):
 						actionF = "Display Message: " + "\"" + textF + "\""
+					elif(action == "Play Sound"):
+						actionF = "Play sound from link: \"" + textF + "\""
 					elif(action == "Gain Points"):
 						actionF = "Gain " + textF + " Points"
 					elif(action == "Lose Points"):
 						actionF = "Lose " + textF + " Points"
-				
 				if(actionF is not None):
 					action = actionF
 				

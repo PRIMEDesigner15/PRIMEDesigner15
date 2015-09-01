@@ -29,7 +29,8 @@ PROBLEM_DESC=\
 BRYTHON = True
 
 if(BRYTHON):
-	from PRIMEDesigner15VisForBrython import hide_loading, show_loading, add_puzzle_menu, add_condition_menu, add_action_menu
+	from PRIMEDesigner15VisForBrython import hide_loading, show_loading, url_is_valid
+	from PRIMEDesigner15VisForBrython import add_puzzle_menu, add_condition_menu, add_action_menu
 	from PRIMEDesigner15MusicForBrython import playAmbientMusic, stopAmbientMusic
 	from templateRoot.PRIMEDesigner15Operator import Operator as Operator
 	from templateRoot.PRIMEDesigner15Operator import AsyncOperator as AsyncOperator
@@ -471,18 +472,6 @@ def add_wallpaper_to_room(state):
 		
 		# Recurse
 		return add_wallpaper_to_room(state)
-
-	
-def url_is_valid(url):	
-	# Note: Only works with Brython Implemented
-	# if not, only returns true
-	try:
-		fileContents = open(url)
-		return True
-	except OSError:
-		return False
-	else:
-		return False
 
 # Changes which room the user selects. Then calls the callback function, passing it the new state.
 def change_room_selection(state, room_num):
@@ -934,7 +923,7 @@ INITIAL_STATE['Selected_Music'] = None
 INITIAL_STATE['Role'] = "Rules"
 INITIAL_STATE['Operators'] = set_operators(INITIAL_STATE)	
 INITIAL_STATE['ConditionMaster'] = ["Enter Room","Have Points","Time Elapses"]
-INITIAL_STATE['ActionMaster'] = ["Open Door", "Close Door", "Play Music", "Display Message","Gain Points","Lose Points","End Game"]
+INITIAL_STATE['ActionMaster'] = ["Open Door", "Close Door", "Play Sound", "Display Message","Gain Points","Lose Points","End Game"]
 
 # Create 9 rooms, add them to the the state.
 for j in range(3):
