@@ -186,6 +186,12 @@ class Room:
 		
 		return newRoom
 		
+	def encode(self):
+		return {"coordinates" : {"x1": self.x1, "y1": self.y1, "x2": self.x2, "y2": self.y2},
+				"walls" : {"N" : self.walls['N'].encode(), "S" : self.walls['S'].encode(),
+						   "W" : self.walls['W'].encode(), "E" : self.walls['E'].encode()},
+				"ambientMusic" : self.aMusic}
+		
 """ A wall could contain a door and a wallpaper """	
 class Wall:
 
@@ -212,6 +218,14 @@ class Wall:
 	def copy(self):
 		newWall = Wall(self.x1,self.y1,self.x2,self.y2,self.loc, self.wallpaper.copy(), self.hasDoor, self.doorOpen, self.puzzle)
 		return newWall
+	
+	def encode(self):
+		return 	{"coordinates" : {"x1": self.x1, "y1": self.y1, "x2": self.x2, "y2": self.y2},
+				 "location" : self.loc,
+				 "wallpaper" : self.wallpaper.encode(),
+				 "hasDoor" : self.hasDoor,
+				 "doorOpen" : self.doorOpen,
+				 "puzzle" : self.puzzle}
 		
 # Default url is wall.jpg
 # Test url is stripes.jpg for transformation testing.
@@ -226,6 +240,9 @@ class Wallpaper:
 	def copy(self):
 		
 		return Wallpaper(self.url)
+	
+	def encode():
+		return {"URL" : self.url}
 '''
 class Door:
 	
