@@ -415,11 +415,25 @@ def cFollowUp(state):
 			for index, room in enumerate(state["Rooms"]):
 				for wall in room.walls.values():
 					if wall.puzzle is not None:
-						puzzleOp = html.OPTION("Solve: " + wall.puzzle + " in room " + str(index + 1) + " on " + wall.loc + " wall.")
+						puzzleOp = html.OPTION("Solve puzzle in room " + str(index + 1) + " on " + wall.loc + " wall.")
 						cFollowUpSelect <= puzzleOp
 					
 			cFollowUp <= cFollowUpSelect
 			conditionForm <= cFollowUp
+		elif(condition == "Have Points"):
+		
+			cFollowUp <= "Enter point amount:"
+			textInput = html.INPUT(type="text", id="textInput", style = {"margin-left" : "10px"})
+			cFollowUp <= textInput
+			conditionForm <= cFollowUp
+			
+		elif(condition == "Time Elapses"):
+			
+			cFollowUp <= "Enter time in minutes:"
+			textInput = html.INPUT(type="text", id="textInput", style = {"margin-left" : "10px"})
+			cFollowUp <= textInput
+			conditionForm <= cFollowUp
+			
 		else:
 			pass #console.log("Debug: No Condition Follow Up expected")	
 	
@@ -464,9 +478,14 @@ def add_condition_menu(state, sendBack):
 		else:
 			conditionF = None
 		
+		if (document.getElementById("textInput") is not None):
+			textF = document.getElementById("textInput").value
+		else:
+			textF = None
+		
 		cFollowUp = False
 		if (condition is None or condition == "Nothing Selected"):
-			alert("No Condition was selected.")
+			alert("No condition was selected.")
 		else:
 			if (conditionF is not None and conditionF != 'Nothing Selected'):
 				cFollowUp = True
@@ -480,9 +499,18 @@ def add_condition_menu(state, sendBack):
 				
 				enableOpSelect()
 				
+				if(textF is not None and textF.strip() != ''):
+					if(condition == "Have Points"):
+						conditionF = "Have " + textF + " Points."
+					elif(condition == "Time Elapses"):
+						conditionF = textF + " minutes elapse."
+					else:
+						alert("invalid condition for follow up.")
+				
 				if(conditionF is not None):
 					condition = conditionF
-					
+
+				
 				sendBack(condition)	
 	
 	okButton = html.BUTTON(id = "addConditionOkButton", style = {'margin' : '10px'})
@@ -550,7 +578,7 @@ def aFollowUp(state):
 		for index, room in enumerate(state["Rooms"]):
 			for wall in room.walls.values():
 				if wall.hasDoor:
-					doorOp = html.OPTION("Open Door in room " + str(index + 1) + " on " + wall.loc + " wall.")
+					doorOp = html.OPTION("Open door in room " + str(index + 1) + " on " + wall.loc + " wall.")
 					aFollowUpSelect <= doorOp
 		aFollowUp <= aFollowUpSelect
 		actionForm <= aFollowUp
@@ -570,14 +598,25 @@ def aFollowUp(state):
 		actionForm <= aFollowUp
 		
 	elif(action == "Play Music"):
-		console.log("What do if play music? Paul help pls") #Paul, should this just be a room selection? Since music is bound to rooms
-		
+		aFollowUp <= "Music Link:"
+		textInput = html.INPUT(type="text", id="textInput", style = {"margin-left" : "10px"})
+		aFollowUp <= textInput
+		actionForm <= aFollowUp
 	elif(action == "Display Message"):
 		aFollowUp <= "Enter your message:"
 		textInput = html.INPUT(type="text", id="textInput", style = {"margin-left" : "10px"})
 		aFollowUp <= textInput
 		actionForm <= aFollowUp
-		
+	elif(action == "Gain Points"):
+		aFollowUp <= "Gain how many points?"
+		textInput = html.INPUT(type="text", id="textInput", style = {"margin-left" : "10px"})
+		aFollowUp <= textInput
+		actionForm <= aFollowUp
+	elif(action == "Lose Points"):
+		aFollowUp <= "Lose how many points?"
+		textInput = html.INPUT(type="text", id="textInput", style = {"margin-left" : "10px"})
+		aFollowUp <= textInput
+		actionForm <= aFollowUp
 	else:
 		pass #console.log("Debug: No Action Follow Up expected")	
 	
@@ -627,7 +666,7 @@ def add_action_menu(state, sendBack):
 		
 		aFollowUp = False
 		if (action is None or action == "Nothing Selected"):
-			alert("No Action was selected.")
+			alert("No action was selected.")
 		else:
 			if ((textF is not None and textF.strip() != '') or (actionF is not None and actionF != 'Nothing Selected')):
 				aFollowUp = True	
@@ -641,9 +680,17 @@ def add_action_menu(state, sendBack):
 				destroy_menu("addActionMenu")
 				
 				enableOpSelect()
-				
+				# Make sure something was actually put into the text box
 				if(textF is not None and textF.strip() != ''):
-					actionF = "Display Message: " + "\"" + textF + "\""
+					# Change display of text box information based on action.
+					if(action == "Play Music"):
+						actionF = "Play music from link: \"" + textF + "\""
+					elif(action == "Display Message"):
+						actionF = "Display Message: " + "\"" + textF + "\""
+					elif(action == "Gain Points"):
+						actionF = "Gain " + textF + " Points"
+					elif(action == "Lose Points"):
+						actionF = "Lose " + textF + " Points"
 				
 				if(actionF is not None):
 					action = actionF

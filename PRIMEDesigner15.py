@@ -106,34 +106,39 @@ def describe_state(state):
     Might not be needed in normal operation with GUIs."""	
 	
 # Goes through the rules of a state and marks the ones 
-# refer to non-existent objects as defunct.
+# that refer to non-existent objects as defunct.
 def check_rules(state):
-	dAlert("checking rules1")
-	# Checks the string
+	
+
 	rules = state["Rules"]
-	defunct = False
-	dAlert("checking rules2")
-	for rule in rules:
+	for rule in rules:	
+		defunct = False
 		
-		'''# Check cause
+		#Check cause
 		for condition in rule.conditions:
 			cdSplit = condition.split(" ")
-			if(cdSplit[0] == "Solve:"):
-				# Look for attached puzzle name inside both dictionaries of puzzles
-				if(state["Music_Puzzles"][cause[1]] is None or state["Image_Puzzles"][cause[1]] is None):
+			
+			# If condition is "Solve Puzzle:"
+			if(cdSplit[0] == "Solve"):
+				roomNum = cdSplit[4]
+				dir = cdSplit[6]
+				
+				if(state["Rooms"][int(roomNum)-1].walls[dir].puzzle is None):
 					defunct = True
-		'''
+				
+	
 		for action in rule.actions:
 			# Check action
 			acSplit = action.split(" ")
+			
+			# If action is opening or closing a door:
 			if(acSplit[0] == "Open" or acSplit[0] == "Close"):
 				roomNum = acSplit[4]
 				dir = acSplit[6]
-				dAlert(roomNum + " " + dir + " " + acSplit[0])
-				# True if no door 
-				if(state["Rooms"][int(roomNum)].walls[dir].hasDoor is False):
+				 
+				if(state["Rooms"][int(roomNum)-1].walls[dir].hasDoor is False):
 					defunct = True
-			
+					
 		rule.defunct = defunct
 		
 #Template JSON Stuff	
@@ -326,7 +331,6 @@ def remove_wall_object_from_room(state, side):
 	if(wall.hasDoor):
 		wall.hasDoor = False
 		if side == 'N':
-			dAlert(side)
 			wall = rooms[room_num - 3].walls['S']
 		elif side == 'S':
 			wall = rooms[room_num + 3].walls['N']
@@ -413,7 +417,7 @@ def add_puzzle_to_room(room_num,side, state, name = None):
 		name = "defaultImagePuzzle"
 		name = check_puzzle_name(state,name)
 		puzzle = ImagePuzzle()
-		state["Image_puzzles"][name] = puzzle
+		state["Image_Puzzles"][name] = puzzle
 		
 	state["Rooms"][room_num].walls[side].puzzle = name
 	check_rules(state)
@@ -867,7 +871,7 @@ def set_operators(state):
 				lambda state: createRule(state))
 				
 		delete_rules =\
-			[Operator("Delete Rule " + str(index + 1) + ", \"" + rule.name + "\"",
+			[Operator("Delete Rule " + str(index + 1) + ".",
 				lambda state: True,
 				lambda state, i = index: deleteRule(state, i))
 			for index, rule in enumerate(state["Rules"])]
@@ -905,9 +909,9 @@ INITIAL_STATE["Music_Puzzles"]["test puzzle1"] = MusicPuzzle()
 INITIAL_STATE['Rules'] = []
 
 # ADD BLANK RULES FOR DEBUG PURPOSES ONLY
-
+'''
 INITIAL_STATE['Rules'].append(Rule())
-'''INITIAL_STATE['Rules'].append(Rule())
+INITIAL_STATE['Rules'].append(Rule())
 INITIAL_STATE['Rules'].append(Rule(["Cool bean",'fdafsasdfadfasfdaf','aaaaaaaaa'],["cool cream"], True))
 INITIAL_STATE['Rules'].append(Rule())
 INITIAL_STATE['Rules'].append(Rule())
@@ -922,7 +926,6 @@ INITIAL_STATE['Rules'].append(Rule())
 INITIAL_STATE['Rules'].append(Rule())
 '''
 
-
 INITIAL_STATE['Selected_Room'] = 0
 
 # Stores name of selected image and selected music
@@ -930,16 +933,16 @@ INITIAL_STATE['Selected_Image'] = None
 INITIAL_STATE['Selected_Music'] = None
 INITIAL_STATE['Role'] = "Rules"
 INITIAL_STATE['Operators'] = set_operators(INITIAL_STATE)	
-INITIAL_STATE['ConditionMaster'] = ["Enter Room"]
-INITIAL_STATE['ActionMaster'] = ["Open Door", "Close Door", "Play Music", "Display Message"]
+INITIAL_STATE['ConditionMaster'] = ["Enter Room","Have Points","Time Elapses"]
+INITIAL_STATE['ActionMaster'] = ["Open Door", "Close Door", "Play Music", "Display Message","Gain Points","Lose Points","End Game"]
 
 # Create 9 rooms, add them to the the state.
 for j in range(3):
 	for i in range(3):
 		INITIAL_STATE['Rooms'].append( Room(i, j, i + 1, j + 1) )	
 
-# TEMP DEBUG ADD DOOR
-INITIAL_STATE['Rooms'][0].walls['E'].hasDoor = True
+# TEMP DEBUG ADD PUZZLE
+add_puzzle_to_room(0,'E',INITIAL_STATE)
 
 # Temporary addition for debug purposes
 INITIAL_STATE["Rooms"][0].aMusic = "music\defaultAmbient.mp3"
