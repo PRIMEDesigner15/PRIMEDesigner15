@@ -187,10 +187,10 @@ class Room:
 		return newRoom
 		
 	def encode(self):
-		return {"coordinates" : {"x1": self.x1, "y1": self.y1, "x2": self.x2, "y2": self.y2},
-				"walls" : {"N" : self.walls['N'].encode(), "S" : self.walls['S'].encode(),
+		return {"Vector Coordinates" : {"x1": self.x1, "y1": self.y1, "x2": self.x2, "y2": self.y2},
+				"Walls" : {"N" : self.walls['N'].encode(), "S" : self.walls['S'].encode(),
 						   "W" : self.walls['W'].encode(), "E" : self.walls['E'].encode()},
-				"ambientMusic" : self.aMusic}
+				"Ambient Music" : self.aMusic}
 		
 """ A wall could contain a door and a wallpaper """	
 class Wall:
@@ -216,12 +216,12 @@ class Wall:
 		return newWall
 	
 	def encode(self):
-		return 	{"coordinates" : {"x1": self.x1, "y1": self.y1, "x2": self.x2, "y2": self.y2},
-				 "location" : self.loc,
-				 "wallpaper" : self.wallpaperurl,
-				 "hasDoor" : self.hasDoor,
-				 "doorOpen" : self.doorOpen,
-				 "puzzle" : self.puzzle}
+		return 	{"Vector Coordinates" : {"x1": self.x1, "y1": self.y1, "x2": self.x2, "y2": self.y2},
+				 "Location" : self.loc,
+				 "Wallpaper" : self.wallpaperurl,
+				 "HasDoor" : self.hasDoor,
+				 "DoorOpen" : self.doorOpen,
+				 "Puzzle" : self.puzzle}
 		
 
 '''
@@ -664,6 +664,75 @@ def play_ambient_music(state):
 def stop_ambient_music():
 	stopAmbientMusic()
 
+'''
+#<INITIAL_STATE> The game is a list of 9 rooms stored a list.
+INITIAL_STATE = {}
+INITIAL_STATE['Rooms'] = []
+INITIAL_STATE['Image_Puzzles'] = {}
+INITIAL_STATE['Music_Puzzles'] = {}
+
+# ADD A BLANK MUSIC PUZZLE FOR DEBUG PURPOSES ONLY
+INITIAL_STATE["Music_Puzzles"]["test puzzle1"] = MusicPuzzle()
+
+INITIAL_STATE['Rules'] = []
+
+# ADD BLANK RULES FOR DEBUG PURPOSES ONLY
+INITIAL_STATE['Rules'].append(Rule())
+INITIAL_STATE['Rules'].append(Rule())
+INITIAL_STATE['Rules'].append(Rule(["Cool bean",'fdafsasdfadfasfdaf','aaaaaaaaa'],["cool cream"], True))
+INITIAL_STATE['Rules'].append(Rule())
+INITIAL_STATE['Rules'].append(Rule())
+INITIAL_STATE['Rules'].append(Rule(["not cool bean"]))
+INITIAL_STATE['Rules'].append(Rule())
+INITIAL_STATE['Rules'].append(Rule())
+INITIAL_STATE['Rules'].append(Rule())
+INITIAL_STATE['Rules'].append(Rule())
+INITIAL_STATE['Rules'].append(Rule())
+INITIAL_STATE['Rules'].append(Rule())
+INITIAL_STATE['Rules'].append(Rule())
+INITIAL_STATE['Rules'].append(Rule())
+
+INITIAL_STATE['Selected_Room'] = 0
+
+# Stores name of selected image and selected music
+INITIAL_STATE['Selected_Image'] = None
+INITIAL_STATE['Selected_Music'] = None
+INITIAL_STATE['Role'] = "Rules"
+INITIAL_STATE['Operators'] = set_operators(INITIAL_STATE)	
+INITIAL_STATE['ConditionMaster'] = ["Enter Room","Have Points","Time Elapses"]
+INITIAL_STATE['ActionMaster'] = ["Open Door", "Close Door", "Play Sound", "Display Message","Gain Points","Lose Points","End Game"]
+
+# Create 9 rooms, add them to the the state.
+for j in range(3):
+	for i in range(3):
+		INITIAL_STATE['Rooms'].append( Room(i, j, i + 1, j + 1) )	
+
+# TEMP DEBUG ADD PUZZLE
+add_puzzle_to_room(0,'E',INITIAL_STATE)
+
+# Temporary addition for debug purposes
+INITIAL_STATE["Rooms"][0].aMusic = "music\defaultAmbient.mp3"
+		
+# Now initialize operators.
+OPERATORS = INITIAL_STATE['Operators']
+#</INITIAL_STATE>
+
+'''	
+def create_json(state):
+	stateJSON = {}
+	
+	#Rooms
+	stateJSON["Rooms"] = {}
+	for index, room in enumerate(state["Rooms"]):
+		stateJSON["Rooms"][str(index)] = room.encode()
+		#looks like stateJson = {"Rooms" : {1 : room1, 2 : room2, etc}, etc}
+	
+	console.log(stateJSON)
+	
+	#Puzzles
+	#Rules
+	#We don't need to send the selected room, image/music puzzles, role, 
+	#the operators, or the action/condition master
 	
 def addImageTransformation(state, transformation):
 	newState = copy_state(state)
@@ -771,7 +840,14 @@ def set_operators(state):
 				lambda state: True,
 				lambda state: stop_ambient_music())
 				
-		OPERATORS = selection_operators	+ add_door_operators + remove_object_operators + wallpaper_operators + add_puzzle_operators + add_ambient_music_operator + play_ambient_music_operator + stop_ambient_music_operator + role_operators
+		create_json_file =\
+			AsyncOperator("Create JSON file for the current state.",
+				lambda state: True,
+				lambda state, sb: create_json(state))
+				
+		OPERATORS = (selection_operators + add_door_operators + remove_object_operators + 
+					wallpaper_operators + add_puzzle_operators + add_ambient_music_operator + 
+					play_ambient_music_operator + stop_ambient_music_operator + role_operators + create_json_file)
 	
 	elif(state['Role'] == "Image Puzzle"):
 		
@@ -883,7 +959,7 @@ def set_operators(state):
 				lambda state, r = rule: not r.defunct, #If defunct is false then valid
 				lambda state, sb, i = index: addAction(state, i, sb))
 			for index, rule in enumerate(state["Rules"])]		
-			
+		
 		OPERATORS = role_operators + create_rule + delete_rules + add_condition + add_action
 	else:
 		alert("unsupported role")
