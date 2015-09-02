@@ -1078,7 +1078,7 @@ def drawWallpaper(wall,x3,y3,x4,y4,room_num):
 	pattern = svg.pattern(id="wallpaper" + str(room_num) + wall.loc,width = "100%",height = "100%")
 	window.addAttribute(pattern,"patternContentUnits","objectBoundingBox")
 	
-	img = svg.image(xlink_href=wall.wallpaper.url, x= "0" ,y = "0", width = '1', height = '1', transform = transform)
+	img = svg.image(xlink_href=wall.wallpaperurl, x= "0" ,y = "0", width = '1', height = '1', transform = transform)
 	window.addAttribute(img,"preserveAspectRatio","none")
 	
 	# Append

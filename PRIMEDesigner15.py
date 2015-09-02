@@ -195,17 +195,13 @@ class Room:
 """ A wall could contain a door and a wallpaper """	
 class Wall:
 
-	def __init__(self, x1, y1, x2, y2, loc, wallpaper = None, hasDoor = False, doorOpen = None, puzzle = None): 
+	def __init__(self, x1, y1, x2, y2, loc, wallpaperurl = "images/wall.jpg", hasDoor = False, doorOpen = None, puzzle = None): 
 		self.x1 = x1
 		self.y1 = y1
 		self.x2 = x2
 		self.y2 = y2
 		self.loc = loc
-		self.wallpaper = wallpaper
-		
-		if(self.wallpaper is None):
-			# Creates a wallpaper, default picture is wall.jpg
-			self.wallpaper = Wallpaper()
+		self.wallpaperurl = wallpaperurl
 		
 		# Whether the wall contains a door and if its open or not
 		self.hasDoor = hasDoor
@@ -216,33 +212,18 @@ class Wall:
 		
 	# Returns a copy of itself. Does not copy its door.
 	def copy(self):
-		newWall = Wall(self.x1,self.y1,self.x2,self.y2,self.loc, self.wallpaper.copy(), self.hasDoor, self.doorOpen, self.puzzle)
+		newWall = Wall(self.x1,self.y1,self.x2,self.y2,self.loc, self.wallpaperurl, self.hasDoor, self.doorOpen, self.puzzle)
 		return newWall
 	
 	def encode(self):
 		return 	{"coordinates" : {"x1": self.x1, "y1": self.y1, "x2": self.x2, "y2": self.y2},
 				 "location" : self.loc,
-				 "wallpaper" : self.wallpaper.encode(),
+				 "wallpaper" : self.wallpaperurl,
 				 "hasDoor" : self.hasDoor,
 				 "doorOpen" : self.doorOpen,
 				 "puzzle" : self.puzzle}
 		
-# Default url is wall.jpg
-# Test url is stripes.jpg for transformation testing.
-class Wallpaper:
-	
-	def __init__(self, url = "images/wall.jpg"):
-		
-		# url of image to be displayed on the wallpaper, automatically set to wall.jpg
-		self.url = url
-	
-	# Returns a copy of itself.
-	def copy(self):
-		
-		return Wallpaper(self.url)
-	
-	def encode():
-		return {"URL" : self.url}
+
 '''
 class Door:
 	
@@ -274,6 +255,9 @@ class ImagePuzzle:
 	def copy(self):
 		return ImagePuzzle(self.url, self.transformList)
 		
+	def encode():
+		return {"URL" : self.url, "transformList" : self.transformList}
+		
 class MusicPuzzle:
 
 	def __init__(self, notes = [], transformList = []):
@@ -295,6 +279,9 @@ class MusicPuzzle:
 
 		return MusicPuzzle(noteCopy, self.transformList)
 
+	def encode():
+		return {"Notes" : self.notes, "transformList" : self.transformList}		
+		
 # Defaults are empty lists
 class Rule:
 	def __init__(self, conditions = [], actions = [], defunct = False):
@@ -312,7 +299,10 @@ class Rule:
 		
 		return Rule(list(self.conditions), list(self.actions), self.defunct)
 
-
+	def encode():
+		return {"Conditions" : self.conditions, "Actions" : self.actions,
+				"Defunct" : self.defunct, "Name" : self.name}
+				
 # Takes a room num from 0 to 8 and a side for the door to be on, [N, S, E, W]
 # Optional newDoor parameter which allows you to pass which door the walls will point to.
 # Is default set to the creation of a new door.
@@ -479,7 +469,7 @@ def add_wallpaper_to_room(state):
 		newState = copy_state(state)
 		room = newState["Rooms"][newState["Selected_Room"]]
 		for loc in room.walls:
-			room.walls[loc].wallpaper.url = url
+			room.walls[loc].wallpaperurl = url
 		
 		return newState
 		
