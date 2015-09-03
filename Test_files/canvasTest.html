@@ -1,0 +1,50 @@
+<div id = "test8"> </div>
+<script>
+	//<img id=img src=noPuzzle.jpg>
+	//<canvas id=canvas width=300 height=300>
+	var img = document.createElement("img");
+	img.src = "noPuzzle.jpg";
+	var can = document.createElement("canvas");
+	var ctx = can.getContext('2d');
+	var imgData0;
+	var imgData1;
+	img.onload = function() {
+		can.width = img.width;
+		can.height = img.height;
+		ctx.drawImage(img, 0, 0);
+		imgData0 = ctx.getImageData.apply(ctx, [0,0,300,300]);
+		imgData1 = ctx.getImageData.apply(ctx, [0,0,300,300]);
+		for (var i = 0; i < can.width; i++) {
+			for(var j = 0; j < can.height; j++) {
+				for(var k = 0; k < 4; k++) {
+					imgData1.data[(j * can.width) * 4 + i * 4 + k] = imgData0.data[(can.height - 1 - j) * can.width * 4 + (can.width - 1 - i) * 4 + k];
+				}
+			}
+		}
+		ctx.putImageData(imgData1, 0, 0);
+	}
+	document.getElementById("test8").appendChild(can);
+
+
+
+
+/*
+	var img = document.getElementById("img");
+	var can = document.getElementById("canvas");
+	var ctx = can.getContext('2d');
+	var imgData;
+	img.onload = function() {
+		ctx.drawImage(img, 0, 0);
+		imgData0 = ctx.getImageData.apply(ctx, [0,0,300,300]);
+		imgData1 = ctx.getImageData.apply(ctx, [0,0,300,300]);
+		for (var i = 0; i < 300; i++) {
+			for(var j = 0; j < 300; j++) {
+				imgData1.data[i * can.width * 4 + j * 4] = 0 //+1 for green etc
+				imgData1.data[i * can.width * 4 + j * 4 + 1] = 255
+				
+			}
+		}
+		ctx.putImageData(imgData1, 0, 0);
+	}
+	*/
+</script>
