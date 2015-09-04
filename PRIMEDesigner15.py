@@ -1014,10 +1014,10 @@ for j in range(3):
 		INITIAL_STATE['Rooms'].append( Room(i, j, i + 1, j + 1) )	
 
 # TEMP DEBUG ADD PUZZLE
-add_puzzle_to_room(0,'E',INITIAL_STATE)
+#add_puzzle_to_room(0,'E',INITIAL_STATE)
 
 # Temporary addition for debug purposes
-INITIAL_STATE["Rooms"][0].aMusic = "music\defaultAmbient.mp3"
+#INITIAL_STATE["Rooms"][0].aMusic = "music\defaultAmbient.mp3"
 		
 # Now initialize operators.
 OPERATORS = INITIAL_STATE['Operators']

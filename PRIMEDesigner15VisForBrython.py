@@ -47,6 +47,15 @@ LINE_WIDTH = 4
 def dAlert(string):
 	alert(string)
 
+brythonTitle = html.P(id = "pagetitle", style = {"background": "black", 
+								"color" : "white", 
+								"text-align" : "center",
+								"font-size" : "30px"
+								})
+brythonTitle.innerHTML = "Brython Prime Client"
+
+document <= brythonTitle
+	
 def url_is_valid(url):	
 	# Note: Only works with Brython Implemented
 	# if not, only returns true
@@ -754,8 +763,7 @@ def hide_loading():
 
 # renders the state
 def render_state():
-	boarddiv = html.DIV(Id = "boarddivid", style = {"backgroundColor":"#CCFFCC"})
-	boarddiv <= html.I("Puzzle state:")
+	boarddiv = html.DIV(Id = "boarddivid", style = {"backgroundColor":"rgb(180,198,211)"})
 	
 	# Create canvas
 	global ctx, roleCanvas
@@ -766,9 +774,9 @@ def render_state():
 	global APANEL, board
 	board = svg.svg(Id = "svgboard", 
 					style = {"width":GAME_WIDTH, "height":GAME_HEIGHT,
-							"backgroundColor":"#AAAABB"})
+							"backgroundColor":"rgb(190,208,221)"})
 	board.elt.style.display = "none"
-	APANEL = svg.g(Id = "panel")
+	APANEL = svg.g(Id = "panel", style = {"text-align" : "center"})
 	
 	# Create music divs
 	global musicDisplay
