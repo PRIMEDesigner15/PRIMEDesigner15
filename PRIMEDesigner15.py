@@ -107,13 +107,13 @@ def describe_state(state):
     Might not be needed in normal operation with GUIs."""	
 	
 # Goes through the rules of a state and marks the ones 
-# that refer to non-existent objects as defunct.
+# that refer to non-existent objects as inapp.
 def check_rules(state):
 	
 
 	rules = state["Rules"]
 	for rule in rules:	
-		defunct = False
+		inapp = False
 		
 		#Check cause
 		for condition in rule.conditions:
@@ -125,7 +125,7 @@ def check_rules(state):
 				dir = cdSplit[6]
 				
 				if(state["Rooms"][int(roomNum)-1].walls[dir].puzzle is None):
-					defunct = True
+					inapp = True
 				
 	
 		for action in rule.actions:
@@ -138,9 +138,9 @@ def check_rules(state):
 				dir = acSplit[6]
 				 
 				if(state["Rooms"][int(roomNum)-1].walls[dir].hasDoor is False):
-					defunct = True
+					inapp = True
 					
-		rule.defunct = defunct
+		rule.inapp = inapp
 		
 #Template JSON Stuff	
 #try:
@@ -284,24 +284,24 @@ class MusicPuzzle:
 		
 # Defaults are empty lists
 class Rule:
-	def __init__(self, conditions = [], actions = [], defunct = False):
+	def __init__(self, conditions = [], actions = [], inapp = False):
 			
 		self.conditions = conditions[:]
 		self.actions = actions[:]
 		
 		# Whether the rule still applies to the current architecture.
-		self.defunct = defunct		
+		self.inapp = inapp		
 		
 		self.name = "C: " + str(self.conditions) + ", " + "A: " + str(self.actions)
 	
 	# Copies the rule, list is used to return a new list
 	def copy(self):
 		
-		return Rule(list(self.conditions), list(self.actions), self.defunct)
+		return Rule(list(self.conditions), list(self.actions), self.inapp)
 
 	def encode():
 		return {"Conditions" : self.conditions, "Actions" : self.actions,
-				"Defunct" : self.defunct, "Name" : self.name}
+				"inapp" : self.inapp, "Name" : self.name}
 				
 # Takes a room num from 0 to 8 and a side for the door to be on, [N, S, E, W]
 # Optional newDoor parameter which allows you to pass which door the walls will point to.
@@ -753,7 +753,6 @@ def createRule(state):
 	newState = copy_state(state)
 	newRule = Rule()
 	newState["Rules"].append(newRule)
-	
 	return newState
 
 def deleteRule(state, index):
@@ -950,13 +949,13 @@ def set_operators(state):
 		
 		add_condition =\
 			[AsyncOperator("Add Condition to Rule " + str(index + 1) + ".",
-				lambda state, r = rule: not r.defunct, #If defunct is false then valid
+				lambda state, r = rule: not r.inapp, #If inapp is false then valid
 				lambda state, sb, i = index: addCondition(state, i, sb))
 			for index, rule in enumerate(state["Rules"])]
 		
 		add_action =\
 			[AsyncOperator("Add Action to Rule " + str(index + 1) + ".",
-				lambda state, r = rule: not r.defunct, #If defunct is false then valid
+				lambda state, r = rule: not r.inapp, #If inapp is false then valid
 				lambda state, sb, i = index: addAction(state, i, sb))
 			for index, rule in enumerate(state["Rules"])]		
 		
