@@ -778,8 +778,7 @@ def render_state():
 							"backgroundColor":"rgb(190,208,221)"})
 	board.elt.style.display = "none"
 	APANEL = svg.g(Id = "panel", style = {"text-align" : "center"})
-	# Create puzzle list featured in Architect
-	PList = create_puzzle_list(state)
+
 	
 	# Create music divs
 	global musicDisplay
@@ -857,6 +856,12 @@ def render_state_svg_graphics(state):
 		
 		# Display the SVG
 		prepareSVG()
+		
+		# Remove old puzzle list if it exists
+		# Append new puzzle list to Architect role
+		remove_puzzle_list()
+		create_puzzle_list(state)
+
 		
 		# Create the puzzle list so architect can tell which puzzles are which
 		# Draw all the rooms.
@@ -956,6 +961,13 @@ def create_puzzle_list(state):
 	puzzleTable.border = '10px solid white'
 	boardDiv <= puzzleTable
 	
+# Removes a puzzle list if it has been created/exists
+def remove_puzzle_list():
+	puzzleTable = document.getElementById("puzzleTable")
+	if(puzzleTable is not None):
+		puzzleTable.parentNode.removeChild(puzzleTable)
+
+	
 # Called by the Architect role.
 # Returns the corresponding puzzle index from the puzzle list.
 # Used so Architect knows which puzzle they've placed is which
@@ -964,10 +976,42 @@ def getPuzzleIndex(puzzle):
 	# Get current list of puzzle names
 	puzzleTable = document.getElementById("puzzleTable")
 	i = 0
-	for row in puzzleTable:
-		print(i)
-		i += 1
 	
+	# Retrieves the name without the puzzle type description
+	def getElementName(puzzle):
+		name = ""
+		paren = False
+		i = 0
+		while(paren == False and i < len(puzzle)):
+			char = puzzle[i]
+			nextChar = puzzle[i+1]
+			if(nextChar == "("):
+				paren = True
+			else:
+				name += char
+			i += 1
+		
+		return name
+		
+	# Brython is being stupid so I have to do this 
+	# really inefficient method, im so sorry
+	onPuzzle = False
+	i = 0
+	name = ""
+	number = None
+	for row in puzzleTable:
+		if(i > 0):
+			for element in row:
+				if(onPuzzle):
+					name = getElementName(element.innerHTML)
+					if(name == puzzle):
+						return number
+				else:
+					number = element.innerHTML
+				
+				onPuzzle = not onPuzzle
+		i += 1
+				
 
 def populateRuleDisplay(state):
 	global ruleDisplay
@@ -1023,6 +1067,8 @@ def prepareCanvas():
 	
 	# Hide svg, musicDisplay
 	board.elt.style.display = "none"
+	remove_puzzle_list()
+	
 	musicDisplay.elt.style.display = "none"
 	ruleDisplay.elt.style.display = "none"
 	
@@ -1035,6 +1081,8 @@ def prepareMusicDisplay():
 	
 	# Hide svg, roleCanvas
 	board.elt.style.display = "none"
+	remove_puzzle_list()
+	
 	roleCanvas.elt.style.display = "none"
 	ruleDisplay.elt.style.display = "none"
 	
@@ -1052,6 +1100,7 @@ def prepareRuleDisplay():
 	ruleDisplay.style.display = "block"
 	# Make Architect display visible
 	board.elt.style.display = "block"
+	remove_puzzle_list()
 	
 # draws a room.		
 def drawRoom(room,room_num):
@@ -1230,6 +1279,8 @@ def drawDoor(wall,x3,y3,x4,y4):
 # Draws a wall on a wall with the given wall coordinates.
 # Fills in the polygon green for image puzzles and blue for music puzzles.
 def drawPuzzle(wall,type,x3,y3,x4,y4):
+	global board
+	
 	# Caution: Sensitive variable, keep it around 1 for a good sized puzzle.
 	PUZZLE_SIZE = 1.2
 	# map (p)uzzle coords to wall coords before translation
@@ -1242,23 +1293,45 @@ def drawPuzzle(wall,type,x3,y3,x4,y4):
 		py3 -= 1/PUZZLE_SIZE * (1/5)
 		py4 += 1/PUZZLE_SIZE * (1/5)
 		
+		if(wall.loc == 'E'):
+			tx = x4 + (1/2) * (wall.x1 - x4)
+			ty = wall.y1 + (1/2) * (wall.y2 - wall.y1) + 0.06
+		else:
+			tx = wall.x1 + (1/2) * (x4 - wall.x1)
+			ty = wall.y1 + (1/2) * (wall.y2 - wall.y1) + 0.06
+	
 	elif (wall.loc == 'N' or wall.loc == 'S'):
 		px1 += 1/PUZZLE_SIZE * (1/4)
 		px2 -= 1/PUZZLE_SIZE * (1/4)
 		px3 -= 1/PUZZLE_SIZE * (1/5)
 		px4 += 1/PUZZLE_SIZE * (1/5)
+		
+		if(wall.loc == 'N'):
+			tx = wall.x1 + (1/2) * (wall.x2 - wall.x1)
+			ty = wall.y1 + (1/2) * (y3 - wall.y1) + 0.06
+		else:
+			tx = wall.x1 + (1/2) * (wall.x2 - wall.x1)
+			ty = y4 + (1/2) * (wall.y1 - y4) + 0.06
 	else:
 		alert("drawPuzzle wall location check broke")
 	
+	# puzzle index number from puzzle list
+	number = getPuzzleIndex(wall.puzzle)
 	
 	# Create puzzle polygon
 	fill = "green"	
 	puzzleDiv = create_polygon(px1,py1,px2,py2,px3,py3,px4,py4, fill = fill)
 	
-	# Add puzzle index number from puzzle
-	getPuzzleIndex(wall.puzzle)
+	textSvg = create_text(number,tx,ty)
 	
 	APANEL <= puzzleDiv
+	APANEL <= textSvg
+
+# returns an svg text at the given point
+def create_text(text, x, y, fontSize = "18"):
+	(X1,Y1) = mapCoordsToDIV(x,y)
+	textSvg = svg.text(text, x = X1, y = Y1, fill = "black", text_anchor = "middle", font_size = fontSize, font_weight = "bold")
+	return textSvg
 
 # returns an svg polygon at the given 4 points.
 def create_polygon(x1,y1,x2,y2,x3,y3,x4,y4, fill = "black", stroke = "black", transform = "rotate(0)", id = "polygon"):
@@ -1275,7 +1348,8 @@ def create_polygon(x1,y1,x2,y2,x3,y3,x4,y4, fill = "black", stroke = "black", tr
 	
 	# Create polygon
 	poly = svg.polygon(id=id,fill = fill, stroke = stroke, stroke_width = LINE_WIDTH,
-					points=Points, transform=transform)				
+					points=Points, transform=transform)
+	
 	# return polygon
 	return poly
 	
