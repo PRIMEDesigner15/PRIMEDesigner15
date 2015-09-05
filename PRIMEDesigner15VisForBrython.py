@@ -47,6 +47,15 @@ LINE_WIDTH = 4
 def dAlert(string):
 	alert(string)
 
+brythonTitle = html.P(id = "pagetitle", style = {"background": "black", 
+								"color" : "white", 
+								"text-align" : "center",
+								"font-size" : "30px"
+								})
+brythonTitle.innerHTML = "Brython Prime Client"
+
+document <= brythonTitle
+	
 def url_is_valid(url):	
 	# Note: Only works with Brython Implemented
 	# if not, only returns true
@@ -754,8 +763,7 @@ def hide_loading():
 
 # renders the state
 def render_state():
-	boarddiv = html.DIV(Id = "boarddivid", style = {"backgroundColor":"#CCFFCC"})
-	boarddiv <= html.I("Puzzle state:")
+	boarddiv = html.DIV(Id = "boarddivid", style = {"backgroundColor":"rgb(180,198,211)"})
 	
 	# Create canvas
 	global ctx, roleCanvas
@@ -766,9 +774,9 @@ def render_state():
 	global APANEL, board
 	board = svg.svg(Id = "svgboard", 
 					style = {"width":GAME_WIDTH, "height":GAME_HEIGHT,
-							"backgroundColor":"#AAAABB"})
+							"backgroundColor":"rgb(190,208,221)"})
 	board.elt.style.display = "none"
-	APANEL = svg.g(Id = "panel")
+	APANEL = svg.g(Id = "panel", style = {"text-align" : "center"})
 	
 	# Create music divs
 	global musicDisplay
@@ -843,8 +851,12 @@ def render_state_svg_graphics(state):
 		ruleDisplay.removeChild(ruleDisplay.childNodes[0])
 		
 	if(state['Role'] == "Architect"):
+		
+		# Display the SVG
 		prepareSVG()
 		
+		# Create the puzzle list so architect can tell which puzzles are which
+		create_puzzle_list(state)
 		# Draw all the rooms.
 		for room_num, room in enumerate(state['Rooms']):
 			drawRoom(room,room_num)
@@ -906,6 +918,52 @@ def render_state_svg_graphics(state):
 
 	else:
 		pass
+		
+# Puzzle list used for Architect to determine which puzzle is which		
+def create_puzzle_list(state):
+
+	boardDiv = document.getElementById("boarddivid")
+
+	listDiv = html.DIV(id="puzzleListDiv", width = GAME_WIDTH, height = GAME_HEIGHT)
+	puzzleList = html.OL(id="puzzleList")
+
+	tableWrapper = html.DIV(id="tableWrapper", style = {'position' : 'relative', 'height' : 'auto'})
+	scrollDiv = html.DIV(id="tableScroll", style = {'height' : str(GAME_HEIGHT) + 'px', 'overflow' : 'auto'})
+	puzzleTable = html.TABLE(id="puzzleTable", style = {'width' : str(GAME_WIDTH) + 'px', 'font-size' : '13px','background-color' : 'rgb(220, 238, 251)' , 'text-align' : 'center'})
+	headerRow = html.TR(id="puzzleHeaders", style = {'background-color' : 'rgb(200, 218, 231)'})
+	
+	headerRow <= html.TH("Number")
+	headerRow <= html.TH("Puzzle")
+	puzzleTable <= headerRow
+	
+	# Add puzzles to list
+	i = 1
+	for puzzle in state["Image_Puzzles"]:
+		newRow = html.TR(id="puzzleRow"+ str(i))
+		newRow <= html.TD(str(i))
+		newRow <= html.TD(puzzle + " (Image Puzzle)")
+		puzzleTable <= newRow
+		i += 1
+	for puzzle in state["Music_Puzzles"]:
+		newRow = html.TR(id="puzzleRow"+ str(i))
+		newRow <= html.TD(str(i))
+		newRow <= html.TD(puzzle + " (Music Puzzle)")
+		puzzleTable <= newRow
+		i += 1
+	
+	puzzleTable.border = '10px solid white'
+	boardDiv <= puzzleTable
+	
+# Called by the Architect role, adds a puzzle to the puzzle list
+# and returns its index number within the list 
+def addPuzzleToList(puzzle):
+	
+	puzzleTable = document.getElementById("puzzleTable")
+	i = 0
+	for row in puzzleTable:
+		print(i)
+		i += 1
+	
 
 def populateRuleDisplay(state):
 	global ruleDisplay
@@ -926,7 +984,7 @@ def populateRuleDisplay(state):
 
 	for index, rule in enumerate(state["Rules"]):
 		color = 'white'
-		if(rule.defunct):
+		if(rule.inapp):
 			color = 'red'
 			
 		newRow = html.TR(id = "ruleRow" + str(index + 1))
