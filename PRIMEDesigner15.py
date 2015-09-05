@@ -102,6 +102,7 @@ def copy_state(state):
 	
 	return newState
 		
+		
 def describe_state(state):
 	""" Produces a textual description of a state.
     Might not be needed in normal operation with GUIs."""	
