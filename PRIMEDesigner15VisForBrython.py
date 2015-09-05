@@ -25,6 +25,7 @@ GAME_HEIGHT = ROOM_SIZE * 3
 
 # The svg element used for the architect role
 board = None
+PList = None
 
 # The canvas and its context will go here when initialized for manipulation
 roleCanvas = None
@@ -771,12 +772,14 @@ def render_state():
 	ctx = roleCanvas.getContext("2d")
 	
 	# Create svg board
-	global APANEL, board
+	global APANEL, board, PList
 	board = svg.svg(Id = "svgboard", 
 					style = {"width":GAME_WIDTH, "height":GAME_HEIGHT,
 							"backgroundColor":"rgb(190,208,221)"})
 	board.elt.style.display = "none"
 	APANEL = svg.g(Id = "panel", style = {"text-align" : "center"})
+	# Create puzzle list featured in Architect
+	PList = create_puzzle_list(state)
 	
 	# Create music divs
 	global musicDisplay
@@ -856,7 +859,6 @@ def render_state_svg_graphics(state):
 		prepareSVG()
 		
 		# Create the puzzle list so architect can tell which puzzles are which
-		create_puzzle_list(state)
 		# Draw all the rooms.
 		for room_num, room in enumerate(state['Rooms']):
 			drawRoom(room,room_num)
@@ -954,10 +956,12 @@ def create_puzzle_list(state):
 	puzzleTable.border = '10px solid white'
 	boardDiv <= puzzleTable
 	
-# Called by the Architect role, adds a puzzle to the puzzle list
-# and returns its index number within the list 
-def addPuzzleToList(puzzle):
+# Called by the Architect role.
+# Returns the corresponding puzzle index from the puzzle list.
+# Used so Architect knows which puzzle they've placed is which
+def getPuzzleIndex(puzzle):
 	
+	# Get current list of puzzle names
 	puzzleTable = document.getElementById("puzzleTable")
 	i = 0
 	for row in puzzleTable:
@@ -1245,10 +1249,14 @@ def drawPuzzle(wall,type,x3,y3,x4,y4):
 		px4 += 1/PUZZLE_SIZE * (1/5)
 	else:
 		alert("drawPuzzle wall location check broke")
-			
+	
+	
 	# Create puzzle polygon
 	fill = "green"	
 	puzzleDiv = create_polygon(px1,py1,px2,py2,px3,py3,px4,py4, fill = fill)
+	
+	# Add puzzle index number from puzzle
+	getPuzzleIndex(wall.puzzle)
 	
 	APANEL <= puzzleDiv
 
