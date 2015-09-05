@@ -303,6 +303,14 @@ class Rule:
 	def encode():
 		return {"Conditions" : self.conditions, "Actions" : self.actions,
 				"inapp" : self.inapp, "Name" : self.name}
+
+class RuleElement:
+	def __init__(self, text, defunct = False):
+		self.text = text
+		self.defunct = defunct
+		
+	def copy(self):
+		return RuleElement(self.text, self.defunct)
 				
 # Takes a room num from 0 to 8 and a side for the door to be on, [N, S, E, W]
 # Optional newDoor parameter which allows you to pass which door the walls will point to.
