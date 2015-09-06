@@ -978,13 +978,13 @@ def set_operators(state):
 		
 		add_condition =\
 			[AsyncOperator("Add Condition to Rule " + str(index + 1) + ".",
-				lambda state, r = rule: not r.app, #If app is false then valid
+				lambda state, r = rule: r.app, # If rule is valid
 				lambda state, sb, i = index: addCondition(state, i, sb))
 			for index, rule in enumerate(state["Rules"])]
 		
 		add_action =\
 			[AsyncOperator("Add Action to Rule " + str(index + 1) + ".",
-				lambda state, r = rule: not r.app, #If app is false then valid
+				lambda state, r = rule: r.app, # If rule is valid
 				lambda state, sb, i = index: addAction(state, i, sb))
 			for index, rule in enumerate(state["Rules"])]		
 		
