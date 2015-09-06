@@ -188,7 +188,7 @@ class Room:
 		return newRoom
 		
 	def encode(self):
-		return {"Vector Coordinates" : {"x1": self.x1, "y1": self.y1, "x2": self.x2, "y2": self.y2},
+		return {#"Vector Coordinates" : {"x1": self.x1, "y1": self.y1, "x2": self.x2, "y2": self.y2},
 				"Walls" : {"N" : self.walls['N'].encode(), "S" : self.walls['S'].encode(),
 						   "W" : self.walls['W'].encode(), "E" : self.walls['E'].encode()},
 				"Ambient Music" : self.aMusic}
@@ -217,14 +217,13 @@ class Wall:
 		return newWall
 	
 	def encode(self):
-		return 	{"Vector Coordinates" : {"x1": self.x1, "y1": self.y1, "x2": self.x2, "y2": self.y2},
+		return 	{#"Vector Coordinates" : {"x1": self.x1, "y1": self.y1, "x2": self.x2, "y2": self.y2},
 				 "Location" : self.loc,
 				 "Wallpaper" : self.wallpaperurl,
 				 "HasDoor" : self.hasDoor,
 				 "DoorOpen" : self.doorOpen,
 				 "Puzzle" : self.puzzle}
 		
-
 '''
 class Door:
 	
@@ -256,7 +255,7 @@ class ImagePuzzle:
 	def copy(self):
 		return ImagePuzzle(self.url, self.transformList)
 		
-	def encode():
+	def encode(self):
 		return {"URL" : self.url, "transformList" : self.transformList}
 		
 class MusicPuzzle:
@@ -280,7 +279,7 @@ class MusicPuzzle:
 
 		return MusicPuzzle(noteCopy, self.transformList)
 
-	def encode():
+	def encode(self):
 		return {"Notes" : self.notes, "transformList" : self.transformList}		
 		
 # Defaults are empty lists
@@ -291,6 +290,7 @@ class Rule:
 		self.actions = actions[:]
 		
 		# Whether the rule still applies to the current architecture.
+		# Stands for inapplicable
 		self.inapp = inapp		
 		
 		self.name = "C: " + str(self.conditions) + ", " + "A: " + str(self.actions)
@@ -300,17 +300,22 @@ class Rule:
 		
 		return Rule(list(self.conditions), list(self.actions), self.inapp)
 
-	def encode():
-		return {"Conditions" : self.conditions, "Actions" : self.actions,
+	def encode(self):
+		return {#"Conditions" : [condition.encode() for condition in self.conditions], #for when we use ruleElements
+				#"Actions" : [action.encode() for action in self.actions],
+				"Conditions" : list(self.conditions), "Actions" : list(self.actions),
 				"inapp" : self.inapp, "Name" : self.name}
 
 class RuleElement:
-	def __init__(self, text, defunct = False):
+	def __init__(self, text, inapp = False):
 		self.text = text
-		self.defunct = defunct
+		self.inapp = inapp
 		
 	def copy(self):
-		return RuleElement(self.text, self.defunct)
+		return RuleElement(self.text, self.inapp)
+		
+	def encode(self):
+		return (self.text, self.inapp)
 				
 # Takes a room num from 0 to 8 and a side for the door to be on, [N, S, E, W]
 # Optional newDoor parameter which allows you to pass which door the walls will point to.
@@ -725,17 +730,32 @@ INITIAL_STATE["Rooms"][0].aMusic = "music\defaultAmbient.mp3"
 # Now initialize operators.
 OPERATORS = INITIAL_STATE['Operators']
 #</INITIAL_STATE>
-
 '''	
+
 def create_json(state):
-	stateJSON = {}
+	global SOLUZION_VERSION, PROBLEM_NAME, PROBLEM_VERSION, PROBLEM_AUTHORS, PROBLEM_CREATION_DATE, PROBLEM_DESC
+			
+	stateJSON = {"Soluzion Version" : SOLUZION_VERSION, "Problem Name" : PROBLEM_NAME, 
+				 "Problem Version" : PROBLEM_VERSION, "Problem Authors"  : PROBLEM_AUTHORS, 
+				 "Problem Creation Date" : PROBLEM_CREATION_DATE, "Problem Description" : PROBLEM_DESC}
 	
 	#Rooms
 	stateJSON["Rooms"] = {}
 	for index, room in enumerate(state["Rooms"]):
 		stateJSON["Rooms"][str(index)] = room.encode()
 		#looks like stateJson = {"Rooms" : {1 : room1, 2 : room2, etc}, etc}
-	
+		
+	stateJSON["Rules"] = []
+	for rule in state["Rules"]:
+		stateJSON["Rules"].append(rule.encode())
+		
+	stateJSON["Puzzles"] = {}
+	for puzzle in state["Image_Puzzles"]:
+		stateJSON["Puzzles"][puzzle] = state["Image_Puzzles"][puzzle].encode()
+		
+	for puzzle in state["Music_Puzzles"]:
+		stateJSON["Puzzles"][puzzle] = state["Music_Puzzles"][puzzle].encode()	
+		
 	console.log(stateJSON)
 	
 	#Puzzles
