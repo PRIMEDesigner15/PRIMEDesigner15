@@ -975,43 +975,45 @@ def getPuzzleIndex(puzzle):
 	
 	# Get current list of puzzle names
 	puzzleTable = document.getElementById("puzzleTable")
-	i = 0
-	
-	# Retrieves the name without the puzzle type description
-	def getElementName(puzzle):
-		name = ""
-		paren = False
+	if(puzzleTable is not None):
 		i = 0
-		while(paren == False and i < len(puzzle)):
-			char = puzzle[i]
-			nextChar = puzzle[i+1]
-			if(nextChar == "("):
-				paren = True
-			else:
-				name += char
-			i += 1
 		
-		return name
-		
-	# Brython is being stupid so I have to do this 
-	# really inefficient method, im so sorry
-	onPuzzle = False
-	i = 0
-	name = ""
-	number = None
-	for row in puzzleTable:
-		if(i > 0):
-			for element in row:
-				if(onPuzzle):
-					name = getElementName(element.innerHTML)
-					if(name == puzzle):
-						return number
+		# Retrieves the name without the puzzle type description
+		def getElementName(puzzle):
+			name = ""
+			paren = False
+			i = 0
+			while(paren == False and i < len(puzzle)):
+				char = puzzle[i]
+				nextChar = puzzle[i+1]
+				if(nextChar == "("):
+					paren = True
 				else:
-					number = element.innerHTML
-				
-				onPuzzle = not onPuzzle
-		i += 1
-				
+					name += char
+				i += 1
+			
+			return name
+			
+		# Brython is being stupid so I have to do this 
+		# really inefficient method, im so sorry
+		onPuzzle = False
+		i = 0
+		name = ""
+		number = None
+		for row in puzzleTable:
+			if(i > 0):
+				for element in row:
+					if(onPuzzle):
+						name = getElementName(element.innerHTML)
+						if(name == puzzle):
+							return number
+					else:
+						number = element.innerHTML
+					
+					onPuzzle = not onPuzzle
+			i += 1
+		else:
+			return None
 
 def populateRuleDisplay(state):
 	global ruleDisplay
@@ -1321,11 +1323,12 @@ def drawPuzzle(wall,type,x3,y3,x4,y4):
 	# Create puzzle polygon
 	fill = "green"	
 	puzzleDiv = create_polygon(px1,py1,px2,py2,px3,py3,px4,py4, fill = fill)
-	
-	textSvg = create_text(number,tx,ty)
-	
+
 	APANEL <= puzzleDiv
-	APANEL <= textSvg
+	
+	if(number is not None):
+		textSvg = create_text(number,tx,ty)
+		APANEL <= textSvg
 
 # returns an svg text at the given point
 def create_text(text, x, y, fontSize = "18"):
