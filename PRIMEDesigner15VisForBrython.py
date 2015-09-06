@@ -1034,7 +1034,7 @@ def populateRuleDisplay(state):
 
 	for index, rule in enumerate(state["Rules"]):
 		color = 'white'
-		if(rule.inapp):
+		if(rule.app):
 			color = 'red'
 			
 		newRow = html.TR(id = "ruleRow" + str(index + 1))

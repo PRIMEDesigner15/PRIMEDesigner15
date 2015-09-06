@@ -108,13 +108,13 @@ def describe_state(state):
     Might not be needed in normal operation with GUIs."""	
 	
 # Goes through the rules of a state and marks the ones 
-# that refer to non-existent objects as inapp.
+# that refer to non-existent objects as app.
 def check_rules(state):
 	
 
 	rules = state["Rules"]
 	for rule in rules:	
-		inapp = False
+		app = False
 		
 		#Check cause
 		for condition in rule.conditions:
@@ -126,7 +126,7 @@ def check_rules(state):
 				dir = cdSplit[6]
 				
 				if(state["Rooms"][int(roomNum)-1].walls[dir].puzzle is None):
-					inapp = True
+					app = True
 				
 	
 		for action in rule.actions:
@@ -139,9 +139,9 @@ def check_rules(state):
 				dir = acSplit[6]
 				 
 				if(state["Rooms"][int(roomNum)-1].walls[dir].hasDoor is False):
-					inapp = True
+					app = True
 					
-		rule.inapp = inapp
+		rule.app = app
 		
 #Template JSON Stuff	
 #try:
@@ -284,38 +284,38 @@ class MusicPuzzle:
 		
 # Defaults are empty lists
 class Rule:
-	def __init__(self, conditions = [], actions = [], inapp = False):
+	def __init__(self, conditions = [], actions = [], app = False):
 			
 		self.conditions = conditions[:]
 		self.actions = actions[:]
 		
 		# Whether the rule still applies to the current architecture.
-		# Stands for inapplicable
-		self.inapp = inapp		
+		# Stands for applicable
+		self.app = app		
 		
 		self.name = "C: " + str(self.conditions) + ", " + "A: " + str(self.actions)
 	
 	# Copies the rule, list is used to return a new list
 	def copy(self):
 		
-		return Rule(list(self.conditions), list(self.actions), self.inapp)
+		return Rule(list(self.conditions), list(self.actions), self.app)
 
 	def encode(self):
 		return {#"Conditions" : [condition.encode() for condition in self.conditions], #for when we use ruleElements
 				#"Actions" : [action.encode() for action in self.actions],
 				"Conditions" : list(self.conditions), "Actions" : list(self.actions),
-				"inapp" : self.inapp, "Name" : self.name}
+				"app" : self.app, "Name" : self.name}
 
 class RuleElement:
-	def __init__(self, text, inapp = False):
+	def __init__(self, text, app = False):
 		self.text = text
-		self.inapp = inapp
+		self.app = app
 		
 	def copy(self):
-		return RuleElement(self.text, self.inapp)
+		return RuleElement(self.text, self.app)
 		
 	def encode(self):
-		return (self.text, self.inapp)
+		return (self.text, self.app)
 				
 # Takes a room num from 0 to 8 and a side for the door to be on, [N, S, E, W]
 # Optional newDoor parameter which allows you to pass which door the walls will point to.
@@ -978,13 +978,13 @@ def set_operators(state):
 		
 		add_condition =\
 			[AsyncOperator("Add Condition to Rule " + str(index + 1) + ".",
-				lambda state, r = rule: not r.inapp, #If inapp is false then valid
+				lambda state, r = rule: not r.app, #If app is false then valid
 				lambda state, sb, i = index: addCondition(state, i, sb))
 			for index, rule in enumerate(state["Rules"])]
 		
 		add_action =\
 			[AsyncOperator("Add Action to Rule " + str(index + 1) + ".",
-				lambda state, r = rule: not r.inapp, #If inapp is false then valid
+				lambda state, r = rule: not r.app, #If app is false then valid
 				lambda state, sb, i = index: addAction(state, i, sb))
 			for index, rule in enumerate(state["Rules"])]		
 		
