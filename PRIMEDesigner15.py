@@ -115,19 +115,27 @@ def check_rules(state):
 	rules = state["Rules"]
 	for rule in rules:	
 		
-		#Check cause
+		#Check condition
 		for condition in rule.conditions:
 			cdSplit = condition.text.split(" ")
 			
 			# If condition is "Solve Puzzle:"
 			if(cdSplit[0] == "Solve"):
+				'''
 				roomNum = cdSplit[4]
 				dir = cdSplit[6]
 				
 				if(state["Rooms"][int(roomNum)-1].walls[dir].puzzle is None):
 					condition.app = False
-				
-	
+				'''
+				puzzleName = condition.text.rsplit(':', 1)[1].strip()
+				console.log(puzzleName)
+				if(puzzleName in state['Image_Puzzles'] or puzzleName in state['Music_Puzzles']):
+					condition.app = True
+				else:
+					condition.app = False
+					
+				console.log(condition.app)
 		for action in rule.actions:
 			# Check action
 			acSplit = action.text.split(" ")
@@ -749,6 +757,9 @@ def addCondition(state, index, sendBack):
 	def processCondition(condition):
 		newState = copy_state(state)
 		newState["Rules"][index].conditions.append(RuleElement(condition))
+		console.log('b')
+		check_rules(newState)
+		console.log('c')
 		sendBack(newState)
 	
 	add_condition_menu(state, processCondition)
@@ -758,6 +769,9 @@ def addAction(state, index, sendBack):
 	def processAction(action):
 		newState = copy_state(state)
 		newState["Rules"][index].actions.append(RuleElement(action))
+
+		check_rules(newState)
+
 		sendBack(newState)
 	
 	add_action_menu(state, processAction)	

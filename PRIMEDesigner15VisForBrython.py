@@ -498,7 +498,6 @@ def add_condition_menu(state, sendBack):
 	conditionForm = add_condition_form(state)	
 	
 	def destroyAndSendBack():
-	
 		if (document.getElementById("conditionSelect") is not None):
 			condition = document.getElementById("conditionSelect").value
 		else:
@@ -541,7 +540,6 @@ def add_condition_menu(state, sendBack):
 				if(conditionF is not None):
 					condition = conditionF
 
-				
 				sendBack(condition)	
 	
 	okButton = html.BUTTON(id = "addConditionOkButton", style = {'margin' : '10px'})
@@ -607,10 +605,16 @@ def aFollowUp(state):
 		aFollowUpSelect <= doorOp
 		
 		for index, room in enumerate(state["Rooms"]):
+			for wall in ['N', 'S', 'E', 'W']:
+				doorOp = html.OPTION("Open door in room " + str(index + 1) + " on " + wall + " wall.")
+				aFollowUpSelect <= doorOp
+		'''
+		for index, room in enumerate(state["Rooms"]):
 			for wall in room.walls.values():
 				if wall.hasDoor:
 					doorOp = html.OPTION("Open door in room " + str(index + 1) + " on " + wall.loc + " wall.")
 					aFollowUpSelect <= doorOp
+		'''
 		aFollowUp <= aFollowUpSelect
 		actionForm <= aFollowUp
 		
