@@ -121,21 +121,33 @@ def check_rules(state):
 			
 			# If condition is "Solve Puzzle:"
 			if(cdSplit[0] == "Solve"):
+			
+				puzzleName = condition.text.rsplit(':', 1)[1].strip()
+				found = False
+				for room in state["Rooms"]:
+					for wall in room.walls.values():
+						if wall.puzzle == puzzleName:
+							found = True
+						
+				condition.app = found
 				'''
+				#Old logic
 				roomNum = cdSplit[4]
 				dir = cdSplit[6]
 				
 				if(state["Rooms"][int(roomNum)-1].walls[dir].puzzle is None):
 					condition.app = False
 				'''
+				'''
+				#If we want to check that the puzzle exists at all
 				puzzleName = condition.text.rsplit(':', 1)[1].strip()
 				console.log(puzzleName)
 				if(puzzleName in state['Image_Puzzles'] or puzzleName in state['Music_Puzzles']):
 					condition.app = True
 				else:
 					condition.app = False
-					
-				console.log(condition.app)
+				'''	
+	
 		for action in rule.actions:
 			# Check action
 			acSplit = action.text.split(" ")
