@@ -1033,19 +1033,39 @@ def populateRuleDisplay(state):
 	ruleTable <= headerRow
 
 	for index, rule in enumerate(state["Rules"]):
-		color = 'white'
-		if(rule.app):
-			color = 'red'
 			
 		newRow = html.TR(id = "ruleRow" + str(index + 1))
-		newRow <= html.TD(str(index+1), style = {'color' : color})
-		newRow <= html.TD(str(rule.conditions)[1:-1], style = {'color' : color})
-		newRow <= html.TD(str(rule.actions)[1:-1], style = {'color' : color})
+		newRow <= html.TD(str(index+1), style = {'color' : "white"})
+		
+		conditionTD = html.TD()
+		conditionP = None
+		for condition in rule.conditions:
+			if(condition.app):
+				color = "white"
+			else:
+				color = "red"
+			conditionP = html.P(condition.text + ", ", style = {'color' : color})
+			conditionTD <= conditionP
+		# Edge case
+		if(conditionP is not None):
+			conditionP.innerHTML = conditionP.innerHTML[:-2]
+		
+		actionTD = html.TD()
+		actionP = None
+		for action in rule.actions:
+			if(action.app):
+				color = "white"
+			else:
+				color = "red"
+			actionP = html.P(action.text + ", ", style = {'color' : color})
+			actionTD <= actionP
+		# Edge case 
+		if(actionP is not None):
+			actionP.innerHTML = actionP.innerHTML[:-2]
+		
+		newRow <= conditionTD
+		newRow <= actionTD
 
-		
-		#ruleItem = html.DIV(str(index) + ": " + str(rule.name), style = {"font-size" : "13px"})
-		#ruleDisplay <= ruleItem
-		
 		ruleTable <= newRow
 	
 	ruleTable.border = '10px solid white'

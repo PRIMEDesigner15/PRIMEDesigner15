@@ -107,18 +107,17 @@ def describe_state(state):
 	""" Produces a textual description of a state.
     Might not be needed in normal operation with GUIs."""	
 	
-# Goes through the rules of a state and marks the ones 
+# Goes through the rules of a state and marks the conditions/actions 
 # that refer to non-existent objects as app.
 def check_rules(state):
 	
 
 	rules = state["Rules"]
 	for rule in rules:	
-		app = False
 		
 		#Check cause
 		for condition in rule.conditions:
-			cdSplit = condition.split(" ")
+			cdSplit = condition.text.split(" ")
 			
 			# If condition is "Solve Puzzle:"
 			if(cdSplit[0] == "Solve"):
@@ -126,12 +125,12 @@ def check_rules(state):
 				dir = cdSplit[6]
 				
 				if(state["Rooms"][int(roomNum)-1].walls[dir].puzzle is None):
-					app = True
+					condition.app = False
 				
 	
 		for action in rule.actions:
 			# Check action
-			acSplit = action.split(" ")
+			acSplit = action.text.split(" ")
 			
 			# If action is opening or closing a door:
 			if(acSplit[0] == "Open" or acSplit[0] == "Close"):
@@ -139,9 +138,8 @@ def check_rules(state):
 				dir = acSplit[6]
 				 
 				if(state["Rooms"][int(roomNum)-1].walls[dir].hasDoor is False):
-					app = True
+					action.app = False
 					
-		rule.app = app
 		
 #Template JSON Stuff	
 #try:
@@ -282,23 +280,32 @@ class MusicPuzzle:
 	def encode(self):
 		return {"Notes" : self.notes, "transformList" : self.transformList}		
 		
-# Defaults are empty lists
+# A rule contains two lists of RuleElements. Conditions and actions.
 class Rule:
-	def __init__(self, conditions = [], actions = [], app = False):
+	def __init__(self, conditions = [], actions = []):
 			
 		self.conditions = conditions[:]
-		self.actions = actions[:]
+		self.actions = actions[:]	
 		
-		# Whether the rule still applies to the current architecture.
-		# Stands for applicable
-		self.app = app		
+		self.name = "C: "
+		for condition in self.conditions:
+			self.name += condition.text + ","
+		self.name += " A: "
+		for action in self.actions:
+			self.name += action.text + ","
 		
-		self.name = "C: " + str(self.conditions) + ", " + "A: " + str(self.actions)
 	
 	# Copies the rule, list is used to return a new list
 	def copy(self):
+		newConditions = []
+		newActions = []
 		
-		return Rule(list(self.conditions), list(self.actions), self.app)
+		for condition in self.conditions:
+			newConditions.append(condition.copy())
+		for action in self.actions:
+			newActions.append(action.copy())
+		
+		return Rule(newConditions, newActions)
 
 	def encode(self):
 		return {#"Conditions" : [condition.encode() for condition in self.conditions], #for when we use ruleElements
@@ -307,7 +314,7 @@ class Rule:
 				"app" : self.app, "Name" : self.name}
 
 class RuleElement:
-	def __init__(self, text, app = False):
+	def __init__(self, text, app = True):
 		self.text = text
 		self.app = app
 		
@@ -794,7 +801,7 @@ def addCondition(state, index, sendBack):
 
 	def processCondition(condition):
 		newState = copy_state(state)
-		newState["Rules"][index].conditions.append(condition)
+		newState["Rules"][index].conditions.append(RuleElement(condition))
 		sendBack(newState)
 	
 	add_condition_menu(state, processCondition)
@@ -803,7 +810,7 @@ def addAction(state, index, sendBack):
 	
 	def processAction(action):
 		newState = copy_state(state)
-		newState["Rules"][index].actions.append(action)
+		newState["Rules"][index].actions.append(RuleElement(action))
 		sendBack(newState)
 	
 	add_action_menu(state, processAction)	
@@ -978,13 +985,13 @@ def set_operators(state):
 		
 		add_condition =\
 			[AsyncOperator("Add Condition to Rule " + str(index + 1) + ".",
-				lambda state, r = rule: r.app, # If rule is valid
+				lambda state: True,
 				lambda state, sb, i = index: addCondition(state, i, sb))
 			for index, rule in enumerate(state["Rules"])]
 		
 		add_action =\
 			[AsyncOperator("Add Action to Rule " + str(index + 1) + ".",
-				lambda state, r = rule: r.app, # If rule is valid
+				lambda state: True,
 				lambda state, sb, i = index: addAction(state, i, sb))
 			for index, rule in enumerate(state["Rules"])]		
 		
@@ -1031,7 +1038,7 @@ INITIAL_STATE['Selected_Room'] = 0
 # Stores name of selected image and selected music
 INITIAL_STATE['Selected_Image'] = None
 INITIAL_STATE['Selected_Music'] = None
-INITIAL_STATE['Role'] = "Architect"
+INITIAL_STATE['Role'] = "Rules"
 INITIAL_STATE['Operators'] = set_operators(INITIAL_STATE)	
 INITIAL_STATE['ConditionMaster'] = ["Enter Room","Have Points","Time Elapses"]
 INITIAL_STATE['ActionMaster'] = ["Open Door", "Close Door", "Play Sound", "Display Message","Gain Points","Lose Points","End Game"]
