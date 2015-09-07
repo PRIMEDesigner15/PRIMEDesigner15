@@ -314,9 +314,6 @@ class Rule:
 				"Actions" : actionsJSON,
 				"Name" : self.name}
 				
-#for when we use ruleElements
-#"Actions" : [action.encode() for action in self.actions],
-#"Conditions" : list(self.conditions), "Actions" : list(self.actions),
 class RuleElement:
 	def __init__(self, text, app = True):
 		self.text = text

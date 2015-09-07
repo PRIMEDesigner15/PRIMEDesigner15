@@ -391,7 +391,7 @@ def add_condition_form(state):
 	conditionOpt = html.OPTION("Solve Puzzle")
 	conditionSelect <= conditionOpt 
 	
-	conditionSelect.onchange = cFollowUp(state)
+	conditionSelect.onchange = lambda e: cFollowUp(state)
 	
 	conditionDiv = html.DIV()
 	
@@ -403,62 +403,72 @@ def add_condition_form(state):
 	return conditionForm	
 	
 def cFollowUp(state):
+	cFollowUp = document.getElementById("cFollowUp")
 	
-	def cFollowUp2():
-		cFollowUp = document.getElementById("cFollowUp")
-		
-		if (cFollowUp is not None):
-			cFollowUp.parentNode.removeChild(cFollowUp)
+	if (cFollowUp is not None):
+		cFollowUp.parentNode.removeChild(cFollowUp)
 
-		
-		cFollowUp = html.DIV(id="cFollowUp", style = {"margin" : '10px'})
-		
-		conditionForm = document.getElementById("conditionForm")
-		
-		condition = document.getElementById("conditionSelect").value
-		cFollowUpSelect = html.SELECT(id = "cFollowUpSelect", style = {"margin-left" : "10px"})	
-		if(condition == "Enter Room"):
-			cFollowUp <= "Pick a room:"
-			for num in range(1,10):
-				roomNum = html.OPTION("Enter Room " + str(num))
-				cFollowUpSelect <= roomNum
+	cFollowUp = html.DIV(id="cFollowUp", style = {"margin" : '10px'})
+	
+	conditionForm = document.getElementById("conditionForm")
+	
+	condition = document.getElementById("conditionSelect").value
+	cFollowUpSelect = html.SELECT(id = "cFollowUpSelect", style = {"margin-left" : "10px"})	
+	if(condition == "Enter Room"):
+		cFollowUp <= "Pick a room:"
+		for num in range(1,10):
+			roomNum = html.OPTION("Enter Room " + str(num))
+			cFollowUpSelect <= roomNum
 
-			cFollowUp <= cFollowUpSelect
-			conditionForm <= cFollowUp
-		elif(condition == "Solve Puzzle"):
-		
-			cFollowUp <= "Pick a puzzle:"			
-			puzzleOp = html.OPTION("Nothing Selected")
+		cFollowUp <= cFollowUpSelect
+		conditionForm <= cFollowUp
+	elif(condition == "Solve Puzzle"):
+	
+		cFollowUp <= "Pick a puzzle:"			
+		puzzleOp = html.OPTION("Nothing Selected")
+		cFollowUpSelect <= puzzleOp
+
+		allPuzzles = []
+		# Add puzzles to list
+		for puzzleName in state["Image_Puzzles"]:
+			allPuzzles.append(puzzleName)
+	
+		for puzzleName in state["Music_Puzzles"]:
+			allPuzzles.append(puzzleName)
+			
+		#Changed to no longer care where a puzzle is located		
+		for index, puzzle in enumerate(allPuzzles):
+			puzzleOp = html.OPTION("Solve Puzzle " + str(index) + " : " + str(puzzle))
 			cFollowUpSelect <= puzzleOp
-			
-			# Puzzles are gathered by searching rooms that have been placed
-			# so the rules designer has context for which puzzles to attach conditions too
-			for index, room in enumerate(state["Rooms"]):
-				for wall in room.walls.values():
-					if wall.puzzle is not None:
-						puzzleOp = html.OPTION("Solve puzzle in room " + str(index + 1) + " on " + wall.loc + " wall.")
-						cFollowUpSelect <= puzzleOp
-					
-			cFollowUp <= cFollowUpSelect
-			conditionForm <= cFollowUp
-		elif(condition == "Have Points"):
+
+		'''		
+		# Puzzles are gathered by searching rooms that have been placed
+		# so the rules designer has context for which puzzles to attach conditions too
+		for index, room in enumerate(state["Rooms"]):
+			for wall in room.walls.values():
+				if wall.puzzle is not None:
+					puzzleOp = html.OPTION("Solve puzzle in room " + str(index + 1) + " on " + wall.loc + " wall.")
+					cFollowUpSelect <= puzzleOp
+		'''				
+		cFollowUp <= cFollowUpSelect
+		conditionForm <= cFollowUp
 		
-			cFollowUp <= "Enter point amount:"
-			textInput = html.INPUT(type="text", id="textInput", style = {"margin-left" : "10px"})
-			cFollowUp <= textInput
-			conditionForm <= cFollowUp
-			
-		elif(condition == "Time Elapses"):
-			
-			cFollowUp <= "Enter time in minutes:"
-			textInput = html.INPUT(type="text", id="textInput", style = {"margin-left" : "10px"})
-			cFollowUp <= textInput
-			conditionForm <= cFollowUp
-			
-		else:
-			pass #console.log("Debug: No Condition Follow Up expected")	
+	elif(condition == "Have Points"):
 	
-	return cFollowUp2
+		cFollowUp <= "Enter point amount:"
+		textInput = html.INPUT(type="text", id="textInput", style = {"margin-left" : "10px"})
+		cFollowUp <= textInput
+		conditionForm <= cFollowUp
+		
+	elif(condition == "Time Elapses"):
+		
+		cFollowUp <= "Enter time in minutes:"
+		textInput = html.INPUT(type="text", id="textInput", style = {"margin-left" : "10px"})
+		cFollowUp <= textInput
+		conditionForm <= cFollowUp
+		
+	else:
+		pass #console.log("Debug: No Condition Follow Up expected")	
 	
 def add_condition_menu(state, sendBack):
 	width = 200
