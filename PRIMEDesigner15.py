@@ -308,11 +308,15 @@ class Rule:
 		return Rule(newConditions, newActions)
 
 	def encode(self):
-		return {#"Conditions" : [condition.encode() for condition in self.conditions], #for when we use ruleElements
-				#"Actions" : [action.encode() for action in self.actions],
-				"Conditions" : list(self.conditions), "Actions" : list(self.actions),
-				"app" : self.app, "Name" : self.name}
-
+		conditionsJSON = [condition.encode() for condition in self.conditions]
+		actionsJSON = [action.encode() for action in self.actions]
+		return {"Conditions" : conditionsJSON, 
+				"Actions" : actionsJSON,
+				"Name" : self.name}
+				
+#for when we use ruleElements
+#"Actions" : [action.encode() for action in self.actions],
+#"Conditions" : list(self.conditions), "Actions" : list(self.actions),
 class RuleElement:
 	def __init__(self, text, app = True):
 		self.text = text
@@ -322,7 +326,7 @@ class RuleElement:
 		return RuleElement(self.text, self.app)
 		
 	def encode(self):
-		return (self.text, self.app)
+		return [self.text, self.app]
 				
 # Takes a room num from 0 to 8 and a side for the door to be on, [N, S, E, W]
 # Optional newDoor parameter which allows you to pass which door the walls will point to.
@@ -685,60 +689,6 @@ def play_ambient_music(state):
 def stop_ambient_music():
 	stopAmbientMusic()
 
-'''
-#<INITIAL_STATE> The game is a list of 9 rooms stored a list.
-INITIAL_STATE = {}
-INITIAL_STATE['Rooms'] = []
-INITIAL_STATE['Image_Puzzles'] = {}
-INITIAL_STATE['Music_Puzzles'] = {}
-
-# ADD A BLANK MUSIC PUZZLE FOR DEBUG PURPOSES ONLY
-INITIAL_STATE["Music_Puzzles"]["test puzzle1"] = MusicPuzzle()
-
-INITIAL_STATE['Rules'] = []
-
-# ADD BLANK RULES FOR DEBUG PURPOSES ONLY
-INITIAL_STATE['Rules'].append(Rule())
-INITIAL_STATE['Rules'].append(Rule())
-INITIAL_STATE['Rules'].append(Rule(["Cool bean",'fdafsasdfadfasfdaf','aaaaaaaaa'],["cool cream"], True))
-INITIAL_STATE['Rules'].append(Rule())
-INITIAL_STATE['Rules'].append(Rule())
-INITIAL_STATE['Rules'].append(Rule(["not cool bean"]))
-INITIAL_STATE['Rules'].append(Rule())
-INITIAL_STATE['Rules'].append(Rule())
-INITIAL_STATE['Rules'].append(Rule())
-INITIAL_STATE['Rules'].append(Rule())
-INITIAL_STATE['Rules'].append(Rule())
-INITIAL_STATE['Rules'].append(Rule())
-INITIAL_STATE['Rules'].append(Rule())
-INITIAL_STATE['Rules'].append(Rule())
-
-INITIAL_STATE['Selected_Room'] = 0
-
-# Stores name of selected image and selected music
-INITIAL_STATE['Selected_Image'] = None
-INITIAL_STATE['Selected_Music'] = None
-INITIAL_STATE['Role'] = "Rules"
-INITIAL_STATE['Operators'] = set_operators(INITIAL_STATE)	
-INITIAL_STATE['ConditionMaster'] = ["Enter Room","Have Points","Time Elapses"]
-INITIAL_STATE['ActionMaster'] = ["Open Door", "Close Door", "Play Sound", "Display Message","Gain Points","Lose Points","End Game"]
-
-# Create 9 rooms, add them to the the state.
-for j in range(3):
-	for i in range(3):
-		INITIAL_STATE['Rooms'].append( Room(i, j, i + 1, j + 1) )	
-
-# TEMP DEBUG ADD PUZZLE
-add_puzzle_to_room(0,'E',INITIAL_STATE)
-
-# Temporary addition for debug purposes
-INITIAL_STATE["Rooms"][0].aMusic = "music\defaultAmbient.mp3"
-		
-# Now initialize operators.
-OPERATORS = INITIAL_STATE['Operators']
-#</INITIAL_STATE>
-'''	
-
 def create_json(state):
 	global SOLUZION_VERSION, PROBLEM_NAME, PROBLEM_VERSION, PROBLEM_AUTHORS, PROBLEM_CREATION_DATE, PROBLEM_DESC
 			
@@ -751,11 +701,11 @@ def create_json(state):
 	for index, room in enumerate(state["Rooms"]):
 		stateJSON["Rooms"][str(index)] = room.encode()
 		#looks like stateJson = {"Rooms" : {1 : room1, 2 : room2, etc}, etc}
-		
+
 	stateJSON["Rules"] = []
 	for rule in state["Rules"]:
 		stateJSON["Rules"].append(rule.encode())
-		
+	
 	stateJSON["Puzzles"] = {}
 	for puzzle in state["Image_Puzzles"]:
 		stateJSON["Puzzles"][puzzle] = state["Image_Puzzles"][puzzle].encode()
