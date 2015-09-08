@@ -30,7 +30,8 @@ BRYTHON = True
 
 if(BRYTHON):
 	from PRIMEDesigner15VisForBrython import hide_loading, show_loading, url_is_valid
-	from PRIMEDesigner15VisForBrython import add_puzzle_menu, add_condition_menu, add_action_menu, add_edit_rule_menu
+	from PRIMEDesigner15VisForBrython import add_puzzle_menu, add_condition_menu, add_action_menu, edit_rule_menu
+	from PRIMEDesigner15VisForBrython import delete_condition_menu
 	from PRIMEDesigner15MusicForBrython import playAmbientMusic, stopAmbientMusic
 	from templateRoot.PRIMEDesigner15Operator import Operator as Operator
 	from templateRoot.PRIMEDesigner15Operator import AsyncOperator as AsyncOperator
@@ -788,7 +789,19 @@ def addAction(state, index, sendBack):
 	
 	add_action_menu(state, processAction)	
 
-# Concatinates several operators into one with a central menu.
+# Deletes the rule element fro the specified 
+def deleteCondition(state, index, sendBack):
+
+	def processDelete(condition):
+		newState = copy_state(state)
+		newState["Rules"][index].conditions.remove(condition)
+		
+		sendBack(newState)
+		
+	delete_condition_menu(state, index, processDelete)
+
+			
+# Concatenates several operators into one with a central menu.
 def editRule(state, index, sendBack):
 
 	def processEdit(edit):
@@ -799,14 +812,14 @@ def editRule(state, index, sendBack):
 		elif(edit == "deleteAction"):
 			dAlert(edit)
 		elif(edit == "deleteCondition"):
-			dAlert(edit)
+			deleteCondition(state,index,sendBack)
 		elif(edit == "deleteRule"):
 			newState = deleteRule(state,index)
 			sendBack(newState)
 		else:
 			pass
 	
-	add_edit_rule_menu(state, processEdit)
+	edit_rule_menu(state, processEdit)
 	
 def doNothing():
 	pass
@@ -1004,9 +1017,10 @@ INITIAL_STATE["Music_Puzzles"]["test puzzle1"] = MusicPuzzle()
 INITIAL_STATE['Rules'] = []
 
 # ADD BLANK RULES FOR DEBUG PURPOSES ONLY
-'''
+
 INITIAL_STATE['Rules'].append(Rule())
-INITIAL_STATE['Rules'].append(Rule())
+
+'''INITIAL_STATE['Rules'].append(Rule())
 INITIAL_STATE['Rules'].append(Rule(["Cool bean",'fdafsasdfadfasfdaf','aaaaaaaaa'],["cool cream"], True))
 INITIAL_STATE['Rules'].append(Rule())
 INITIAL_STATE['Rules'].append(Rule())

@@ -99,23 +99,10 @@ def set_up_black_overlay():
 	
 # Sets up the loading div for asynchronous calls
 def set_up_loading_div():
-
+	
 	width = 200
 	height = 100
-	loadingDiv = html.DIV(id = "loadingDiv",
-							style = {
-								'display' : 'none',
-								'position' : 'fixed',
-								'background-image' : 'url(images/loading.gif)',
-								'border-radius' : '10px',
-								'border' : '5px solid grey',
-								'left' : '50%',
-								'top' : '50%',
-								'margin-top' : "-" + str(1/2 * height) + 'px',
-								'margin-left' : "-" + str(1/2 * width) + 'px',
-								'z-index' : '1002',
-								'overflow' : 'auto'
-							})
+	loadingDiv = create_menu("loadingDiv",width,height,display = "none")
 	loadingImg = html.IMG(id = "loadingImg", 
 						src = "images/loading.gif", 
 						style = {
@@ -241,10 +228,36 @@ def create_puzzle_lists(imagePuzzles,musicPuzzles):
 	lists <= musicList
 	
 	return lists
+
+# Returns a popup menu with the specified id
+def create_menu(id,width,height,display = "visible"):
+
+	menu = html.DIV(id = id,
+							style = {
+								'display' : display,
+								'position' : 'fixed',
+								'padding' : '10px',
+								'background' : 'white',
+								'border-radius' : '10px',
+								'border' : '5px solid grey',
+								'left' : '50%',
+								'top' : '50%',
+								'margin-top' : "-" + str(1/2 * height) + 'px',
+								'margin-left' : "-" + str(1/2 * width) + 'px',
+								'text-align' : 'center',
+								'z-index' : '1003',
+								'overflow' : 'auto'
+							})
+
+	if(display != "none"):
+		disableOpSelect()
+	
+	return menu
 	
 # Removes any menu from the gui
 def destroy_menu(menuName):	
 	try:
+		enableOpSelect()
 		menu = document.getElementById(menuName)
 		gui.removeChild(menu)
 	except:
@@ -279,7 +292,6 @@ def enableOpSelect():
 # calls a callback function, sendBack, when the user hits a button.
 def add_puzzle_menu(state, sendBack, bannedDirections = None):
 
-	disableOpSelect()
 
 	# Convert to list for easy indexing
 	musicPuzzles = list(state["Music_Puzzles"])
@@ -288,24 +300,10 @@ def add_puzzle_menu(state, sendBack, bannedDirections = None):
 	
 	musLen = len(musicPuzzles)
 	imgLen = len(imagePuzzles)
-	
+		
 	width = 200
 	height = 200
-	menu = html.DIV(id = "addPuzzleMenu",
-							style = {
-								'text-align' : 'center',
-								'position' : 'fixed',
-								'padding' : '10px',
-								'background' : 'white',
-								'border-radius' : '10px',
-								'border' : '5px solid grey',
-								'left' : '50%',
-								'top' : '50%',
-								'margin-top' : "-" + str(1/2 * height) + 'px',
-								'margin-left' : "-" + str(1/2 * width) + 'px',
-								'z-index' : '1003',
-								'overflow' : 'auto'
-							})
+	menu = create_menu("addPuzzleMenu", width, height)
 							
 	title1 = html.P(id="addPuzzleTitle1", style = {"margin-top" : '0', 'text-align' : 'left', 'font-size' : '13px'})
 	title1.innerHTML = "Place Puzzle:"
@@ -479,28 +477,13 @@ def cFollowUp(state):
 		pass #console.log("Debug: No Condition Follow Up expected")	
 	
 def add_condition_menu(state, sendBack):
+		
 	width = 200
 	height = 200
-	menu = html.DIV(id = "addConditionMenu",
-							style = {
-								#'display' : 'none',
-								'position' : 'fixed',
-								'padding' : '10px',
-								'background' : 'white',
-								'border-radius' : '10px',
-								'border' : '5px solid grey',
-								'left' : '50%',
-								'top' : '50%',
-								'margin-top' : "-" + str(1/2 * height) + 'px',
-								'margin-left' : "-" + str(1/2 * width) + 'px',
-								'z-index' : '1003',
-								'overflow' : 'auto'
-							})
-
+	menu = create_menu("addConditionMenu",width,height)
+	
 	conditionTitle = html.P(id="addConditionMenuTitle", style = {"margin-top" : '0'})
 	conditionTitle.innerHTML = "Add Condition:"							
-	
-	disableOpSelect()
 	
 	#Create and populate conditionSelect
 	conditionForm = add_condition_form(state)	
@@ -664,28 +647,13 @@ def aFollowUp(state):
 		pass #console.log("Debug: No Action Follow Up expected")	
 	
 def add_action_menu(state, sendBack):
+		
 	width = 200
 	height = 200
-	menu = html.DIV(id = "addActionMenu",
-							style = {
-								#'display' : 'none',
-								'position' : 'fixed',
-								'padding' : '10px',
-								'background' : 'white',
-								'border-radius' : '10px',
-								'border' : '5px solid grey',
-								'left' : '50%',
-								'top' : '50%',
-								'margin-top' : "-" + str(1/2 * height) + 'px',
-								'margin-left' : "-" + str(1/2 * width) + 'px',
-								'z-index' : '1003',
-								'overflow' : 'auto'
-							})
-
+	menu = create_menu("addActionMenu",width,height)
+	
 	actionTitle = html.P(id="addActionMenuTitle", style = {"margin-top" : '0'})
 	actionTitle.innerHTML = "Add Action:"							
-	
-	disableOpSelect()
 	
 	#Create and populate actionSelect
 	actionForm = add_action_form(state)	
@@ -757,35 +725,59 @@ def add_action_menu(state, sendBack):
 
 	gui <= menu
 
-def add_edit_rule_menu(state, sendBack):
+def delete_condition_menu(state, index, sendBack):
+		
+
 	width = 200
 	height = 200
-	menu = html.DIV(id = "editRuleMenu",
-							style = {
-								'position' : 'fixed',
-								'padding' : '10px',
-								'background' : 'white',
-								'border-radius' : '10px',
-								'border' : '5px solid grey',
-								'left' : '50%',
-								'top' : '50%',
-								'margin-top' : "-" + str(1/2 * height) + 'px',
-								'margin-left' : "-" + str(1/2 * width) + 'px',
-								'text-align' : 'center',
-								'z-index' : '1003',
-								'overflow' : 'auto'
-							})
+	menu = create_menu("deleteConditionMenu",width,height)
+	deleteTitle = html.P(id="deleteConditionTitle", style = {"margin-top" : '0'})
+	deleteTitle.innerHTML = "Which condition?"
+	
 
+	conditionSelect = html.SELECT()
+	conditionSelect <= html.OPTION("None Selected")
+	conditionList = state["Rules"][index].conditions
+	for condition in conditionList:
+		conditionSelect <= html.OPTION(condition.text)
+	
+	def destroy():
+		destroyMenu("deleteConditionMenu")
+	
+	def destroyAndSendBack():
+		if(conditionSelect.value == "None Selected"):
+			alert("Select a condition to delete")
+		else:
+			condition = conditionList[conditionSelect.selectedIndex - 1]
+			console.log(condition)
+			destroyMenu("deleteConditionMenu")
+			sendBack(condition)
+			
+	dAlert("got here")
+	submit = html.BUTTON("Delete Selected Condition")
+	submit.onclick = destroyAndSendBack
+	
+	
+	menu <= deleteTitle
+	menu <= conditionSelect
+	menu <= submit
+	gui <= menu
+	
+	
+	
+def edit_rule_menu(state, sendBack):
+	
+	width = 200
+	height = 200
+	menu = create_menu("editRuleMenu",width,height)
+	
 	editTitle = html.P(id="editRuleTitle", style = {"margin-top" : '0'})
 	editTitle.innerHTML = "What would you like to do?"
 	
-	# Disable applying/selecting operator
-	disableOpSelect()
 	
 	def processButton(input):
 		def processButton2():
 			sendBack(input)
-			enableOpSelect()
 			destroy_menu("editRuleMenu")
 		return processButton2
 	
