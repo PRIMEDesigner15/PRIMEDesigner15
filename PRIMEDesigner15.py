@@ -787,15 +787,30 @@ def addAction(state, index, sendBack):
 		sendBack(newState)
 	
 	add_action_menu(state, processAction)	
-	
+
+# Concatinates several operators into one with a central menu.
 def editRule(state, index, sendBack):
-	dAlert("got here")
+
 	def processEdit(edit):
-		pass
+		if(edit == "addAction"):
+			addAction(state,index,sendBack)
+		elif(edit == "addCondition"):
+			addCondition(state,index,sendBack)
+		elif(edit == "deleteAction"):
+			dAlert(edit)
+		elif(edit == "deleteCondition"):
+			dAlert(edit)
+		elif(edit == "deleteRule"):
+			newState = deleteRule(state,index)
+			sendBack(newState)
+		else:
+			pass
 	
 	add_edit_rule_menu(state, processEdit)
 	
-	
+def doNothing():
+	pass
+
 #</COMMON_CODE>		
 
 #<OPERATORS>
@@ -807,6 +822,8 @@ def set_operators(state):
 	# Sendback is the function given by the client which receives the modified state
 	sb = None
 
+	nothing_selected = [Operator("Nothing Selected", lambda state: True, lambda state: doNothing())]
+	
 	role_operators =\
 		[Operator("Change Role to " + role + " Designer.",
 			lambda state, r = role: state['Role'] is not r,
@@ -860,10 +877,12 @@ def set_operators(state):
 			AsyncOperator("Create JSON file for the current state.",
 				lambda state: True,
 				lambda state, sb: create_json(state))
-				
-		OPERATORS = (selection_operators + add_door_operators + remove_object_operators + 
-					wallpaper_operators + add_puzzle_operators + add_ambient_music_operator + 
-					play_ambient_music_operator + stop_ambient_music_operator + role_operators + create_json_file)
+			
+		# I don't know why I have to do this, something to do with memory perhaps.
+		OPERATORS = nothing_selected	
+		OPERATORS += (role_operators + selection_operators + add_door_operators + 
+					remove_object_operators + wallpaper_operators + add_puzzle_operators + add_ambient_music_operator + 
+					play_ambient_music_operator + stop_ambient_music_operator + create_json_file)
 	
 	elif(state['Role'] == "Image Puzzle"):
 		
@@ -902,7 +921,7 @@ def set_operators(state):
 				lambda state: state["Selected_Image"] is not None,
 				lambda state: addImageTransformation(state, "shuffleColumns"))
 				
-		OPERATORS =   selection_operators + create_new_puzzle + horiz_flip + vert_flip + shuff_rows + invs_shuff_rows + shuff_cols + role_operators
+		OPERATORS = nothing_selected + role_operators + selection_operators + create_new_puzzle + horiz_flip + vert_flip + shuff_rows + invs_shuff_rows + shuff_cols
 		
 	elif(state['Role'] == "Music Puzzle"):
 		
@@ -950,7 +969,7 @@ def set_operators(state):
 				lambda state: state["Selected_Music"] is not None,
 				lambda state: addMusicTransformation(state, "reverseNotes"))
 		
-		OPERATORS = selection_operators + role_operators  + create_new_puzzle + increase_tempo + decrease_tempo + shuffle_notes + increase_pitch + decrease_pitch + reverse_notes        
+		OPERATORS = nothing_selected + role_operators + selection_operators + create_new_puzzle + increase_tempo + decrease_tempo + shuffle_notes + increase_pitch + decrease_pitch + reverse_notes        
 	
 	elif(state['Role'] == "Rules"):
 		create_rule =\
@@ -958,31 +977,13 @@ def set_operators(state):
 				lambda state: True,
 				lambda state: createRule(state))
 				
-		delete_rules =\
-			[Operator("Delete Rule " + str(index + 1) + ".",
-				lambda state: True,
-				lambda state, i = index: deleteRule(state, i))
-			for index, rule in enumerate(state["Rules"])]
-		
-		add_condition =\
-			[AsyncOperator("Add Condition to Rule " + str(index + 1) + ".",
-				lambda state: True,
-				lambda state, sb, i = index: addCondition(state, i, sb))
-			for index, rule in enumerate(state["Rules"])]
-		
-		add_action =\
-			[AsyncOperator("Add Action to Rule " + str(index + 1) + ".",
-				lambda state: True,
-				lambda state, sb, i = index: addAction(state, i, sb))
-			for index, rule in enumerate(state["Rules"])]		
-		
 		edit_rule =\
 			[AsyncOperator("Edit Rule " + str(index + 1) + ".",
 				lambda state: True,
 				lambda state, sb, i = index: editRule(state, i, sb))
 			for index, rule in enumerate(state["Rules"])]
 		
-		OPERATORS = role_operators + create_rule + delete_rules + add_condition + add_action + edit_rule
+		OPERATORS = nothing_selected + role_operators + create_rule + edit_rule
 	else:
 		alert("unsupported role")
 	

@@ -254,17 +254,25 @@ def disableOpSelect():
 	# Disable operator controls
 	opSel = document.getElementById("theoptselect")
 	applyButton = document.getElementById("applyButtonID")
+	resetState = document.getElementById("RESET_BUTTONID")
+	backTrack = document.getElementById("BACKTRACK_BUTTONID")
 	
 	opSel.disabled = True
 	applyButton.disabled = True
+	resetState.disabled = True
+	backTrack.disabled = True
 
 def enableOpSelect():		
 	# Enable op controls
 	opSel = document.getElementById("theoptselect")
 	applyButton = document.getElementById("applyButtonID")
+	resetState = document.getElementById("RESET_BUTTONID")
+	backTrack = document.getElementById("BACKTRACK_BUTTONID")
 	
 	opSel.disabled = False
 	applyButton.disabled = False
+	resetState.disabled = False
+	backTrack.disabled = False
 	
 # Creates an architect menu with choices of which puzzle to select.
 # The band direction will be disabled when the user tries to choose it.
@@ -750,7 +758,6 @@ def add_action_menu(state, sendBack):
 	gui <= menu
 
 def add_edit_rule_menu(state, sendBack):
-	dAlert("in add edit rule menu")
 	width = 200
 	height = 200
 	menu = html.DIV(id = "editRuleMenu",
@@ -764,6 +771,7 @@ def add_edit_rule_menu(state, sendBack):
 								'top' : '50%',
 								'margin-top' : "-" + str(1/2 * height) + 'px',
 								'margin-left' : "-" + str(1/2 * width) + 'px',
+								'text-align' : 'center',
 								'z-index' : '1003',
 								'overflow' : 'auto'
 							})
@@ -771,29 +779,41 @@ def add_edit_rule_menu(state, sendBack):
 	editTitle = html.P(id="editRuleTitle", style = {"margin-top" : '0'})
 	editTitle.innerHTML = "What would you like to do?"
 	
+	# Disable applying/selecting operator
+	disableOpSelect()
+	
 	def processButton(input):
 		def processButton2():
-			dAlert(input)
-			#sendBack(input)
+			sendBack(input)
+			enableOpSelect()
+			destroy_menu("editRuleMenu")
 		return processButton2
 	
-	addAction = html.BUTTON("Add action to rule")
+	addAction = html.BUTTON("Add action to rule", style = {'display' : 'block', 'margin' : '10px'})
 	addAction.onclick = processButton("addAction")
 	
-	addCondition = html.BUTTON("Add condition to rule")
+	addCondition = html.BUTTON("Add condition to rule", style = {'display' : 'block', 'margin' : '10px'})
 	addCondition.onclick = processButton("addCondition")
 	
-	deleteAction = html.BUTTON("Delete action from rule")
+	deleteAction = html.BUTTON("Delete action from rule", style = {'display' : 'block', 'margin' : '10px'})
 	deleteAction.onclick = processButton("deleteAction")
 	
-	deleteCondition = html.BUTTON("Delete condition from rule")
+	deleteCondition = html.BUTTON("Delete condition from rule", style = {'display' : 'block', 'margin' : '10px'})
 	deleteCondition.onclick = processButton("deleteCondition")
+	
+	deleteRule = html.BUTTON("Delete rule", style = {'display' : 'block', 'margin' : '20px', 'font-weight' : 'bold'})
+	deleteRule.onclick = processButton("deleteRule")
+	
+	cancel = html.BUTTON("Cancel", style = {'display' : 'block', 'margin' : '10px'})
+	cancel.onclick = processButton("cancel")
 	
 	menu <= editTitle
 	menu <= addAction
 	menu <= addCondition
 	menu <= deleteAction
 	menu <= deleteCondition
+	menu <= deleteRule
+	menu <= cancel
 	
 	gui <= menu 
 	
