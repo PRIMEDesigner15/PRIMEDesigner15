@@ -433,7 +433,8 @@ def cFollowUp(state):
 		cFollowUp <= "Pick a puzzle:"			
 		puzzleOp = html.OPTION("Nothing Selected")
 		cFollowUpSelect <= puzzleOp
-
+		
+		'''
 		allPuzzles = []
 		# Add puzzles to list
 		for puzzleName in state["Image_Puzzles"]:
@@ -446,8 +447,8 @@ def cFollowUp(state):
 		for index, puzzle in enumerate(allPuzzles):
 			puzzleOp = html.OPTION("Solve Puzzle " + str(index) + " : " + str(puzzle))
 			cFollowUpSelect <= puzzleOp
-
-		'''		
+		'''
+			
 		# Puzzles are gathered by searching rooms that have been placed
 		# so the rules designer has context for which puzzles to attach conditions too
 		for index, room in enumerate(state["Rooms"]):
@@ -455,7 +456,7 @@ def cFollowUp(state):
 				if wall.puzzle is not None:
 					puzzleOp = html.OPTION("Solve puzzle in room " + str(index + 1) + " on " + wall.loc + " wall.")
 					cFollowUpSelect <= puzzleOp
-		'''				
+				
 		cFollowUp <= cFollowUpSelect
 		conditionForm <= cFollowUp
 		
@@ -595,10 +596,24 @@ def aFollowUp(state):
 		doorOp = html.OPTION("Nothing Selected")
 		aFollowUpSelect <= doorOp
 		
+		for index in range(1, 10):
+			for side in ['S', 'E']:
+				if side == 'S':
+					south = index + 3
+					if (south < 10):
+						doorOp = html.OPTION("Open door between rooms " + str(index) + " and " + str(south))
+						aFollowUpSelect <= doorOp
+				if side == 'E':
+					east = index + 1
+					if (east % 3 is not 1):
+						doorOp = html.OPTION("Open door between rooms " + str(index) + " and " + str(east))
+						aFollowUpSelect <= doorOp					
+		'''
 		for index, room in enumerate(state["Rooms"]):
 			for wall in ['N', 'S', 'E', 'W']:
 				doorOp = html.OPTION("Open door in room " + str(index + 1) + " on " + wall + " wall.")
 				aFollowUpSelect <= doorOp
+		'''		
 		'''
 		for index, room in enumerate(state["Rooms"]):
 			for wall in room.walls.values():
@@ -614,12 +629,26 @@ def aFollowUp(state):
 		
 		doorOp = html.OPTION("Nothing Selected")
 		aFollowUpSelect <= doorOp
-		
+
+		for index in range(1, 10):
+			for side in ['S', 'E']:
+				if side == 'S':
+					south = index + 3
+					if (south < 10):
+						doorOp = html.OPTION("Close door between rooms " + str(index) + " and " + str(south))
+						aFollowUpSelect <= doorOp
+				if side == 'E':
+					east = index + 1
+					if (east % 3 is not 1):
+						doorOp = html.OPTION("Close door between rooms " + str(index) + " and " + str(east))
+						aFollowUpSelect <= doorOp					
+		'''
 		for index, room in enumerate(state["Rooms"]):
 			for wall in room.walls.values():
 				if wall.hasDoor:
 					doorOp = html.OPTION("Close Door in room " + str(index + 1) + " on " + wall.loc + " wall.")
 					aFollowUpSelect <= doorOp
+		'''			
 		aFollowUp <= aFollowUpSelect
 		actionForm <= aFollowUp
 		

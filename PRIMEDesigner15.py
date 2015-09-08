@@ -122,7 +122,7 @@ def check_rules(state):
 			
 			# If condition is "Solve Puzzle:"
 			if(cdSplit[0] == "Solve"):
-			
+				'''
 				puzzleName = condition.text.rsplit(':', 1)[1].strip()
 				found = False
 				for room in state["Rooms"]:
@@ -132,13 +132,13 @@ def check_rules(state):
 						
 				condition.app = found
 				'''
-				#Old logic
+				
 				roomNum = cdSplit[4]
 				dir = cdSplit[6]
 				
 				if(state["Rooms"][int(roomNum)-1].walls[dir].puzzle is None):
 					condition.app = False
-				'''
+					
 				'''
 				#If we want to check that the puzzle exists at all
 				puzzleName = condition.text.rsplit(':', 1)[1].strip()
@@ -155,12 +155,28 @@ def check_rules(state):
 			
 			# If action is opening or closing a door:
 			if(acSplit[0] == "Open" or acSplit[0] == "Close"):
+				roomNum1 = int(acSplit[4])
+				roomNum2 = int(acSplit[6])
+				
+				#switch from visual index to array index
+				roomNumFinal = roomNum1 - 1 
+				
+				if roomNum2 - roomNum1 == 1:
+					dir = 'E'
+				else:
+					dir = 'S'
+					
+				if state["Rooms"][roomNumFinal].walls[dir].hasDoor is False:
+					action.app = False
+				else:
+					action.app = True
+				'''
 				roomNum = acSplit[4]
 				dir = acSplit[6]
 				 
 				if(state["Rooms"][int(roomNum)-1].walls[dir].hasDoor is False):
 					action.app = False
-					
+				'''	
 		
 #Template JSON Stuff	
 #try:
@@ -854,7 +870,10 @@ def set_operators(state):
 	# Sendback is the function given by the client which receives the modified state
 	sb = None
 
-	nothing_selected = [Operator("Nothing Selected", lambda state: True, lambda state: doNothing())]
+	nothing_selected =\
+		[Operator("Nothing Selected", 
+			lambda state: True, 
+			lambda state: doNothing())]
 	
 	role_operators =\
 		[Operator("Change Role to " + role + " Designer.",
