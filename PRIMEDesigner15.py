@@ -30,7 +30,7 @@ BRYTHON = True
 
 if(BRYTHON):
 	from PRIMEDesigner15VisForBrython import hide_loading, show_loading, url_is_valid
-	from PRIMEDesigner15VisForBrython import add_puzzle_menu, add_condition_menu, add_action_menu
+	from PRIMEDesigner15VisForBrython import add_puzzle_menu, add_condition_menu, add_action_menu, add_edit_rule_menu
 	from PRIMEDesigner15MusicForBrython import playAmbientMusic, stopAmbientMusic
 	from templateRoot.PRIMEDesigner15Operator import Operator as Operator
 	from templateRoot.PRIMEDesigner15Operator import AsyncOperator as AsyncOperator
@@ -788,6 +788,14 @@ def addAction(state, index, sendBack):
 	
 	add_action_menu(state, processAction)	
 	
+def editRule(state, index, sendBack):
+	dAlert("got here")
+	def processEdit(edit):
+		pass
+	
+	add_edit_rule_menu(state, processEdit)
+	
+	
 #</COMMON_CODE>		
 
 #<OPERATORS>
@@ -968,7 +976,13 @@ def set_operators(state):
 				lambda state, sb, i = index: addAction(state, i, sb))
 			for index, rule in enumerate(state["Rules"])]		
 		
-		OPERATORS = role_operators + create_rule + delete_rules + add_condition + add_action
+		edit_rule =\
+			[AsyncOperator("Edit Rule " + str(index + 1) + ".",
+				lambda state: True,
+				lambda state, sb, i = index: editRule(state, i, sb))
+			for index, rule in enumerate(state["Rules"])]
+		
+		OPERATORS = role_operators + create_rule + delete_rules + add_condition + add_action + edit_rule
 	else:
 		alert("unsupported role")
 	

@@ -748,6 +748,54 @@ def add_action_menu(state, sendBack):
 	menu <= cancelButton
 
 	gui <= menu
+
+def add_edit_rule_menu(state, sendBack):
+	dAlert("in add edit rule menu")
+	width = 200
+	height = 200
+	menu = html.DIV(id = "editRuleMenu",
+							style = {
+								'position' : 'fixed',
+								'padding' : '10px',
+								'background' : 'white',
+								'border-radius' : '10px',
+								'border' : '5px solid grey',
+								'left' : '50%',
+								'top' : '50%',
+								'margin-top' : "-" + str(1/2 * height) + 'px',
+								'margin-left' : "-" + str(1/2 * width) + 'px',
+								'z-index' : '1003',
+								'overflow' : 'auto'
+							})
+
+	editTitle = html.P(id="editRuleTitle", style = {"margin-top" : '0'})
+	editTitle.innerHTML = "What would you like to do?"
+	
+	def processButton(input):
+		def processButton2():
+			dAlert(input)
+			#sendBack(input)
+		return processButton2
+	
+	addAction = html.BUTTON("Add action to rule")
+	addAction.onclick = processButton("addAction")
+	
+	addCondition = html.BUTTON("Add condition to rule")
+	addCondition.onclick = processButton("addCondition")
+	
+	deleteAction = html.BUTTON("Delete action from rule")
+	deleteAction.onclick = processButton("deleteAction")
+	
+	deleteCondition = html.BUTTON("Delete condition from rule")
+	deleteCondition.onclick = processButton("deleteCondition")
+	
+	menu <= editTitle
+	menu <= addAction
+	menu <= addCondition
+	menu <= deleteAction
+	menu <= deleteCondition
+	
+	gui <= menu 
 	
 def cancelMenu(id):
 	destroy_menu(id)
