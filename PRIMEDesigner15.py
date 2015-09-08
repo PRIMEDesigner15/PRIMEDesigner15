@@ -138,6 +138,10 @@ def check_rules(state):
 				
 				if(state["Rooms"][int(roomNum)-1].walls[dir].puzzle is None):
 					condition.app = False
+				#In the off chance that a puzzle is placed, a rule element added to it,
+				#And then the puzzle is removed, but then a puzzle is placed in the same spot
+				else:
+					condition.app = True
 					
 				'''
 				#If we want to check that the puzzle exists at all
@@ -786,9 +790,9 @@ def addCondition(state, index, sendBack):
 	def processCondition(condition):
 		newState = copy_state(state)
 		newState["Rules"][index].conditions.append(RuleElement(condition))
-		console.log('b')
+		
 		check_rules(newState)
-		console.log('c')
+		
 		sendBack(newState)
 	
 	add_condition_menu(state, processCondition)
@@ -1080,8 +1084,9 @@ INITIAL_STATE['Selected_Image'] = None
 INITIAL_STATE['Selected_Music'] = None
 INITIAL_STATE['Role'] = "Rules"
 INITIAL_STATE['Operators'] = set_operators(INITIAL_STATE)	
-INITIAL_STATE['ConditionMaster'] = ["Enter Room","Have Points","Time Elapses"]
-INITIAL_STATE['ActionMaster'] = ["Open Door", "Close Door", "Play Sound", "Display Message","Gain Points","Lose Points","End Game"]
+INITIAL_STATE['ConditionMaster'] = ["Enter Room","Have Points","Time Elapses", "Solve Puzzle"]
+INITIAL_STATE['ActionMaster'] = ["Open Door", "Close Door", "Play Sound", "Display Message", 
+								 "Unsolve Puzzle", "Gain Points","Lose Points","End Game"]
 
 # Create 9 rooms, add them to the the state.
 for j in range(3):

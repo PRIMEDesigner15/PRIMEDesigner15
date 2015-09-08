@@ -394,9 +394,6 @@ def add_condition_form(state):
 		conditionOpt = html.OPTION(condition)
 		conditionSelect <= conditionOpt 
 	
-	conditionOpt = html.OPTION("Solve Puzzle")
-	conditionSelect <= conditionOpt 
-	
 	conditionSelect.onchange = lambda e: cFollowUp(state)
 	
 	conditionDiv = html.DIV()
@@ -657,16 +654,36 @@ def aFollowUp(state):
 		textInput = html.INPUT(type="text", id="textInput", style = {"margin-left" : "10px"})
 		aFollowUp <= textInput
 		actionForm <= aFollowUp
+		
 	elif(action == "Display Message"):
 		aFollowUp <= "Enter your message:"
 		textInput = html.INPUT(type="text", id="textInput", style = {"margin-left" : "10px"})
 		aFollowUp <= textInput
 		actionForm <= aFollowUp
+		
+	elif(action == "Unsolve Puzzle"):
+	
+		aFollowUp <= "Pick a puzzle:"			
+		puzzleOp = html.OPTION("Nothing Selected")
+		aFollowUpSelect <= puzzleOp
+			
+		# Puzzles are gathered by searching rooms that have been placed
+		# so the rules designer has context for which puzzles to attach conditions too
+		for index, room in enumerate(state["Rooms"]):
+			for wall in room.walls.values():
+				if wall.puzzle is not None:
+					puzzleOp = html.OPTION("Unsolve puzzle in room " + str(index + 1) + " on " + wall.loc + " wall.")
+					aFollowUpSelect <= puzzleOp
+				
+		aFollowUp <= aFollowUpSelect
+		actionForm <= aFollowUp		
+		
 	elif(action == "Gain Points"):
 		aFollowUp <= "Gain how many points?"
 		textInput = html.INPUT(type="text", id="textInput", style = {"margin-left" : "10px"})
 		aFollowUp <= textInput
 		actionForm <= aFollowUp
+		
 	elif(action == "Lose Points"):
 		aFollowUp <= "Lose how many points?"
 		textInput = html.INPUT(type="text", id="textInput", style = {"margin-left" : "10px"})
