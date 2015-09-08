@@ -742,27 +742,72 @@ def delete_condition_menu(state, index, sendBack):
 		conditionSelect <= html.OPTION(condition.text)
 	
 	def destroy():
-		destroyMenu("deleteConditionMenu")
+		destroy_menu("deleteConditionMenu")
 	
 	def destroyAndSendBack():
-		if(conditionSelect.value == "None Selected"):
+		conditionName = conditionSelect.value
+		if(conditionName == "None Selected"):
 			alert("Select a condition to delete")
 		else:
-			condition = conditionList[conditionSelect.selectedIndex - 1]
-			console.log(condition)
-			destroyMenu("deleteConditionMenu")
-			sendBack(condition)
+			destroy_menu("deleteConditionMenu")
+			sendBack(conditionName)
 			
-	dAlert("got here")
-	submit = html.BUTTON("Delete Selected Condition")
+	
+	submit = html.BUTTON("Delete selected condition")
 	submit.onclick = destroyAndSendBack
+	
+	cancel = html.BUTTON("Cancel", style = {'display' : 'block', 'margin' : '10px'})
+	cancel.onclick = destroy
 	
 	
 	menu <= deleteTitle
 	menu <= conditionSelect
 	menu <= submit
+	menu <= cancel
+	
 	gui <= menu
 	
+def delete_action_menu(state, index, sendBack):
+		
+
+	width = 200
+	height = 200
+	menu = create_menu("deleteActionMenu",width,height)
+	deleteTitle = html.P(id="deleteActionTitle", style = {"margin-top" : '0'})
+	deleteTitle.innerHTML = "Which action?"
+	
+
+	actionSelect = html.SELECT()
+	actionSelect <= html.OPTION("None Selected")
+	actionList = state["Rules"][index].actions
+	for action in actionList:
+		actionSelect <= html.OPTION(action.text)
+	
+	def destroy():
+		destroy_menu("deleteActionMenu")
+	
+	def destroyAndSendBack():
+		actionName = actionSelect.value
+		if(actionName == "None Selected"):
+			alert("Select an action to delete")
+		else:
+			destroy_menu("deleteActionMenu")
+			sendBack(actionName)
+			
+	
+	submit = html.BUTTON("Delete Selected Action")
+	submit.onclick = destroyAndSendBack
+	
+	cancel = html.BUTTON("Cancel", style = {'display' : 'block', 'margin' : '10px'})
+	cancel.onclick = destroy
+	
+	
+	menu <= deleteTitle
+	menu <= actionSelect
+	menu <= submit
+	menu <= cancel
+	
+	gui <= menu
 	
 	
 def edit_rule_menu(state, sendBack):

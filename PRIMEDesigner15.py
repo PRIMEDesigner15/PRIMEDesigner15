@@ -31,7 +31,7 @@ BRYTHON = True
 if(BRYTHON):
 	from PRIMEDesigner15VisForBrython import hide_loading, show_loading, url_is_valid
 	from PRIMEDesigner15VisForBrython import add_puzzle_menu, add_condition_menu, add_action_menu, edit_rule_menu
-	from PRIMEDesigner15VisForBrython import delete_condition_menu
+	from PRIMEDesigner15VisForBrython import delete_condition_menu, delete_action_menu
 	from PRIMEDesigner15MusicForBrython import playAmbientMusic, stopAmbientMusic
 	from templateRoot.PRIMEDesigner15Operator import Operator as Operator
 	from templateRoot.PRIMEDesigner15Operator import AsyncOperator as AsyncOperator
@@ -789,16 +789,35 @@ def addAction(state, index, sendBack):
 	
 	add_action_menu(state, processAction)	
 
-# Deletes the rule element fro the specified 
+# Deletes a condition from the specified rule
 def deleteCondition(state, index, sendBack):
 
-	def processDelete(condition):
+	def processDelete(conditionName):
 		newState = copy_state(state)
-		newState["Rules"][index].conditions.remove(condition)
+		conditionList = newState["Rules"][index].conditions
+		for i, condition in enumerate(conditionList):
+			if(condition.text == conditionName):
+				conditionList.pop(i)
 		
 		sendBack(newState)
 		
 	delete_condition_menu(state, index, processDelete)
+
+# Deletes an action from the specified rule
+def deleteAction(state, index, sendBack):
+	
+	dAlert("within delete action")
+	
+	def processDelete(actionName):
+		newState = copy_state(state)
+		actionList = newState["Rules"][index].actions
+		for i, action in enumerate(actionList):
+			if(action.text == actionName):
+				actionList.pop(i)
+		
+		sendBack(newState)
+		
+	delete_action_menu(state, index, processDelete)
 
 			
 # Concatenates several operators into one with a central menu.
@@ -810,7 +829,7 @@ def editRule(state, index, sendBack):
 		elif(edit == "addCondition"):
 			addCondition(state,index,sendBack)
 		elif(edit == "deleteAction"):
-			dAlert(edit)
+			deleteAction(state,index,sendBack)
 		elif(edit == "deleteCondition"):
 			deleteCondition(state,index,sendBack)
 		elif(edit == "deleteRule"):
