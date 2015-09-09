@@ -121,7 +121,7 @@ def check_rules(state):
 			cdSplit = condition.text.split(" ")
 			
 			# If condition is "Solve Puzzle:"
-			if(cdSplit[0] == "Solve"):
+			if(cdSplit[0] == "Solve" or cdSplit[0] == "Unsolve"):
 				'''
 				puzzleName = condition.text.rsplit(':', 1)[1].strip()
 				found = False
@@ -735,9 +735,9 @@ def create_json(state):
 				 "Problem Creation Date" : PROBLEM_CREATION_DATE, "Problem Description" : PROBLEM_DESC}
 	
 	#Rooms
-	stateJSON["Rooms"] = {}
-	for index, room in enumerate(state["Rooms"]):
-		stateJSON["Rooms"][str(index)] = room.encode()
+	stateJSON["Rooms"] = []
+	for room in state["Rooms"]:
+		stateJSON["Rooms"].append(room.encode())
 		#looks like stateJson = {"Rooms" : {1 : room1, 2 : room2, etc}, etc}
 
 	stateJSON["Rules"] = []
