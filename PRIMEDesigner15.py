@@ -121,7 +121,7 @@ def check_rules(state):
 			cdSplit = condition.text.split(" ")
 			
 			# If condition is "Solve Puzzle:"
-			if(cdSplit[0] == "Solve" or cdSplit[0] == "Unsolve"):
+			if(cdSplit[0] == "Solve"):
 				'''
 				puzzleName = condition.text.rsplit(':', 1)[1].strip()
 				found = False
@@ -181,7 +181,17 @@ def check_rules(state):
 				if(state["Rooms"][int(roomNum)-1].walls[dir].hasDoor is False):
 					action.app = False
 				'''	
-		
+			# If action is "Unsolve Puzzle:"
+			if(acSplit[0] == "Unsolve"):
+				roomNum = acSplit[4]
+				dir = acSplit[6]
+				
+				if(state["Rooms"][int(roomNum)-1].walls[dir].puzzle is None):
+					action.app = False
+				#In the off chance that a puzzle is placed, a rule element added to it,
+				#And then the puzzle is removed, but then a puzzle is placed in the same spot
+				else:
+					action.app = True		
 #Template JSON Stuff	
 #try:
 #  from browser import window, alert

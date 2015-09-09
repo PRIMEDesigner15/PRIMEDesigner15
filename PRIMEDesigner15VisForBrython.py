@@ -450,9 +450,9 @@ def cFollowUp(state):
 		# so the rules designer has context for which puzzles to attach conditions too
 		for index, room in enumerate(state["Rooms"]):
 			for wall in room.walls.values():
-				if wall.puzzle is not None:
-					puzzleOp = html.OPTION("Solve puzzle in room " + str(index + 1) + " on " + wall.loc + " wall.")
-					cFollowUpSelect <= puzzleOp
+				#if wall.puzzle is not None:
+				puzzleOp = html.OPTION("Solve puzzle in room " + str(index + 1) + " on " + wall.loc + " wall.")
+				cFollowUpSelect <= puzzleOp
 				
 		cFollowUp <= cFollowUpSelect
 		conditionForm <= cFollowUp
@@ -671,9 +671,9 @@ def aFollowUp(state):
 		# so the rules designer has context for which puzzles to attach conditions too
 		for index, room in enumerate(state["Rooms"]):
 			for wall in room.walls.values():
-				if wall.puzzle is not None:
-					puzzleOp = html.OPTION("Unsolve puzzle in room " + str(index + 1) + " on " + wall.loc + " wall.")
-					aFollowUpSelect <= puzzleOp
+				#if wall.puzzle is not None:
+				puzzleOp = html.OPTION("Unsolve puzzle in room " + str(index + 1) + " on " + wall.loc + " wall.")
+				aFollowUpSelect <= puzzleOp
 				
 		aFollowUp <= aFollowUpSelect
 		actionForm <= aFollowUp		
