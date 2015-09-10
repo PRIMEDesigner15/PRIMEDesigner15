@@ -403,7 +403,6 @@ def add_door_to_room(state, room_num, side, openOrClosed):
 
 # Operator version of add door that returns new state
 def add_door_operator(state, room_num, side, sendBack):
-	dAlert("in add door operator")
 	def processState(openOrClosed):
 		newState = copy_state(state)
 		add_door_to_room(newState, room_num, side, openOrClosed)

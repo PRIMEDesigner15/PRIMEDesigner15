@@ -932,9 +932,9 @@ def open_or_closed_menu(sendBack):
 	menu <= openOrClosedTitle
 	
 	menu <= open
-	menu <= html.P("open", style = {'display' : 'inline', 'margin' : '0'})
+	menu <= html.P("Open", style = {'display' : 'inline', 'margin' : '0'})
 	menu <= closed
-	menu <= html.P("closed", style = {'display' : 'inline', 'margin' : '0'})
+	menu <= html.P("Closed", style = {'display' : 'inline', 'margin' : '0'})
 	
 	menu <= submit
 	menu <= cancel
