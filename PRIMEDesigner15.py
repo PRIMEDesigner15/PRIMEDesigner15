@@ -1102,8 +1102,8 @@ INITIAL_STATE['Selected_Music'] = None
 INITIAL_STATE['Role'] = "Architect"
 INITIAL_STATE['Operators'] = set_operators(INITIAL_STATE)	
 INITIAL_STATE['ConditionMaster'] = ["Entered Room","Had Points","Time Elapsed", "Solved Puzzle"]
-INITIAL_STATE['ActionMaster'] = ["Opened Door", "Closed Door", "Played Sound", "Displayed Message", 
-								 "Unsolved Puzzle", "Gained Points","Lost Points","Game Ended"]
+INITIAL_STATE['ActionMaster'] = ["Open Door", "Close Door", "Play Sound", "Display Message", 
+								 "Unsolve Puzzle", "Gain Points","Lose Points","Game Ends"]
 
 # Create 9 rooms, add them to the the state.
 for j in range(3):
