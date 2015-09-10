@@ -901,6 +901,45 @@ def edit_rule_menu(state, sendBack):
 	
 	gui <= menu 
 	
+def open_or_closed_menu(sendBack):
+	width = 200
+	height = 200
+	menu = create_menu("openOrClosedMenu",width,height)
+	
+	openOrClosedTitle = html.P("Should the door start open or closed?")
+	
+	open = html.INPUT(type="radio", name = 'direction', value = 'open', checked = True, style = {"display" : 'inline'} )
+	closed = html.INPUT(type="radio", name = 'direction', value = 'closed', style = {"display" : 'inline'} )
+
+	
+	def destroy():
+		destroy_menu("openOrClosedMenu")
+		
+	def destroyAndSendBack():
+		if(open.checked):
+			sendBack(True)
+		else:
+			sendBack(False)
+		destroy_menu("openOrClosedMenu")
+	
+	
+	submit = html.BUTTON("Submit", style = {'margin' : '10px'})
+	submit.onclick = destroyAndSendBack
+	
+	cancel = html.BUTTON("Cancel", style = {'margin' : '10px'})
+	cancel.onclick = destroy
+	
+	menu <= openOrClosedTitle
+	
+	menu <= open
+	menu <= html.P("open", style = {'display' : 'inline', 'margin' : '0'})
+	menu <= closed
+	menu <= html.P("closed", style = {'display' : 'inline', 'margin' : '0'})
+	
+	menu <= submit
+	menu <= cancel
+	
+	gui <= menu
 def cancelMenu(id):
 	destroy_menu(id)
 	enableOpSelect()

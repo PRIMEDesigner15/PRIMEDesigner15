@@ -31,7 +31,7 @@ BRYTHON = True
 if(BRYTHON):
 	from PRIMEDesigner15VisForBrython import hide_loading, show_loading, url_is_valid
 	from PRIMEDesigner15VisForBrython import add_puzzle_menu, add_condition_menu, add_action_menu, edit_rule_menu
-	from PRIMEDesigner15VisForBrython import delete_condition_menu, delete_action_menu
+	from PRIMEDesigner15VisForBrython import delete_condition_menu, delete_action_menu, open_or_closed_menu
 	from PRIMEDesigner15MusicForBrython import playAmbientMusic, stopAmbientMusic
 	from templateRoot.PRIMEDesigner15Operator import Operator as Operator
 	from templateRoot.PRIMEDesigner15Operator import AsyncOperator as AsyncOperator
@@ -379,31 +379,39 @@ class RuleElement:
 # Takes a room num from 0 to 8 and a side for the door to be on, [N, S, E, W]
 # Optional newDoor parameter which allows you to pass which door the walls will point to.
 # Is default set to the creation of a new door.
-def add_door_to_room(room_num, side, state):
+def add_door_to_room(state, room_num, side, openOrClosed):
 	ROOMS = state["Rooms"]
 	
 	ROOMS[room_num].walls[side].hasDoor = True
+	ROOMS[room_num].walls[side].doorOpen = openOrClosed
 	if side == 'N':
 		ROOMS[room_num - 3].walls['S'].hasDoor = True
+		ROOMS[room_num - 3].walls['S'].doorOpen = openOrClosed
 	elif side == 'S':
 		ROOMS[room_num + 3].walls['N'].hasDoor = True
+		ROOMS[room_num + 3].walls['N'].doorOpen = openOrClosed
 	elif side == 'E':
 		ROOMS[room_num + 1].walls['W'].hasDoor = True
+		ROOMS[room_num + 1].walls['W'].doorOpen = openOrClosed
 	elif side == 'W':
 		ROOMS[room_num - 1].walls['E'].hasDoor = True
+		ROOMS[room_num - 1].walls['E'].doorOpen = openOrClosed
 	else:
 		alert("Error: Invalid direction passed to add_door")
 	
 	check_rules(state)
 
 # Operator version of add door that returns new state
-def add_door_operator(state, room_num, side):
+def add_door_operator(state, room_num, side, sendBack):
+	dAlert("in add door operator")
+	def processState(openOrClosed):
+		newState = copy_state(state)
+		add_door_to_room(newState, room_num, side, openOrClosed)
+		sendBack(newState)
+		
+	open_or_closed_menu(processState)
 	
-	newState = copy_state(state)
-	add_door_to_room(room_num, side, newState)
 	
-	return newState
-
 # Removes the door between two walls or a puzzle on a wall
 def remove_wall_object_from_room(state, side):
 	room_num = state["Selected_Room"]
@@ -902,9 +910,9 @@ def set_operators(state):
 			for num in range(9)]
 
 		add_door_operators =\
-			[Operator("Add door to current room on " + cardinal + " wall.",
+			[AsyncOperator("Add door to current room on " + cardinal + " wall.",
 				lambda state, c = cardinal: add_doors_is_valid(state, c),
-				lambda state, c = cardinal: add_door_operator(state, state["Selected_Room"], c))
+				lambda state, sb, c = cardinal: add_door_operator(state, state["Selected_Room"], c, sb))
 			for cardinal in ['N', 'S', 'E', 'W']]
 		
 		remove_object_operators =\
@@ -1092,7 +1100,7 @@ INITIAL_STATE['Selected_Room'] = 0
 # Stores name of selected image and selected music
 INITIAL_STATE['Selected_Image'] = None
 INITIAL_STATE['Selected_Music'] = None
-INITIAL_STATE['Role'] = "Rules"
+INITIAL_STATE['Role'] = "Architect"
 INITIAL_STATE['Operators'] = set_operators(INITIAL_STATE)	
 INITIAL_STATE['ConditionMaster'] = ["Entered Room","Had Points","Time Elapsed", "Solved Puzzle"]
 INITIAL_STATE['ActionMaster'] = ["Opened Door", "Closed Door", "Played Sound", "Displayed Message", 
