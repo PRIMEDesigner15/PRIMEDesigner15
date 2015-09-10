@@ -121,7 +121,7 @@ def check_rules(state):
 			cdSplit = condition.text.split(" ")
 			
 			# If condition is "Solve Puzzle:"
-			if(cdSplit[0] == "Solve"):
+			if(cdSplit[0] == "Solved"):
 				'''
 				puzzleName = condition.text.rsplit(':', 1)[1].strip()
 				found = False
@@ -158,7 +158,7 @@ def check_rules(state):
 			acSplit = action.text.split(" ")
 			
 			# If action is opening or closing a door:
-			if(acSplit[0] == "Open" or acSplit[0] == "Close"):
+			if(acSplit[0] == "Opened" or acSplit[0] == "Closed"):
 				roomNum1 = int(acSplit[4])
 				roomNum2 = int(acSplit[6])
 				
@@ -182,7 +182,7 @@ def check_rules(state):
 					action.app = False
 				'''	
 			# If action is "Unsolve Puzzle:"
-			if(acSplit[0] == "Unsolve"):
+			if(acSplit[0] == "Unsolved"):
 				roomNum = acSplit[4]
 				dir = acSplit[6]
 				
@@ -1094,9 +1094,9 @@ INITIAL_STATE['Selected_Image'] = None
 INITIAL_STATE['Selected_Music'] = None
 INITIAL_STATE['Role'] = "Rules"
 INITIAL_STATE['Operators'] = set_operators(INITIAL_STATE)	
-INITIAL_STATE['ConditionMaster'] = ["Enter Room","Have Points","Time Elapses", "Solve Puzzle"]
-INITIAL_STATE['ActionMaster'] = ["Open Door", "Close Door", "Play Sound", "Display Message", 
-								 "Unsolve Puzzle", "Gain Points","Lose Points","End Game"]
+INITIAL_STATE['ConditionMaster'] = ["Entered Room","Had Points","Time Elapsed", "Solved Puzzle"]
+INITIAL_STATE['ActionMaster'] = ["Opened Door", "Closed Door", "Played Sound", "Displayed Message", 
+								 "Unsolved Puzzle", "Gained Points","Lost Points","Game Ended"]
 
 # Create 9 rooms, add them to the the state.
 for j in range(3):

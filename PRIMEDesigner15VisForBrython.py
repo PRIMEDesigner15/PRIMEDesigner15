@@ -417,15 +417,16 @@ def cFollowUp(state):
 	
 	condition = document.getElementById("conditionSelect").value
 	cFollowUpSelect = html.SELECT(id = "cFollowUpSelect", style = {"margin-left" : "10px"})	
-	if(condition == "Enter Room"):
+	if(condition == "Entered Room"):
 		cFollowUp <= "Pick a room:"
 		for num in range(1,10):
-			roomNum = html.OPTION("Enter Room " + str(num))
+			roomNum = html.OPTION("Entered Room " + str(num))
 			cFollowUpSelect <= roomNum
 
 		cFollowUp <= cFollowUpSelect
 		conditionForm <= cFollowUp
-	elif(condition == "Solve Puzzle"):
+		
+	elif(condition == "Solved Puzzle"):
 	
 		cFollowUp <= "Pick a puzzle:"			
 		puzzleOp = html.OPTION("Nothing Selected")
@@ -451,20 +452,20 @@ def cFollowUp(state):
 		for index, room in enumerate(state["Rooms"]):
 			for wall in room.walls.values():
 				#if wall.puzzle is not None:
-				puzzleOp = html.OPTION("Solve puzzle in room " + str(index + 1) + " on " + wall.loc + " wall.")
+				puzzleOp = html.OPTION("Solved puzzle in room " + str(index + 1) + " on " + wall.loc + " wall.")
 				cFollowUpSelect <= puzzleOp
 				
 		cFollowUp <= cFollowUpSelect
 		conditionForm <= cFollowUp
 		
-	elif(condition == "Have Points"):
+	elif(condition == "Had Points"):
 	
 		cFollowUp <= "Enter point amount:"
 		textInput = html.INPUT(type="text", id="textInput", style = {"margin-left" : "10px"})
 		cFollowUp <= textInput
 		conditionForm <= cFollowUp
 		
-	elif(condition == "Time Elapses"):
+	elif(condition == "Time Elapsed"):
 		
 		cFollowUp <= "Enter time in minutes:"
 		textInput = html.INPUT(type="text", id="textInput", style = {"margin-left" : "10px"})
@@ -509,7 +510,7 @@ def add_condition_menu(state, sendBack):
 			if (conditionF is not None and conditionF != 'Nothing Selected'):
 				cFollowUp = True
 				
-			if ((condition == "Enter Room" or condition == "Solve Puzzle") and cFollowUp is False):
+			if ((condition == "Entered Room" or condition == "Solved Puzzle") and cFollowUp is False):
 				alert("Not enough information was entered.")
 			else:
 				#console.log("Debug: Enough info was given.")
@@ -519,9 +520,9 @@ def add_condition_menu(state, sendBack):
 				enableOpSelect()
 				
 				if(textF is not None and textF.strip() != ''):
-					if(condition == "Have Points"):
-						conditionF = "Have " + textF + " Points."
-					elif(condition == "Time Elapses"):
+					if(condition == "Had Points"):
+						conditionF = "Had " + textF + " Points."
+					elif(condition == "Time Elapsed"):
 						conditionF = textF + " minutes elapse."
 					else:
 						alert("invalid condition for follow up.")
@@ -587,7 +588,7 @@ def aFollowUp(state):
 	
 	aFollowUpSelect = html.SELECT(id = "aFollowUpSelect", style = {"margin-left" : "10px"})
 	
-	if(action == "Open Door"):
+	if(action == "Opened Door"):
 		aFollowUp <= "Pick a door:"
 		
 		doorOp = html.OPTION("Nothing Selected")
@@ -598,12 +599,12 @@ def aFollowUp(state):
 				if side == 'S':
 					south = index + 3
 					if (south < 10):
-						doorOp = html.OPTION("Open door between rooms " + str(index) + " and " + str(south))
+						doorOp = html.OPTION("Opened door between rooms " + str(index) + " and " + str(south))
 						aFollowUpSelect <= doorOp
 				if side == 'E':
 					east = index + 1
 					if (east % 3 is not 1):
-						doorOp = html.OPTION("Open door between rooms " + str(index) + " and " + str(east))
+						doorOp = html.OPTION("Opened door between rooms " + str(index) + " and " + str(east))
 						aFollowUpSelect <= doorOp					
 		'''
 		for index, room in enumerate(state["Rooms"]):
@@ -621,7 +622,7 @@ def aFollowUp(state):
 		aFollowUp <= aFollowUpSelect
 		actionForm <= aFollowUp
 		
-	elif(action == "Close Door"):
+	elif(action == "Closed Door"):
 		aFollowUp <= "Pick a door:"
 		
 		doorOp = html.OPTION("Nothing Selected")
@@ -632,12 +633,12 @@ def aFollowUp(state):
 				if side == 'S':
 					south = index + 3
 					if (south < 10):
-						doorOp = html.OPTION("Close door between rooms " + str(index) + " and " + str(south))
+						doorOp = html.OPTION("Closed door between rooms " + str(index) + " and " + str(south))
 						aFollowUpSelect <= doorOp
 				if side == 'E':
 					east = index + 1
 					if (east % 3 is not 1):
-						doorOp = html.OPTION("Close door between rooms " + str(index) + " and " + str(east))
+						doorOp = html.OPTION("Closed door between rooms " + str(index) + " and " + str(east))
 						aFollowUpSelect <= doorOp					
 		'''
 		for index, room in enumerate(state["Rooms"]):
@@ -649,19 +650,19 @@ def aFollowUp(state):
 		aFollowUp <= aFollowUpSelect
 		actionForm <= aFollowUp
 		
-	elif(action == "Play Sound"):
+	elif(action == "Played Sound"):
 		aFollowUp <= "Sound Link:"
 		textInput = html.INPUT(type="text", id="textInput", style = {"margin-left" : "10px"})
 		aFollowUp <= textInput
 		actionForm <= aFollowUp
 		
-	elif(action == "Display Message"):
+	elif(action == "Displayed Message"):
 		aFollowUp <= "Enter your message:"
 		textInput = html.INPUT(type="text", id="textInput", style = {"margin-left" : "10px"})
 		aFollowUp <= textInput
 		actionForm <= aFollowUp
 		
-	elif(action == "Unsolve Puzzle"):
+	elif(action == "Unsolved Puzzle"):
 	
 		aFollowUp <= "Pick a puzzle:"			
 		puzzleOp = html.OPTION("Nothing Selected")
@@ -672,20 +673,20 @@ def aFollowUp(state):
 		for index, room in enumerate(state["Rooms"]):
 			for wall in room.walls.values():
 				#if wall.puzzle is not None:
-				puzzleOp = html.OPTION("Unsolve puzzle in room " + str(index + 1) + " on " + wall.loc + " wall.")
+				puzzleOp = html.OPTION("Unsolved puzzle in room " + str(index + 1) + " on " + wall.loc + " wall.")
 				aFollowUpSelect <= puzzleOp
 				
 		aFollowUp <= aFollowUpSelect
 		actionForm <= aFollowUp		
 		
-	elif(action == "Gain Points"):
+	elif(action == "Gained Points"):
 		aFollowUp <= "Gain how many points?"
 		textInput = html.INPUT(type="text", id="textInput", style = {"margin-left" : "10px"})
 		aFollowUp <= textInput
 		actionForm <= aFollowUp
 		
-	elif(action == "Lose Points"):
-		aFollowUp <= "Lose how many points?"
+	elif(action == "Lost Points"):
+		aFollowUp <= "Lost how many points?"
 		textInput = html.INPUT(type="text", id="textInput", style = {"margin-left" : "10px"})
 		aFollowUp <= textInput
 		actionForm <= aFollowUp
@@ -727,11 +728,11 @@ def add_action_menu(state, sendBack):
 		else:
 			if ((textF is not None and textF.strip() != '') or (actionF is not None and actionF != 'Nothing Selected')):
 				aFollowUp = True	
-			if (action == "Open Door" and aFollowUp is False
-				or action == "Close Door" and aFollowUp is False
-				or action == "Display Message" and aFollowUp is False):
+			if (action == "Opened Door" and aFollowUp is False
+				or action == "Closed Door" and aFollowUp is False
+				or action == "Displayed Message" and aFollowUp is False):
 				alert("Not enough information was entered.")
-			elif(action == "Play Sound" and not url_is_valid(textF)):
+			elif(action == "Played Sound" and not url_is_valid(textF)):
 				alert("File link was invalid.")
 			else:
 				#console.log("Debug: Enough info was given.")
@@ -743,14 +744,14 @@ def add_action_menu(state, sendBack):
 				# Make sure something was actually put into the text box
 				if(textF is not None and textF.strip() != ''):
 					# Change display of text box information based on action.
-					if(action == "Display Message"):
-						actionF = "Display Message: " + "\"" + textF + "\""
-					elif(action == "Play Sound"):
-						actionF = "Play sound from link: \"" + textF + "\""
-					elif(action == "Gain Points"):
-						actionF = "Gain " + textF + " Points"
-					elif(action == "Lose Points"):
-						actionF = "Lose " + textF + " Points"
+					if(action == "Displayed Message"):
+						actionF = "Displayed Message: " + "\"" + textF + "\""
+					elif(action == "Played Sound"):
+						actionF = "Played sound from link: \"" + textF + "\""
+					elif(action == "Gained Points"):
+						actionF = "Gained " + textF + " Points"
+					elif(action == "Lost Points"):
+						actionF = "Lost " + textF + " Points"
 				if(actionF is not None):
 					action = actionF
 				
