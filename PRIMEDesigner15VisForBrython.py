@@ -459,9 +459,19 @@ def cFollowUp(state):
 		conditionForm <= cFollowUp
 		
 	elif(condition == "Had Points"):
+		
 	
 		cFollowUp <= "Enter point amount:"
-		textInput = html.INPUT(type="text", id="textInput", style = {"margin-left" : "10px"})
+		textInput = html.INPUT(type="text", id="textInput", name = "hasAPattern", style = {"margin-left" : "10px"})
+		'''
+		def validInput(ev):
+			input = document.getElementById("textInput")
+			numbers = input.value
+			print(numbers)
+			input.value = 'a'#numbers.replace("/\D/",'')
+		
+		textInput.bind('keyup',validInput)
+		'''
 		cFollowUp <= textInput
 		conditionForm <= cFollowUp
 		
@@ -534,6 +544,8 @@ def add_condition_menu(state, sendBack):
 	
 	okButton = html.BUTTON(id = "addConditionOkButton", style = {'margin' : '10px'})
 	okButton.innerHTML = "Add"
+	conditionForm <= okButton
+	
 	okButton.onclick = destroyAndSendBack
 	
 	cancelButton = html.BUTTON(id = "addConditionCancelButton")
@@ -916,10 +928,7 @@ def open_or_closed_menu(sendBack):
 		destroy_menu("openOrClosedMenu")
 		
 	def destroyAndSendBack():
-		if(open.checked):
-			sendBack(True)
-		else:
-			sendBack(False)
+		sendBack(open.checked)
 		destroy_menu("openOrClosedMenu")
 	
 	
