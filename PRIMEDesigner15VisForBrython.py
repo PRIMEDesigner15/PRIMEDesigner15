@@ -9,7 +9,7 @@ from javascript import JSConstructor
 
 # Used for play button
 from PRIMEDesigner15MusicForBrython import handlePlayButtonClick
-
+import re
 
 canMan = None
 gui = None
@@ -417,6 +417,12 @@ def cFollowUp(state):
 	
 	condition = document.getElementById("conditionSelect").value
 	cFollowUpSelect = html.SELECT(id = "cFollowUpSelect", style = {"margin-left" : "10px"})	
+	
+	def numbersOnly(ev):
+			input = document.getElementById("textInput")
+			text = input.value
+			input.value = re.sub(r'\D',"",text)
+			
 	if(condition == "Entered Room"):
 		cFollowUp <= "Pick a room:"
 		for num in range(1,10):
@@ -463,15 +469,9 @@ def cFollowUp(state):
 	
 		cFollowUp <= "Enter point amount:"
 		textInput = html.INPUT(type="text", id="textInput", name = "hasAPattern", style = {"margin-left" : "10px"})
-		'''
-		def validInput(ev):
-			input = document.getElementById("textInput")
-			numbers = input.value
-			print(numbers)
-			input.value = 'a'#numbers.replace("/\D/",'')
-		
+	
 		textInput.bind('keyup',validInput)
-		'''
+		
 		cFollowUp <= textInput
 		conditionForm <= cFollowUp
 		
@@ -479,6 +479,7 @@ def cFollowUp(state):
 		
 		cFollowUp <= "Enter time in minutes:"
 		textInput = html.INPUT(type="text", id="textInput", style = {"margin-left" : "10px"})
+		textInput.bind('keyup',validInput)
 		cFollowUp <= textInput
 		conditionForm <= cFollowUp
 		

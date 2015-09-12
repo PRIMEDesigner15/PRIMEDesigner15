@@ -651,7 +651,36 @@ def check_puzzle_name(state,name):
 		newName = name + " (" + str(i) + ")"
 		i = i + 1
 	return newName
+	
+def check_if_puzzle_copy(state,name):
+	# Make sure there are no copies of the name in image puzzles
+	imageNames = state["Image_Puzzles"]
+	musicNames = state["Music_Puzzles"]
+	if(name is None):
+		return False
+	if(name in imageNames or name in musicNames):
+		return True
+	return False
 
+def rename_image_puzzle(state, sendBack):
+	newName = window.prompt("Enter the new unique name for your puzzle: " + state["Selected_Image"], "")
+
+	while(newName is not None and check_if_puzzle_copy(state,newName) is True):
+
+		newName = window.prompt("There is already a puzzle with that name","")
+	
+	if(newName is not None):
+	
+		newState = copy_state(state)
+		
+		puzzle = newState["Image_Puzzles"][newState["Selected_Image"]]
+		newState["Image_Puzzles"].pop(newState["Selected_Image"],None)
+		
+		newState["Image_Puzzles"][newName] = puzzle
+		newState["Selected_Image"] = newName
+	
+		sendBack(newState)
+	
 # NOTE: This operators requires Brython as it uses a JSON object.
 def create_music_puzzle(state, sendBack):
 	
@@ -697,6 +726,26 @@ def create_music_puzzle(state, sendBack):
 	else:
 		sendBack()
 
+def rename_music_puzzle(state, sendBack): 
+	newName = window.prompt("Enter the new unique name for your puzzle: " + state["Selected_Image"], "")
+
+	while(newName is not None and check_if_puzzle_copy(state,newName) is True):
+
+		newName = window.prompt("There is already a puzzle with that name","")
+	
+	if(newName is not None):
+	
+		newState = copy_state(state)
+		
+		puzzle = newState["Music_Puzzles"][newState["Selected_Music"]]
+		newState["Music_Puzzles"].pop(newState["Selected_Music"],None)
+		
+		newState["Music_Puzzles"][newName] = puzzle
+		newState["Selected_Music"] = newName
+	
+		sendBack(newState)
+
+		
 # Adds ambient music to a room. The rule designer chose when and if these play.		
 def add_ambient_music(state):
 
@@ -972,6 +1021,11 @@ def set_operators(state):
 				lambda state: True,
 				lambda state: create_image_puzzle(state))
 				
+		rename_puzzle =\
+			AsyncOperator("Rename selected puzzle.",
+				lambda state: state["Selected_Image"] is not None,
+				lambda state, sb: rename_image_puzzle(state, sb))
+				
 		horiz_flip =\
 			Operator("Flip the image horizontally.",
 				lambda state: state["Selected_Image"] is not None,
@@ -993,7 +1047,7 @@ def set_operators(state):
 				lambda state: state["Selected_Image"] is not None,
 				lambda state: addImageTransformation(state, "shuffleColumns"))
 				
-		OPERATORS = nothing_selected + role_operators + selection_operators + create_new_puzzle + horiz_flip + vert_flip + shuff_rows + invs_shuff_rows + shuff_cols
+		OPERATORS = nothing_selected + role_operators + selection_operators + create_new_puzzle + rename_puzzle + horiz_flip + vert_flip + shuff_rows + invs_shuff_rows + shuff_cols
 		
 	elif(state['Role'] == "Music Puzzle"):
 		
@@ -1010,6 +1064,11 @@ def set_operators(state):
 			AsyncOperator("Create a new music puzzle.",
 				lambda state: True,
 				lambda state, sb: create_music_puzzle(state, sb))
+		
+		rename_puzzle =\
+			AsyncOperator("Rename selected puzzle.",
+				lambda state: state["Selected_Music"] is not None,
+				lambda state, sb: rename_music_puzzle(state, sb))
 		
 		increase_pitch =\
 			Operator("Increase pitch of song",
@@ -1041,7 +1100,8 @@ def set_operators(state):
 				lambda state: state["Selected_Music"] is not None,
 				lambda state: addMusicTransformation(state, "reverseNotes"))
 		
-		OPERATORS = nothing_selected + role_operators + selection_operators + create_new_puzzle + increase_tempo + decrease_tempo + shuffle_notes + increase_pitch + decrease_pitch + reverse_notes        
+		OPERATORS = nothing_selected
+		OPERATORS += role_operators + selection_operators + create_new_puzzle + rename_puzzle + increase_tempo + decrease_tempo + shuffle_notes + increase_pitch + decrease_pitch + reverse_notes        
 	
 	elif(state['Role'] == "Rules"):
 		create_rule =\
@@ -1099,7 +1159,7 @@ INITIAL_STATE['Selected_Room'] = 0
 # Stores name of selected image and selected music
 INITIAL_STATE['Selected_Image'] = None
 INITIAL_STATE['Selected_Music'] = None
-INITIAL_STATE['Role'] = "Rules"
+INITIAL_STATE['Role'] = "Image Puzzle"
 INITIAL_STATE['Operators'] = set_operators(INITIAL_STATE)	
 INITIAL_STATE['ConditionMaster'] = ["Entered Room","Had Points","Time Elapsed", "Solved Puzzle"]
 INITIAL_STATE['ActionMaster'] = ["Opened Door", "Closed Door", "Played Sound", "Displayed Message", 
