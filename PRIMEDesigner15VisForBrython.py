@@ -9,7 +9,7 @@ from javascript import JSConstructor
 
 # Used for play button
 from PRIMEDesigner15MusicForBrython import handlePlayButtonClick
-
+import re
 
 canMan = None
 gui = None
@@ -417,6 +417,12 @@ def cFollowUp(state):
 	
 	condition = document.getElementById("conditionSelect").value
 	cFollowUpSelect = html.SELECT(id = "cFollowUpSelect", style = {"margin-left" : "10px"})	
+	
+	def numbersOnly(ev):
+			input = document.getElementById("textInput")
+			text = input.value
+			input.value = re.sub(r'\D',"",text)
+			
 	if(condition == "Entered Room"):
 		cFollowUp <= "Pick a room:"
 		for num in range(1,10):
@@ -459,9 +465,13 @@ def cFollowUp(state):
 		conditionForm <= cFollowUp
 		
 	elif(condition == "Had Points"):
+		
 	
 		cFollowUp <= "Enter point amount:"
-		textInput = html.INPUT(type="text", id="textInput", style = {"margin-left" : "10px"})
+		textInput = html.INPUT(type="text", id="textInput", name = "hasAPattern", style = {"margin-left" : "10px"})
+	
+		textInput.bind('keyup',validInput)
+		
 		cFollowUp <= textInput
 		conditionForm <= cFollowUp
 		
@@ -469,6 +479,7 @@ def cFollowUp(state):
 		
 		cFollowUp <= "Enter time in minutes:"
 		textInput = html.INPUT(type="text", id="textInput", style = {"margin-left" : "10px"})
+		textInput.bind('keyup',validInput)
 		cFollowUp <= textInput
 		conditionForm <= cFollowUp
 		
@@ -534,6 +545,8 @@ def add_condition_menu(state, sendBack):
 	
 	okButton = html.BUTTON(id = "addConditionOkButton", style = {'margin' : '10px'})
 	okButton.innerHTML = "Add"
+	conditionForm <= okButton
+	
 	okButton.onclick = destroyAndSendBack
 	
 	cancelButton = html.BUTTON(id = "addConditionCancelButton")
@@ -916,10 +929,7 @@ def open_or_closed_menu(sendBack):
 		destroy_menu("openOrClosedMenu")
 		
 	def destroyAndSendBack():
-		if(open.checked):
-			sendBack(True)
-		else:
-			sendBack(False)
+		sendBack(open.checked)
 		destroy_menu("openOrClosedMenu")
 	
 	
