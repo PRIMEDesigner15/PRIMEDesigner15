@@ -38,7 +38,7 @@ if(BRYTHON):
 	
 from browser import document, window, alert, console, ajax
 from javascript import JSObject, JSConstructor
-import time, json
+import time, json, datetime
 
 # Debug string
 def dAlert(string):
@@ -305,7 +305,7 @@ class ImagePuzzle:
 		return ImagePuzzle(self.url, self.transformList)
 		
 	def encode(self):
-		return {"URL" : self.url, "transformList" : self.transformList}
+		return {"Type" : "image", "URL" : self.url, "Transform List" : self.transformList}
 		
 class MusicPuzzle:
 
@@ -329,7 +329,7 @@ class MusicPuzzle:
 		return MusicPuzzle(noteCopy, self.transformList)
 
 	def encode(self):
-		return {"Notes" : self.notes, "transformList" : self.transformList}		
+		return {"Type" : "music", "Notes" : self.notes, "Transform List" : self.transformList}		
 		
 # A rule contains two lists of RuleElements. Conditions and actions.
 class Rule:
@@ -794,11 +794,19 @@ def stop_ambient_music():
 	stopAmbientMusic()
 
 def create_json(state):
-	global SOLUZION_VERSION, PROBLEM_NAME, PROBLEM_VERSION, PROBLEM_AUTHORS, PROBLEM_CREATION_DATE, PROBLEM_DESC
-			
+	global SOLUZION_VERSION, PROBLEM_NAME, PROBLEM_VERSION, PROBLEM_AUTHORS, PROBLEM_DESC
+	
+	#get the current date
+	now = datetime.datetime.today()
+	day = str(now.day)
+	month = str(now.month)
+	year = str(now.year)
+	
+	creationDate = month + '-' + day + '-' + year
+	
 	stateJSON = {"Soluzion Version" : SOLUZION_VERSION, "Problem Name" : PROBLEM_NAME, 
 				 "Problem Version" : PROBLEM_VERSION, "Problem Authors"  : PROBLEM_AUTHORS, 
-				 "Problem Creation Date" : PROBLEM_CREATION_DATE, "Problem Description" : PROBLEM_DESC}
+				 "Problem Creation Date" : creationDate, "Problem Description" : PROBLEM_DESC}
 	
 	#Rooms
 	stateJSON["Rooms"] = []
@@ -1159,7 +1167,7 @@ INITIAL_STATE['Selected_Room'] = 0
 # Stores name of selected image and selected music
 INITIAL_STATE['Selected_Image'] = None
 INITIAL_STATE['Selected_Music'] = None
-INITIAL_STATE['Role'] = "Image Puzzle"
+INITIAL_STATE['Role'] = "Architect"
 INITIAL_STATE['Operators'] = set_operators(INITIAL_STATE)	
 INITIAL_STATE['ConditionMaster'] = ["Entered Room","Had Points","Time Elapsed", "Solved Puzzle"]
 INITIAL_STATE['ActionMaster'] = ["Open Door", "Close Door", "Play Sound", "Display Message", 
