@@ -947,7 +947,13 @@ def set_operators(state):
 
 	# Sendback is the function given by the client which receives the modified state
 	sb = None
-
+	
+				
+	create_json_file =\
+		AsyncOperator("Create JSON file for the current state.",
+			lambda state: True,
+			lambda state, sb: create_json(state))
+	
 	nothing_selected =\
 		[Operator("Nothing Selected", 
 			lambda state: True, 
@@ -958,6 +964,7 @@ def set_operators(state):
 			lambda state, r = role: state['Role'] is not r,
 			lambda state, r = role: change_role(state, r))
 		for role in ["Architect", "Image Puzzle", "Music Puzzle", "Rules"]] 
+		
 	if (state['Role'] == "Architect"):
 		selection_operators =\
 			[Operator("Switch to room numbered " + str(num + 1) + " for editing.",
@@ -1001,17 +1008,12 @@ def set_operators(state):
 			Operator("Stop all music from playing",
 				lambda state: True,
 				lambda state: stop_ambient_music())
-				
-		create_json_file =\
-			AsyncOperator("Create JSON file for the current state.",
-				lambda state: True,
-				lambda state, sb: create_json(state))
 			
 		# I don't know why I have to do this, something to do with memory perhaps.
 		OPERATORS = nothing_selected	
-		OPERATORS += (role_operators + selection_operators + add_door_operators + 
+		OPERATORS += (role_operators + create_json_file + selection_operators + add_door_operators + 
 					remove_object_operators + wallpaper_operators + add_puzzle_operators + add_ambient_music_operator + 
-					play_ambient_music_operator + stop_ambient_music_operator + create_json_file)
+					play_ambient_music_operator + stop_ambient_music_operator)
 	
 	elif(state['Role'] == "Image Puzzle"):
 		
@@ -1055,7 +1057,8 @@ def set_operators(state):
 				lambda state: state["Selected_Image"] is not None,
 				lambda state: addImageTransformation(state, "shuffleColumns"))
 				
-		OPERATORS = nothing_selected + role_operators + selection_operators + create_new_puzzle + rename_puzzle + horiz_flip + vert_flip + shuff_rows + invs_shuff_rows + shuff_cols
+		OPERATORS = nothing_selected + create_json_file
+		OPERATORS += role_operators + selection_operators + create_new_puzzle + rename_puzzle + horiz_flip + vert_flip + shuff_rows + invs_shuff_rows + shuff_cols
 		
 	elif(state['Role'] == "Music Puzzle"):
 		
@@ -1108,7 +1111,7 @@ def set_operators(state):
 				lambda state: state["Selected_Music"] is not None,
 				lambda state: addMusicTransformation(state, "reverseNotes"))
 		
-		OPERATORS = nothing_selected
+		OPERATORS = nothing_selected + create_json_file
 		OPERATORS += role_operators + selection_operators + create_new_puzzle + rename_puzzle + increase_tempo + decrease_tempo + shuffle_notes + increase_pitch + decrease_pitch + reverse_notes        
 	
 	elif(state['Role'] == "Rules"):
@@ -1123,7 +1126,7 @@ def set_operators(state):
 				lambda state, sb, i = index: editRule(state, i, sb))
 			for index, rule in enumerate(state["Rules"])]
 		
-		OPERATORS = nothing_selected + role_operators + create_rule + edit_rule
+		OPERATORS = nothing_selected + create_json_file + role_operators + create_rule + edit_rule
 	else:
 		alert("unsupported role")
 	
