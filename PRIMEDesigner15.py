@@ -824,8 +824,15 @@ def create_json(state):
 		
 	for puzzle in state["Music_Puzzles"]:
 		stateJSON["Puzzles"][puzzle] = state["Music_Puzzles"][puzzle].encode()	
-		
-	console.log(stateJSON)
+	
+	window.state_JSON = json.dumps(stateJSON)
+	#console.log(window.state_JSON)
+	
+	req = ajax.ajax()
+	req.bind('complete', lambda e: console.log('finished on brython side'))
+	req.open('POST', 'dependencies//jsonPatch.php', True)
+	req.set_header('content-type','application/x-www-form-urlencoded')
+	req.send({'stateJSON' : window.state_JSON})
 	
 	#Puzzles
 	#Rules
