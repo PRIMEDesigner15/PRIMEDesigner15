@@ -1059,13 +1059,17 @@ def set_operators(state):
 			Operator("Invert Row shuffling",
 				lambda state: state["Selected_Image"] is not None,
 				lambda state: addImageTransformation(state, "shuffleRowsInverse"))
+		invs_shuff_cols =\
+			Operator("Invert Column shuffling",
+				lambda state: state["Selected_Image"] is not None,
+				lambda state: addImageTransformation(state, "shuffleColumnsInverse"))
 		shuff_cols =\
 			Operator("Shuffle the columns of the image.",
 				lambda state: state["Selected_Image"] is not None,
 				lambda state: addImageTransformation(state, "shuffleColumns"))
 				
 		OPERATORS = nothing_selected + create_json_file
-		OPERATORS += role_operators + selection_operators + create_new_puzzle + rename_puzzle + horiz_flip + vert_flip + shuff_rows + invs_shuff_rows + shuff_cols
+		OPERATORS += role_operators + selection_operators + create_new_puzzle + rename_puzzle + horiz_flip + vert_flip + shuff_rows + shuff_cols + invs_shuff_rows + invs_shuff_cols
 		
 	elif(state['Role'] == "Music Puzzle"):
 		
@@ -1177,7 +1181,7 @@ INITIAL_STATE['Selected_Room'] = 0
 # Stores name of selected image and selected music
 INITIAL_STATE['Selected_Image'] = None
 INITIAL_STATE['Selected_Music'] = None
-INITIAL_STATE['Role'] = "Architect"
+INITIAL_STATE['Role'] = "Image Puzzle"
 INITIAL_STATE['Operators'] = set_operators(INITIAL_STATE)	
 INITIAL_STATE['ConditionMaster'] = ["Entered Room","Had Points","Time Elapsed", "Solved Puzzle"]
 INITIAL_STATE['ActionMaster'] = ["Open Door", "Close Door", "Play Sound", "Display Message", 

@@ -20,96 +20,127 @@ function CanvasManager(canvas, imagePath) {
 			cb && cb()
 		}.bind(this)
 	}
+	
 	this.horizFlip = function() {
 		var w = this.canvasM.width;
 		var h = this.canvasM.height;
 		var imgData0 = this.ctxM.getImageData(0,0,w,h);
 		var imgData1 = this.ctxM.getImageData(0,0,w,h);
-		for (var i = 0; i < w; i++) {
-			for(var j = 0; j < h; j++) {
+		for (var col = 0; col < w; col++) {
+			for(var row = 0; row < h; row++) {
 				for(var k = 0; k < 4; k++) {
-					imgData1.data[(j * w) * 4 + i * 4 + k] = imgData0.data[j * w * 4 + (w - 1 - i) * 4 + k];
+					imgData1.data[(row * w + col) * 4 + k] = imgData0.data[(row * w + (w - 1 - col)) * 4 + k];
 				}
 			}
 		}	
 		this.ctxM.putImageData(imgData1, 0, 0);
 	}
+	
 	this.vertFlip = function() {
 		var w = this.canvasM.width;
 		var h = this.canvasM.height;
 		var imgData0 = this.ctxM.getImageData(0,0,w,h);
 		var imgData1 = this.ctxM.getImageData(0,0,w,h);
-		for (var i = 0; i < w; i++) {
-			for(var j = 0; j < h; j++) {
+		for (var col = 0; col < w; col++) {
+			for(var row = 0; row < h; row++) {
 				for(var k = 0; k < 4; k++) {
-					imgData1.data[(j * w) * 4 + i * 4 + k] = imgData0.data[(h - 1 - j) * w * 4 + i * 4 + k];
+					imgData1.data[(row * w + col) * 4 + k] = imgData0.data[((h - 1 - row) * w + col) * 4 + k];
 				}
 			}
 		}
 		this.ctxM.putImageData(imgData1, 0, 0);
 	}
+	
 	this.shuffleRows = function() {
 		var w = this.canvasM.width;
 		var h = this.canvasM.height;
-		var i0;
+		var col0;
 		var imgData0 = this.ctxM.getImageData(0,0,w,h);
 		var imgData1 = this.ctxM.getImageData(0,0,w,h);		
-		for (var i = 0; i < w; i++) {
-			i0 = 2 * i;
-			if (i >= w / 2) {
-				i0 = w - 1 - (2 * (w - 1 - i));
+		//console.log(w)
+		for (var col = 0; col < w; col++) {
+			col0 = 2 * col;
+			if (col >= w / 2) {
+				col0 = w - 1 - (2 * (w - 1 - col));
 			}
-			for (var j = 0; j < h; j++) {
+			for (var row = 0; row < h; row++) {
 				for (var k = 0; k < 4; k++) {
-					imgData1.data[(j * w) * 4 + i * 4 + k] =
-					imgData0.data[(j * w) * 4 + i0 * 4 + k];
+					imgData1.data[(row * w + col) * 4 + k] =
+					imgData0.data[(row * w + col0) * 4 + k];
 				}
 			}
 		}
 		this.ctxM.putImageData(imgData1, 0, 0);
+		
 	}
+	
 	this.shuffleColumns = function() {
 		var w = this.canvasM.width;
 		var h = this.canvasM.height;
-		var j0;
+		var row0;
 		var imgData0 = this.ctxM.getImageData(0,0,w,h);
 		var imgData1 = this.ctxM.getImageData(0,0,w,h);		
-		for (var j = 0; j < h; j++) {
-			j0 = 2 * j;
-			if (j >= h / 2) {
-				j0 = h - 1 - (2 * (h - 1 - j));
+		for (var row = 0; row < h; row++) {
+			row0 = 2 * row;
+			if (row >= h / 2) {
+				row0 = h - 1 - (2 * (h - 1 - row));
 			}
-			for (var i = 0; i < w; i++) {
+			for (var col = 0; col < w; col++) {
 				for (var k = 0; k < 4; k++) {
-					imgData1.data[(j * w) * 4 + i * 4 + k] = imgData0.data[(j0 * w) * 4 + i * 4 + k];
+					imgData1.data[(row * w) * 4 + col * 4 + k] = imgData0.data[(row0 * w) * 4 + col * 4 + k];
 				}
 			}
 		}
 		this.ctxM.putImageData(imgData1, 0, 0);		
 	}
+	
 	this.shuffleRowsInverse = function() {
 		var w = this.canvasM.width;
 		var h = this.canvasM.height;
-		var i0;
+		var col0;
 		var imgData0 = this.ctxM.getImageData(0,0,w,h);
 		var imgData1 = this.ctxM.getImageData(0,0,w,h);	
-		for (var i = 0; i < w; i++) {
-			if (i % 2 == 1) {
-				i0 = w - (w - i + 1) / 2;
+		for (var col = 0; col < w; col++) {
+			if (col % 2 == 1) {
+				col0 = w - (w - col + 1) / 2;
 			}
 			else {
-				i0 = i / 2;
+				col0 = col / 2;
 			}
-			for (var j = 0; j < h; j++) {
-				imgData1.data[(j * w) * 4 + i * 4 + k] = imgData0.data[(j * w) * 4 + i0 * 4 + k];
+			for (var row = 0; row < h; row++) {
+				for (var k = 0; k < 4; k++) {
+					imgData1.data[(row * w + col) * 4 + k] = 
+					imgData0.data[(row * w + col0) * 4 + k];
+				}
 			}
 		}
 		this.ctxM.putImageData(imgData1, 0, 0);
 	}
+	
 	this.shuffleColumnsInverse = function() {
-		alert("Has not been implemented yet")
+		var w = this.canvasM.width;
+		var h = this.canvasM.height;
+		var row0;
+		var imgData0 = this.ctxM.getImageData(0,0,w,h);
+		var imgData1 = this.ctxM.getImageData(0,0,w,h);	
+		for (var row = 0; row < h; row++) {
+			if (row % 2 == 1) {
+				row0 = h - (h - row + 1) / 2;
+			}
+			else {
+				row0 = row / 2;
+			}
+			for (var col = 0; col < w; col++) {
+				for (var k = 0; k < 4; k++) {
+					imgData1.data[(row * w + col) * 4 + k] = 
+					imgData0.data[(row0 * w + col) * 4 + k];
+				}
+			}
+		}
+		this.ctxM.putImageData(imgData1, 0, 0);
 	}
+	
 	this.pixelCrossover = function() {
-		alert("Has not been implemented yet")
+		alert("Has not been colmplemented yet")
 	}
 }
