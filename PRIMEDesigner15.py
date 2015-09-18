@@ -1005,22 +1005,11 @@ def set_operators(state):
 			Operator("Add ambient music to current room.",
 				lambda state: True,
 				lambda state: add_ambient_music(state))
-		
-		play_ambient_music_operator =\
-			Operator("Play the ambient music in current room.",
-				lambda state: state["Rooms"][state["Selected_Room"]].aMusic is not None,
-				lambda state: play_ambient_music(state))
-		
-		stop_ambient_music_operator =\
-			Operator("Stop all music from playing",
-				lambda state: True,
-				lambda state: stop_ambient_music())
 			
 		# I don't know why I have to do this, something to do with memory perhaps.
 		OPERATORS = nothing_selected	
 		OPERATORS += (role_operators + create_json_file + selection_operators + add_door_operators + 
-					remove_object_operators + wallpaper_operators + add_puzzle_operators + add_ambient_music_operator + 
-					play_ambient_music_operator + stop_ambient_music_operator)
+					remove_object_operators + wallpaper_operators + add_puzzle_operators + add_ambient_music_operator)
 	
 	elif(state['Role'] == "Image Puzzle"):
 		
