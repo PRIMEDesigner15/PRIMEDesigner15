@@ -1046,10 +1046,11 @@ def set_operators(state):
 			Operator("Shuffle the rows of the image.",
 				lambda state: state["Selected_Image"] is not None,
 				lambda state: addImageTransformation(state, "shuffleRows"))
-		invs_shuff_rows =\
+		'''invs_shuff_rows =\
 			Operator("Invert Row shuffling",
 				lambda state: state["Selected_Image"] is not None,
 				lambda state: addImageTransformation(state, "shuffleRowsInverse"))
+		'''
 		shuff_cols =\
 			Operator("Shuffle the columns of the image.",
 				lambda state: state["Selected_Image"] is not None,

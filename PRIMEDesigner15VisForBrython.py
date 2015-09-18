@@ -8,7 +8,7 @@ from browser import window, document, html, alert, svg, console
 from javascript import JSConstructor
 
 # Used for play button
-from PRIMEDesigner15MusicForBrython import handlePlayButtonClick
+from PRIMEDesigner15MusicForBrython import handlePlayButtonClick, playAmbientMusic
 import re
 
 canMan = None
@@ -1077,6 +1077,7 @@ def render_state_svg_graphics(state):
 		remove_puzzle_list()
 		create_puzzle_list(state)
 
+
 		
 		# Create the puzzle list so architect can tell which puzzles are which
 		# Draw all the rooms.
@@ -1338,26 +1339,26 @@ def prepareRuleDisplay():
 	# Make Architect display visible
 	board.elt.style.display = "block"
 	remove_puzzle_list()
+
+# Onclick trigger for ambient music
+def ambientMusicTrigger(room, ambientDiv):
+	def ambientMusicTrigger2(evt):
+		pattern = svg.pattern(id="ambientMusicPlaying",width = "100%",height = "100%")
+		window.addAttribute(pattern,"patternContentUnits","objectBoundingBox")
+		img = svg.image(xlink_href="images/notePlaying.png", x= "0" ,y = "0", width = '1', height = '1')
+		window.addAttribute(img,"preserveAspectRatio","none")
+		pattern <= img 
+		APANEL <= pattern
+		APANEL <= ambientDiv
+		
+		ambientDiv.fill = "url(#ambientMusicPlaying)"
+		show_loading()
+		playAmbientMusic(room.aMusic,hide_loading)
+	
+	return ambientMusicTrigger2
 	
 # draws a room.		
 def drawRoom(room,room_num):
-	
-	if(room.aMusic is not None):
-		# Create a pattern for image representation.
-		pattern = svg.pattern(id="ambientMusic",width = "100%",height = "100%")
-		window.addAttribute(pattern,"patternContentUnits","objectBoundingBox")
-		
-		img = svg.image(xlink_href="images/note.png", x= "0" ,y = "0", width = '1', height = '1')
-		window.addAttribute(img,"preserveAspectRatio","none")
-		(x1,y1) = mapCoordsToDIV(room.walls['N'].x1,room.walls['E'].y1)
-		(x2,y2) = mapCoordsToDIV(room.walls['N'].x2,room.walls['E'].y2)
-		ambientDiv = svg.rect(x = x1, y = y1, width = x2 - x1, height = y2 - y1, fill = "url(#ambientMusic)")
-		
-		
-		# Append
-		pattern <= img
-		APANEL <= pattern
-		APANEL <= ambientDiv
 	
 	# thickness of a room's walls.
 	THICKNESS = .3
@@ -1365,11 +1366,17 @@ def drawRoom(room,room_num):
 	# draws north wall
 	
 	wall = room.walls['N']
+	
 	x3 = wall.x2 - THICKNESS/pow(2,1/2)
 	y3 = wall.y1 + THICKNESS/pow(2,1/2)
 	x4 = wall.x1 + THICKNESS/pow(2,1/2)
 	y4 = y3
 	drawWall(wall,x3,y3,x4,y4,room_num)
+	
+	# for ambient rect
+	ax1 = x4
+	ay1 = y4 
+	ax2 = x3
 	
 	# draws south wall
 	wall = room.walls['S']
@@ -1378,6 +1385,9 @@ def drawRoom(room,room_num):
 	x4 = wall.x1 + THICKNESS/pow(2,1/2)
 	y4 = y3
 	drawWall(wall,x3,y3,x4,y4,room_num)
+	
+	# for ambient rect
+	ay2 = y3
 	
 	# draws west wall
 	wall = room.walls['W']
@@ -1395,7 +1405,22 @@ def drawRoom(room,room_num):
 	y4 = wall.y1 + THICKNESS/pow(2,1/2)
 	drawWall(wall,x3,y3,x4,y4,room_num)
 	
-
+	if(room.aMusic is not None):
+		# Create a pattern for image representation.
+		pattern = svg.pattern(id="ambientMusic",width = "100%",height = "100%")
+		window.addAttribute(pattern,"patternContentUnits","objectBoundingBox")
+		
+		img = svg.image(xlink_href="images/note.png", x= "0" ,y = "0", width = '1', height = '1')
+		window.addAttribute(img,"preserveAspectRatio","none")
+		(x1,y1) = mapCoordsToDIV(ax1,ay1)
+		(x2,y2) = mapCoordsToDIV(ax2,ay2)
+		ambientDiv = svg.rect(x = x1, y = y1, width = x2 - x1, height = y2 - y1, fill = "url(#ambientMusic)")
+		ambientDiv.onclick = ambientMusicTrigger(room, ambientDiv)
+		
+		# Append
+		pattern <= img
+		APANEL <= pattern
+		APANEL <= ambientDiv
 		
 # draws a wall, requires 2 more points to form trapezoidal 3d shape.
 # Temporary optional color for walls.
