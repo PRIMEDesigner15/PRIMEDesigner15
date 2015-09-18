@@ -479,7 +479,9 @@ def cFollowUp(state):
 		
 		cFollowUp <= "Enter time in minutes:"
 		textInput = html.INPUT(type="text", id="textInput", style = {"margin-left" : "10px"})
+		
 		textInput.bind('keyup',validInput)
+		
 		cFollowUp <= textInput
 		conditionForm <= cFollowUp
 		

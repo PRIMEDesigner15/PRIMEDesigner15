@@ -120,7 +120,7 @@ def check_rules(state):
 		for condition in rule.conditions:
 			cdSplit = condition.text.split(" ")
 			
-			# If condition is "Solve Puzzle:"
+			# If condition is "Solved Puzzle:"
 			if(cdSplit[0] == "Solved"):
 				'''
 				puzzleName = condition.text.rsplit(':', 1)[1].strip()
@@ -158,7 +158,7 @@ def check_rules(state):
 			acSplit = action.text.split(" ")
 			
 			# If action is opening or closing a door:
-			if(acSplit[0] == "Opened" or acSplit[0] == "Closed"):
+			if(acSplit[0] == "Open" or acSplit[0] == "Close"):
 				roomNum1 = int(acSplit[4])
 				roomNum2 = int(acSplit[6])
 				
@@ -182,7 +182,7 @@ def check_rules(state):
 					action.app = False
 				'''	
 			# If action is "Unsolve Puzzle:"
-			if(acSplit[0] == "Unsolved"):
+			if(acSplit[0] == "Unsolve"):
 				roomNum = acSplit[4]
 				dir = acSplit[6]
 				
@@ -374,7 +374,43 @@ class RuleElement:
 		return RuleElement(self.text, self.app)
 		
 	def encode(self):
-		return [self.text, self.app]
+		result = {}
+		result["Applicable"] = self.app
+		textSplit = self.text.split(" ")
+		
+		if(textSplit[0] == 'Entered'):
+			result["Condition"] = 'Entered Room'
+			result["Room"] = int(textSplit[2])
+		elif(textSplit[1] == 'puzzle'):
+			if(textSplit[0] == 'Solved'):
+				result["Condition"] = 'Solved puzzle'
+			else:
+				result["Action"] = 'Unsolve puzzle'
+			result["Room"] = int(textSplit[4])
+			result["Wall"] = textSplit[6]
+		elif(textSplit[0] == 'Had'):
+			result["Condition"] = 'Had Points'
+			result["Points"] = int(textSplit[1])
+		elif(textSplit[1] == 'minutes'):
+			result["Condition"] = 'Minutes elapsed'
+			result["Minutes"] = int(textSplit[0])
+		elif(textSplit[1] == 'door'):
+			result["Action"] = textSplit[0] + ' a door between two rooms'
+			result["Room"] = int(textSplit[4])
+			result["Room2"] = int(textSplit[6])
+		elif(textSplit[0] == 'Display'):
+			result["Action"] = 'Display a message'
+			result["Message"] = textSplit[2]
+			for i in range(3, len(textSplit)):
+				result["Message"] += " " + textSplit[i]
+		elif(textSplit[1] == 'Sound'):
+			result["Action"] = 'Play sound from URL'
+			result["URL"] = textSplit[4]
+		elif(textSplit[2] == 'Points'):
+			result["Action"] = textSplit[0] + " points"
+			result["Points"] = int(textSplit[1])
+			
+		return result
 				
 # Takes a room num from 0 to 8 and a side for the door to be on, [N, S, E, W]
 # Optional newDoor parameter which allows you to pass which door the walls will point to.
