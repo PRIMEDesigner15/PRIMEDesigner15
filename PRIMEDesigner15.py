@@ -1067,9 +1067,12 @@ def set_operators(state):
 			Operator("Shuffle the columns of the image.",
 				lambda state: state["Selected_Image"] is not None,
 				lambda state: addImageTransformation(state, "shuffleColumns"))
-				
-		OPERATORS = nothing_selected + create_json_file
-		OPERATORS += role_operators + selection_operators + create_new_puzzle + rename_puzzle + horiz_flip + vert_flip + shuff_rows + shuff_cols + invs_shuff_rows + invs_shuff_cols
+		pixel_crossover =\
+			Operator("Perform Pixel Crossover.",
+				lambda state: state["Selected_Image"] is not None,
+				lambda state: addImageTransformation(state, "pixelCrossover"))				
+		OPERATORS = nothing_selected + create_json_file + role_operators
+		OPERATORS += selection_operators + create_new_puzzle + rename_puzzle + horiz_flip + vert_flip + shuff_rows + shuff_cols + invs_shuff_rows + invs_shuff_cols + pixel_crossover
 		
 	elif(state['Role'] == "Music Puzzle"):
 		

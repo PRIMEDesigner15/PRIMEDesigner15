@@ -141,6 +141,29 @@ function CanvasManager(canvas, imagePath) {
 	}
 	
 	this.pixelCrossover = function() {
-		alert("Has not been colmplemented yet")
+		var w = this.canvasM.width;
+		var h = this.canvasM.height;
+		var w2 = parseInt(w / 2);
+		var h2 = parseInt(h / 2);
+		var imgData0 = this.ctxM.getImageData(0,0,w,h);
+		var imgData1 = this.ctxM.getImageData(0,0,w,h);	
+		
+		for (var row = 0; row < h; row++) {
+			row0 = (row + h2) % h;
+			for (var col = 0; col < w; col++) {
+				col0 = (col + w2) % w;
+				for (var k = 0; k < 4; k++) {
+						//result
+						imgData1.data[(row * w + col) * 4 + k] =
+						//left nibble of home pixel
+						(imgData0.data[(row * w + col) * 4 + k] / 16) + 
+						//right nibble of partner pixel * 16
+						((imgData0.data[(row0 * w + col0) * 4 + k] % 16) * 16);
+				}
+			}
+		}			
+		this.ctxM.putImageData(imgData1, 0, 0);
 	}
 }
+
+
