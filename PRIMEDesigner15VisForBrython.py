@@ -1644,6 +1644,10 @@ def drawImagePuzzle(puzzle):
 				canMan.shuffleRowsInverse()
 			elif (transform == "shuffleColumns"):
 				canMan.shuffleColumns()
+			elif (transform == "shuffleColumnsInverse"):
+				canMan.shuffleColumnsInverse()
+			elif (transform == "pixelCrossover"):
+				canMan.pixelCrossover()
 			else:
 				alert("Not supported transform")
 
