@@ -225,8 +225,9 @@ def readChords(notes):
 	
 	return notes2
 	
+# Plays a url with wad js with the specified hold (time the music plays for)
 oldUrl = None
-def playAmbientMusic(url, callback = None):
+def playAmbientMusic(url, hold, callback = None):
 	global Wad
 	global aMusic
 	global oldUrl
@@ -235,7 +236,7 @@ def playAmbientMusic(url, callback = None):
 		# Will play Ambient music for 10 minutes
 		if(url != oldUrl):
 			oldUrl = url
-			aMusic = Wad({'source' : url, 'env' : {'hold' : 600}, 'callback' : callback})
+			aMusic = Wad({'source' : url, 'env' : {'hold' : hold}, 'callback' : callback})
 		else:
 			if(callback is not None):
 				callback()
@@ -246,7 +247,6 @@ def playAmbientMusic(url, callback = None):
 def stopAmbientMusic():
 	if(aMusic is not None):
 		aMusic.stop()
-
 
 # Plays a song given some sheetMusic in JSON format
 def playSong(state):

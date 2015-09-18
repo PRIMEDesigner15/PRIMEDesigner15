@@ -4,7 +4,7 @@ Set up a GUI and handle updates and events during a run of
 the PRIMEDesigner template in the Brython environment.
 '''
 
-from browser import window, document, html, alert, svg, console
+from browser import window, document, html, alert, svg, console, timer
 from javascript import JSConstructor
 
 # Used for play button
@@ -1340,17 +1340,25 @@ def prepareRuleDisplay():
 	board.elt.style.display = "block"
 	remove_puzzle_list()
 
+	
 # Onclick trigger for ambient music
 def ambientMusicTrigger(room, ambientDiv):
-	def ambientMusicTrigger2(evt):
 	
-		if(ambientDiv.fill == "url(#ambientMusicPlaying)"):
+	def ambientMusicTrigger2(evt):
+		
+		def stopPlaying():
 			ambientDiv.fill = "url(#ambientMusic)"
 			stopAmbientMusic()
+			
+		hold = 10
+		timer.set_timeout(stopPlaying,hold*1000)
+		
+		if(ambientDiv.fill == "url(#ambientMusicPlaying)"):
+			stopPlaying()
 		else:	
 			ambientDiv.fill = "url(#ambientMusicPlaying)"
 			show_loading()
-			playAmbientMusic(room.aMusic,hide_loading)
+			playAmbientMusic(room.aMusic,hold,hide_loading)
 	
 	return ambientMusicTrigger2
 	
