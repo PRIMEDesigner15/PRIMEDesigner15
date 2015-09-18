@@ -156,13 +156,19 @@ function CanvasManager(canvas, imagePath) {
 						//result
 						imgData1.data[(row * w + col) * 4 + k] =
 						//left nibble of home pixel
-						(imgData0.data[(row * w + col) * 4 + k] / 16) + 
+						parseInt(imgData0.data[(row * w + col) * 4 + k] / 16) + 
 						//right nibble of partner pixel * 16
 						((imgData0.data[(row0 * w + col0) * 4 + k] % 16) * 16);
 				}
 			}
 		}			
 		this.ctxM.putImageData(imgData1, 0, 0);
+	}
+	
+	this.pixelCrossoverInverse = function() {
+		this.pixelCrossover()
+		this.pixelCrossover()
+		this.pixelCrossover()
 	}
 }
 
