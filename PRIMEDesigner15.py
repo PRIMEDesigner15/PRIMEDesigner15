@@ -1055,18 +1055,17 @@ def set_operators(state):
 			Operator("Shuffle the rows of the image.",
 				lambda state: state["Selected_Image"] is not None,
 				lambda state: addImageTransformation(state, "shuffleRows"))
-		'''invs_shuff_rows =\
+		
+		invs_shuff_rows =\
 			Operator("Invert Row shuffling",
 				lambda state: state["Selected_Image"] is not None,
 				lambda state: addImageTransformation(state, "shuffleRowsInverse"))
-<<<<<<< HEAD
-		'''
-=======
+
 		invs_shuff_cols =\
 			Operator("Invert Column shuffling",
 				lambda state: state["Selected_Image"] is not None,
 				lambda state: addImageTransformation(state, "shuffleColumnsInverse"))
->>>>>>> origin/master
+
 		shuff_cols =\
 			Operator("Shuffle the columns of the image.",
 				lambda state: state["Selected_Image"] is not None,
@@ -1188,7 +1187,7 @@ INITIAL_STATE['Selected_Room'] = 0
 # Stores name of selected image and selected music
 INITIAL_STATE['Selected_Image'] = None
 INITIAL_STATE['Selected_Music'] = None
-INITIAL_STATE['Role'] = "Image Puzzle"
+INITIAL_STATE['Role'] = "Architect"
 INITIAL_STATE['Operators'] = set_operators(INITIAL_STATE)	
 INITIAL_STATE['ConditionMaster'] = ["Entered Room","Had Points","Time Elapsed", "Solved Puzzle"]
 INITIAL_STATE['ActionMaster'] = ["Open Door", "Close Door", "Play Sound", "Display Message", 

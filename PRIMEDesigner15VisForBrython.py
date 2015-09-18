@@ -8,7 +8,7 @@ from browser import window, document, html, alert, svg, console
 from javascript import JSConstructor
 
 # Used for play button
-from PRIMEDesigner15MusicForBrython import handlePlayButtonClick, playAmbientMusic
+from PRIMEDesigner15MusicForBrython import handlePlayButtonClick, playAmbientMusic, stopAmbientMusic
 import re
 
 canMan = None
@@ -1343,17 +1343,14 @@ def prepareRuleDisplay():
 # Onclick trigger for ambient music
 def ambientMusicTrigger(room, ambientDiv):
 	def ambientMusicTrigger2(evt):
-		pattern = svg.pattern(id="ambientMusicPlaying",width = "100%",height = "100%")
-		window.addAttribute(pattern,"patternContentUnits","objectBoundingBox")
-		img = svg.image(xlink_href="images/notePlaying.png", x= "0" ,y = "0", width = '1', height = '1')
-		window.addAttribute(img,"preserveAspectRatio","none")
-		pattern <= img 
-		APANEL <= pattern
-		APANEL <= ambientDiv
-		
-		ambientDiv.fill = "url(#ambientMusicPlaying)"
-		show_loading()
-		playAmbientMusic(room.aMusic,hide_loading)
+	
+		if(ambientDiv.fill == "url(#ambientMusicPlaying)"):
+			ambientDiv.fill = "url(#ambientMusic)"
+			stopAmbientMusic()
+		else:	
+			ambientDiv.fill = "url(#ambientMusicPlaying)"
+			show_loading()
+			playAmbientMusic(room.aMusic,hide_loading)
 	
 	return ambientMusicTrigger2
 	
@@ -1406,20 +1403,29 @@ def drawRoom(room,room_num):
 	drawWall(wall,x3,y3,x4,y4,room_num)
 	
 	if(room.aMusic is not None):
-		# Create a pattern for image representation.
+		# Create a pattern for image representation of note and note playing.
 		pattern = svg.pattern(id="ambientMusic",width = "100%",height = "100%")
 		window.addAttribute(pattern,"patternContentUnits","objectBoundingBox")
 		
+		pattern2 = svg.pattern(id="ambientMusicPlaying",width = "100%",height = "100%")
+		window.addAttribute(pattern2,"patternContentUnits","objectBoundingBox")
+		
 		img = svg.image(xlink_href="images/note.png", x= "0" ,y = "0", width = '1', height = '1')
 		window.addAttribute(img,"preserveAspectRatio","none")
+		
+		img2 = svg.image(xlink_href="images/notePlaying.png", x= "0" ,y = "0", width = '1', height = '1')
+		window.addAttribute(img2,"preserveAspectRatio","none")
+		
 		(x1,y1) = mapCoordsToDIV(ax1,ay1)
 		(x2,y2) = mapCoordsToDIV(ax2,ay2)
 		ambientDiv = svg.rect(x = x1, y = y1, width = x2 - x1, height = y2 - y1, fill = "url(#ambientMusic)")
-		ambientDiv.onclick = ambientMusicTrigger(room, ambientDiv)
+		ambientDiv.onclick = ambientMusicTrigger(room,ambientDiv)
 		
 		# Append
 		pattern <= img
+		pattern2 <= img2
 		APANEL <= pattern
+		APANEL <= pattern2
 		APANEL <= ambientDiv
 		
 # draws a wall, requires 2 more points to form trapezoidal 3d shape.
