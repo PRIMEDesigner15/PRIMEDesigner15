@@ -257,7 +257,6 @@ def create_menu(id,width,height,display = "visible"):
 # Removes any menu from the gui
 def destroy_menu(menuName):	
 	try:
-		enableOpSelect()
 		menu = document.getElementById(menuName)
 		gui.removeChild(menu)
 	except:
@@ -286,7 +285,7 @@ def enableOpSelect():
 	applyButton.disabled = False
 	resetState.disabled = False
 	backTrack.disabled = False
-	
+
 # Creates an architect menu with choices of which puzzle to select.
 # The band direction will be disabled when the user tries to choose it.
 # calls a callback function, sendBack, when the user hits a button.
@@ -486,8 +485,6 @@ def cFollowUp(state):
 	
 def add_condition_menu(state, sendBack):
 	
-	disableOpSelect()
-	
 	width = 200
 	height = 200
 	menu = create_menu("addConditionMenu",width,height)
@@ -527,8 +524,6 @@ def add_condition_menu(state, sendBack):
 				#console.log("Debug: Enough info was given.")
 				
 				destroy_menu("addConditionMenu")
-				
-				enableOpSelect()
 				
 				if(textF is not None and textF.strip() != ''):
 					if(condition == "Had Points"):
@@ -707,19 +702,18 @@ def aFollowUp(state):
 		pass #console.log("Debug: No Action Follow Up expected")	
 	
 def add_action_menu(state, sendBack):
-
-	disableOpSelect()
-		
+	
 	width = 200
 	height = 200
+
 	menu = create_menu("addActionMenu",width,height)
-	
+
 	actionTitle = html.P(id="addActionMenuTitle", style = {"margin-top" : '0'})
 	actionTitle.innerHTML = "Add Action:"							
 	
 	#Create and populate actionSelect
 	actionForm = add_action_form(state)	
-	
+
 	def destroyAndSendBack():
 
 		if (document.getElementById("actionSelect") is not None):
@@ -753,8 +747,6 @@ def add_action_menu(state, sendBack):
 				#console.log("Debug: Enough info was given.")
 				
 				destroy_menu("addActionMenu")
-				
-				enableOpSelect()
 				
 				# Make sure something was actually put into the text box
 				if(textF is not None and textF.strip() != ''):
@@ -924,10 +916,6 @@ def open_or_closed_menu(sendBack):
 	
 	open = html.INPUT(type="radio", name = 'direction', value = 'open', checked = True, style = {"display" : 'inline'} )
 	closed = html.INPUT(type="radio", name = 'direction', value = 'closed', style = {"display" : 'inline'} )
-
-	
-	def destroy():
-		destroy_menu("openOrClosedMenu")
 		
 	def destroyAndSendBack():
 		sendBack(open.checked)
@@ -938,7 +926,7 @@ def open_or_closed_menu(sendBack):
 	submit.onclick = destroyAndSendBack
 	
 	cancel = html.BUTTON("Cancel", style = {'margin' : '10px'})
-	cancel.onclick = destroy
+	cancel.onclick = lambda e: destroy_menu("openOrClosedMenu")
 	
 	menu <= openOrClosedTitle
 	

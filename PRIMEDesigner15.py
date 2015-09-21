@@ -1192,7 +1192,7 @@ INITIAL_STATE['Selected_Room'] = 0
 # Stores name of selected image and selected music
 INITIAL_STATE['Selected_Image'] = None
 INITIAL_STATE['Selected_Music'] = None
-INITIAL_STATE['Role'] = "Architect"
+INITIAL_STATE['Role'] = "Rules"
 INITIAL_STATE['Operators'] = set_operators(INITIAL_STATE)	
 INITIAL_STATE['ConditionMaster'] = ["Entered Room","Had Points","Time Elapsed", "Solved Puzzle"]
 INITIAL_STATE['ActionMaster'] = ["Open Door", "Close Door", "Play Sound", "Display Message", 
