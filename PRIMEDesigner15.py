@@ -409,7 +409,7 @@ class RuleElement:
 		elif(textSplit[2] == 'Points'):
 			result["Action"] = textSplit[0] + " points"
 			result["Points"] = int(textSplit[1])
-			
+		console.log(result)	
 		return result
 				
 # Takes a room num from 0 to 8 and a side for the door to be on, [N, S, E, W]
@@ -942,8 +942,6 @@ def deleteCondition(state, index, sendBack):
 
 # Deletes an action from the specified rule
 def deleteAction(state, index, sendBack):
-	
-	dAlert("within delete action")
 	
 	def processDelete(actionName):
 		newState = copy_state(state)

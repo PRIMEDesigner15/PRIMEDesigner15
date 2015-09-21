@@ -489,7 +489,9 @@ def cFollowUp(state):
 		pass #console.log("Debug: No Condition Follow Up expected")	
 	
 def add_condition_menu(state, sendBack):
-		
+	
+	disableOpSelect()
+	
 	width = 200
 	height = 200
 	menu = create_menu("addConditionMenu",width,height)
@@ -553,7 +555,7 @@ def add_condition_menu(state, sendBack):
 	
 	cancelButton = html.BUTTON(id = "addConditionCancelButton")
 	cancelButton.innerHTML = "Cancel"
-	cancelButton.onclick = lambda e: cancelMenu(menu.id)
+	cancelButton.onclick = lambda e: destroy_menu(menu.id)
 
 	menu <= conditionTitle
 	menu <= conditionForm
@@ -709,6 +711,8 @@ def aFollowUp(state):
 		pass #console.log("Debug: No Action Follow Up expected")	
 	
 def add_action_menu(state, sendBack):
+
+	disableOpSelect()
 		
 	width = 200
 	height = 200
@@ -778,7 +782,7 @@ def add_action_menu(state, sendBack):
 	
 	cancelButton = html.BUTTON(id = "addActionCancelButton")
 	cancelButton.innerHTML = "Cancel"
-	cancelButton.onclick = lambda e: cancelMenu(menu.id)
+	cancelButton.onclick = lambda e: destroy_menu(menu.id)
 	
 	menu <= actionTitle
 	menu <= actionForm
@@ -788,7 +792,6 @@ def add_action_menu(state, sendBack):
 	gui <= menu
 
 def delete_condition_menu(state, index, sendBack):
-		
 
 	width = 200
 	height = 200
@@ -952,9 +955,6 @@ def open_or_closed_menu(sendBack):
 	menu <= cancel
 	
 	gui <= menu
-def cancelMenu(id):
-	destroy_menu(id)
-	enableOpSelect()
 	
 # Display the black overlay
 def show_overlay():
