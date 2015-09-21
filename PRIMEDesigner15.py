@@ -613,10 +613,6 @@ def change_music_puzzle_selection(state, name):
 	
 def change_role(state, role):
 	global OPERATORS
-	global stopAmbientAudio
-	
-	if(state["Role"] == "Architect"):
-		stopAmbientAudio()
 	
 	newState = copy_state(state)
 	newState['Role'] = role
@@ -806,10 +802,6 @@ def add_ambient_music(state):
 		
 		# Recurse
 		return add_ambient_music(state)
-
-# Stops the audio from playing
-def stop_ambient_audio():
-	stopAmbientAudio()
 
 def create_json(state):
 	global SOLUZION_VERSION, PROBLEM_NAME, PROBLEM_VERSION, PROBLEM_AUTHORS, PROBLEM_DESC
@@ -1024,8 +1016,8 @@ def set_operators(state):
 			
 		# I don't know why I have to do this, something to do with memory perhaps.
 		OPERATORS = nothing_selected	
-		OPERATORS += (role_operators + create_json_file + selection_operators + add_door_operators + 
-					remove_object_operators + wallpaper_operators + add_puzzle_operators + add_ambient_music_operator)
+		OPERATORS += role_operators + create_json_file + selection_operators + add_door_operators
+		OPERATORS += remove_object_operators + wallpaper_operators + add_puzzle_operators + add_ambient_music_operator
 	
 	elif(state['Role'] == "Image Puzzle"):
 		

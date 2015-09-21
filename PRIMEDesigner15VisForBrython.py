@@ -362,7 +362,7 @@ def add_puzzle_menu(state, sendBack, bannedDirections = None):
 	
 	cancelButton = html.BUTTON(id = "addPuzzleCancelButton", style = {"margin-top" : "10px"})
 	cancelButton.innerHTML = "Cancel"
-	cancelButton.onclick = lambda e: cancelAddPuzzle()
+	cancelButton.onclick = lambda e: destroy_menu("addPuzzleMenu")
 	
 	# Append
 	menu <= title1
@@ -373,10 +373,6 @@ def add_puzzle_menu(state, sendBack, bannedDirections = None):
 	menu <= okButton
 	menu <= cancelButton
 	gui <= menu
-
-def cancelAddPuzzle():
-	destroy_menu("addPuzzleMenu")
-	enableOpSelect()	
 
 def add_condition_form(state):		
 
@@ -1068,9 +1064,8 @@ def render_state_svg_graphics(state):
 	# Clear the ruleDisplay
 	while ruleDisplay.lastChild is not None:
 		ruleDisplay.removeChild(ruleDisplay.childNodes[0])
-		
+	
 	if(state['Role'] == "Architect"):
-		
 		# Display the SVG
 		prepareSVG()
 		
@@ -1096,14 +1091,13 @@ def render_state_svg_graphics(state):
 		outline = svg.rect(x = x1, y = y1, width = x2 - x1, height = y2 - y1, fill = "none",
 						style = {"stroke": "gold", "stroke-width": THICKNESS})
 		APANEL <= outline
-	elif(state['Role'] == "Image Puzzle"):
+	elif(state['Role'] == "Image Puzzle"):		
 		prepareCanvas()	
 		if(state["Selected_Image"] is not None):
 			puzzle = state["Image_Puzzles"][state["Selected_Image"]]
 			canMan.setURL(puzzle.url)
 			drawImagePuzzle(puzzle)
-	elif(state['Role'] == "Music Puzzle"):
-		
+	elif(state['Role'] == "Music Puzzle"):		
 		prepareMusicDisplay()
 		songName = state["Selected_Music"]
 		
