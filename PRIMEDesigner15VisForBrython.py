@@ -251,13 +251,14 @@ def create_menu(id,width,height,display = "visible"):
 
 	if(display != "none"):
 		disableOpSelect()
-	
+		
 	return menu
 	
 # Removes any menu from the gui
-def destroy_menu(menuName):	
-	try:
+def destroy_menu(menuName,enabled=True):	
+	if(enabled):
 		enableOpSelect()
+	try:
 		menu = document.getElementById(menuName)
 		gui.removeChild(menu)
 	except:
@@ -707,8 +708,6 @@ def aFollowUp(state):
 		pass #console.log("Debug: No Action Follow Up expected")	
 	
 def add_action_menu(state, sendBack):
-
-	disableOpSelect()
 		
 	width = 200
 	height = 200
@@ -719,6 +718,7 @@ def add_action_menu(state, sendBack):
 	
 	#Create and populate actionSelect
 	actionForm = add_action_form(state)	
+
 	
 	def destroyAndSendBack():
 
@@ -779,6 +779,8 @@ def add_action_menu(state, sendBack):
 	cancelButton = html.BUTTON(id = "addActionCancelButton")
 	cancelButton.innerHTML = "Cancel"
 	cancelButton.onclick = lambda e: destroy_menu(menu.id)
+
+
 	
 	menu <= actionTitle
 	menu <= actionForm
@@ -786,7 +788,7 @@ def add_action_menu(state, sendBack):
 	menu <= cancelButton
 
 	gui <= menu
-
+	
 def delete_condition_menu(state, index, sendBack):
 
 	width = 200
@@ -884,7 +886,7 @@ def edit_rule_menu(state, sendBack):
 	def processButton(input):
 		def processButton2():
 			sendBack(input)
-			destroy_menu("editRuleMenu")
+			destroy_menu("editRuleMenu",False)
 		return processButton2
 	
 	addAction = html.BUTTON("Add action to rule", style = {'display' : 'block', 'margin' : '10px'})
