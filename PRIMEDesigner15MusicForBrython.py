@@ -38,7 +38,7 @@ piano = Wad({
 })
 
 # Instrument used for playing ambient music
-aMusic = None
+aAudio = None
 
 # This object is a mapping of note names to frequencies
 Pitches = {
@@ -227,26 +227,26 @@ def readChords(notes):
 	
 # Plays a url with wad js with the specified hold (time the music plays for)
 oldUrl = None
-def playAmbientMusic(url, hold, callback = None):
+def playAmbientAudio(url, hold, callback = None):
 	global Wad
-	global aMusic
+	global aAudio
 	global oldUrl
 	if(url is not None):
 		
 		# Will play Ambient music for 10 minutes
 		if(url != oldUrl):
 			oldUrl = url
-			aMusic = Wad({'source' : url, 'env' : {'hold' : hold}, 'callback' : callback})
+			aAudio = Wad({'source' : url, 'env' : {'hold' : hold}, 'callback' : callback})
 		else:
 			if(callback is not None):
 				callback()
-		aMusic.play()
+		aAudio.play()
 	else:
 		alert("no url provided")
 
-def stopAmbientMusic():
-	if(aMusic is not None):
-		aMusic.stop()
+def stopAmbientAudio():
+	if(aAudio is not None):
+		aAudio.stop()
 
 # Plays a song given some sheetMusic in JSON format
 def playSong(state):

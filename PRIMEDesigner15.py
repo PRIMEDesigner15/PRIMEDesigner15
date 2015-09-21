@@ -32,7 +32,6 @@ if(BRYTHON):
 	from PRIMEDesigner15VisForBrython import hide_loading, show_loading, url_is_valid
 	from PRIMEDesigner15VisForBrython import add_puzzle_menu, add_condition_menu, add_action_menu, edit_rule_menu
 	from PRIMEDesigner15VisForBrython import delete_condition_menu, delete_action_menu, open_or_closed_menu
-	from PRIMEDesigner15MusicForBrython import playAmbientMusic, stopAmbientMusic
 	from templateRoot.PRIMEDesigner15Operator import Operator as Operator
 	from templateRoot.PRIMEDesigner15Operator import AsyncOperator as AsyncOperator
 	
@@ -206,8 +205,8 @@ def check_rules(state):
 class Room:
 
 	""" A room in the game contains 4 walls that could have wallpapers or doors
-		and a possible ambient soundtrack, and a possible puzzle. """
-	def __init__(self, x1, y1, x2, y2, aMusic = None):
+		and possible ambient audio, and a possible puzzle. """
+	def __init__(self, x1, y1, x2, y2, aAudio = None):
 		
 		# Coordinates for display of the room.
 		self.x1 = x1
@@ -216,7 +215,7 @@ class Room:
 		self.y2 = y2
 		
 		# Ambient music, contains a url to a piece of music mp3
-		self.aMusic = aMusic
+		self.aAudio = aAudio
 		
 		# 4 walls. 
 		self.walls = {}
@@ -230,7 +229,7 @@ class Room:
 		
 	def copy(self):
 			
-		newRoom = Room(self.x1, self.y1, self.x2, self.y2, self.aMusic)
+		newRoom = Room(self.x1, self.y1, self.x2, self.y2, self.aAudio)
 		for direction in ['N','S','W','E']:
 			newRoom.walls[direction] = self.walls[direction].copy()
 		
@@ -240,7 +239,7 @@ class Room:
 		return {#"Vector Coordinates" : {"x1": self.x1, "y1": self.y1, "x2": self.x2, "y2": self.y2},
 				"Walls" : {"N" : self.walls['N'].encode(), "S" : self.walls['S'].encode(),
 						   "W" : self.walls['W'].encode(), "E" : self.walls['E'].encode()},
-				"Ambient Music" : self.aMusic}
+				"Ambient Music" : self.aAudio}
 		
 """ A wall could contain a door and a wallpaper """	
 class Wall:
@@ -614,10 +613,10 @@ def change_music_puzzle_selection(state, name):
 	
 def change_role(state, role):
 	global OPERATORS
-	global stopAmbientMusic
+	global stopAmbientAudio
 	
 	if(state["Role"] == "Architect"):
-		stopAmbientMusic()
+		stopAmbientAudio()
 	
 	newState = copy_state(state)
 	newState['Role'] = role
@@ -782,10 +781,10 @@ def rename_music_puzzle(state, sendBack):
 		sendBack(newState)
 
 		
-# Adds ambient music to a room. The rule designer chose when and if these play.		
+# Adds ambient audio to a room. The rule designer chose when and if these play.		
 def add_ambient_music(state):
 
-	url = window.prompt("Enter a url for an mp3 to attach ambient music to a room", "music\defaultAmbient.mp3")
+	url = window.prompt("Enter a url for an mp3 to attach ambient audio to a room", "music\defaultAmbient.mp3")
 	if(url is None):
 	
 		return None
@@ -796,8 +795,8 @@ def add_ambient_music(state):
 		newState = copy_state(state)
 		room_num = newState["Selected_Room"]
 		
-		# Add ambient music to room
-		newState["Rooms"][room_num].aMusic = url
+		# Add ambient audio to room
+		newState["Rooms"][room_num].aAudio = url
 
 		return newState
 		
@@ -807,27 +806,10 @@ def add_ambient_music(state):
 		
 		# Recurse
 		return add_ambient_music(state)
-	
-# Plays the ambient music in the selected room
-def play_ambient_music(state):
-	global show_loading, hide_loading
-	global playAmbientMusic
-	
-	music = state["Rooms"][state["Selected_Room"]].aMusic
 
-	def doneLoading():
-		hide_loading()
-
-	if(music is not None):
-		show_loading()
-		stopAmbientMusic()
-		playAmbientMusic(music,doneLoading)
-		
-	return None
-
-# Stops the ambient music from playing
-def stop_ambient_music():
-	stopAmbientMusic()
+# Stops the audio from playing
+def stop_ambient_audio():
+	stopAmbientAudio()
 
 def create_json(state):
 	global SOLUZION_VERSION, PROBLEM_NAME, PROBLEM_VERSION, PROBLEM_AUTHORS, PROBLEM_DESC
@@ -1036,7 +1018,7 @@ def set_operators(state):
 				lambda state, sb: add_puzzle_operator(state, state["Selected_Room"], sb))
 				
 		add_ambient_music_operator =\
-			Operator("Add ambient music to current room.",
+			Operator("Add ambient audio to current room.",
 				lambda state: True,
 				lambda state: add_ambient_music(state))
 			
@@ -1233,7 +1215,7 @@ for j in range(3):
 #add_puzzle_to_room(0,'E',INITIAL_STATE)
 
 # Temporary addition for debug purposes
-#INITIAL_STATE["Rooms"][0].aMusic = "music\defaultAmbient.mp3"
+#INITIAL_STATE["Rooms"][0].aAudio = "music\defaultAmbient.mp3"
 		
 # Now initialize operators.
 OPERATORS = INITIAL_STATE['Operators']

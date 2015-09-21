@@ -8,7 +8,7 @@ from browser import window, document, html, alert, svg, console, timer
 from javascript import JSConstructor
 
 # Used for play button
-from PRIMEDesigner15MusicForBrython import handlePlayButtonClick, playAmbientMusic, stopAmbientMusic
+from PRIMEDesigner15MusicForBrython import handlePlayButtonClick, playAmbientAudio, stopAmbientAudio
 import re
 
 canMan = None
@@ -1343,26 +1343,26 @@ def prepareRuleDisplay():
 	remove_puzzle_list()
 
 	
-# Onclick trigger for ambient music
-def ambientMusicTrigger(room, ambientDiv):
+# Onclick trigger for ambient audio
+def ambientAudioTrigger(room, ambientDiv):
 	
-	def ambientMusicTrigger2(evt):
+	def ambientAudioTrigger2(evt):
 		
 		def stopPlaying():
-			ambientDiv.fill = "url(#ambientMusic)"
-			stopAmbientMusic()
+			ambientDiv.fill = "url(#ambientAudio)"
+			stopAmbientAudio()
 			
 		hold = 10
 		timer.set_timeout(stopPlaying,hold*1000)
 		
-		if(ambientDiv.fill == "url(#ambientMusicPlaying)"):
+		if(ambientDiv.fill == "url(#ambientAudioPlaying)"):
 			stopPlaying()
 		else:	
-			ambientDiv.fill = "url(#ambientMusicPlaying)"
+			ambientDiv.fill = "url(#ambientAudioPlaying)"
 			show_loading()
-			playAmbientMusic(room.aMusic,hold,hide_loading)
+			playAmbientAudio(room.aAudio,hold,hide_loading)
 	
-	return ambientMusicTrigger2
+	return ambientAudioTrigger2
 	
 # draws a room.		
 def drawRoom(room,room_num):
@@ -1412,12 +1412,12 @@ def drawRoom(room,room_num):
 	y4 = wall.y1 + THICKNESS/pow(2,1/2)
 	drawWall(wall,x3,y3,x4,y4,room_num)
 	
-	if(room.aMusic is not None):
+	if(room.aAudio is not None):
 		# Create a pattern for image representation of note and note playing.
-		pattern = svg.pattern(id="ambientMusic",width = "100%",height = "100%")
+		pattern = svg.pattern(id="ambientAudio",width = "100%",height = "100%")
 		window.addAttribute(pattern,"patternContentUnits","objectBoundingBox")
 		
-		pattern2 = svg.pattern(id="ambientMusicPlaying",width = "100%",height = "100%")
+		pattern2 = svg.pattern(id="ambientAudioPlaying",width = "100%",height = "100%")
 		window.addAttribute(pattern2,"patternContentUnits","objectBoundingBox")
 		
 		img = svg.image(xlink_href="images/note.png", x= "0" ,y = "0", width = '1', height = '1')
@@ -1428,8 +1428,8 @@ def drawRoom(room,room_num):
 		
 		(x1,y1) = mapCoordsToDIV(ax1,ay1)
 		(x2,y2) = mapCoordsToDIV(ax2,ay2)
-		ambientDiv = svg.rect(x = x1, y = y1, width = x2 - x1, height = y2 - y1, fill = "url(#ambientMusic)")
-		ambientDiv.onclick = ambientMusicTrigger(room,ambientDiv)
+		ambientDiv = svg.rect(x = x1, y = y1, width = x2 - x1, height = y2 - y1, fill = "url(#ambientAudio)")
+		ambientDiv.onclick = ambientAudioTrigger(room,ambientDiv)
 		
 		# Append
 		pattern <= img
@@ -1504,55 +1504,30 @@ def drawDoor(wall,x3,y3,x4,y4):
 		fx4 += 1/DOOR_SIZE * (4/15)
 	else:
 		alert("drawDoor wall location check broke")
-		
-	# Map default (d)oor coords to (f)rame coords. 
-	(dx1,dy1,dx2,dy2,dx3,dy3,dx4,dy4) = (fx1,fy1,fx2,fy2,fx3,fy3,fx4,fy4)
 	
-	# Map (d)oor coordinates based off (f)rame's
-	if(wall.doorOpen):
-		if(wall.loc == 'E'):
-			dx2 = fx4 - DOOR_SIZE * (1/5)
-			dy2 = fy1
-			dx3 = dx2
-			dy3 = fy4
-		elif(wall.loc == 'W'):
-			dy1 = fy2
-			dx2 = fx4 + DOOR_SIZE * (1/5)
-			dx3 = dx2
-			dy4 = fy3
-		elif(wall.loc == 'N'):
-			dx2 = fx1
-			dy2 = fy1 + DOOR_SIZE * (2/5)
-			dx3 = fx4 
-			dy3 = dy2
-		elif(wall.loc == 'S'):
-			dx1 = fx2
-			dy1 = fy2
-			dy2 = fy2 - DOOR_SIZE * (2/5)
-			dy3 = dy2
-			dx4 = fx3
-		else:
-			alert("wall door isOpen location broke")
-			
 	# Create frame and door polygons
-	frameDiv = create_polygon(fx1,fy1,fx2,fy2,fx3,fy3,fx4,fy4, fill = "black")
-	doorDiv = create_polygon(dx1,dy1,dx2,dy2,dx3,dy3,dx4,dy4, fill = "url(#door)") #fill = "#c9731e"	
-	
-	defs = svg.defs()
-	
-	pattern = svg.pattern(id="door",height="100%",width = "100%")
-	window.addAttribute(pattern,"patternContentUnits","objectBoundingBox")
-	
-	img = svg.image(xlink_href="images/door.jpg", x="0",y="0", height="1", width="1")
-	window.addAttribute(img,"preserveAspectRatio","none")
-	
-	pattern <= img
-	defs <= pattern
+	if(wall.doorOpen):
+		frameDiv = create_polygon(fx1,fy1,fx2,fy2,fx3,fy3,fx4,fy4, fill = "rgb(190, 208, 221)")
+	else:
+
+		pattern = svg.pattern(id="door",height="100%",width = "100%")
+		window.addAttribute(pattern,"patternContentUnits","objectBoundingBox")
 		
-	# Append polygon to svg panel
-	APANEL <= defs
+		img = svg.image(xlink_href="images/door.jpg", x="0",y="0", height="1", width="1")
+		window.addAttribute(img,"preserveAspectRatio","none")
+		
+		pattern <= img
+		
+		defs = svg.defs()
+		defs <= pattern
+		APANEL <= defs	
+		
+		frameDiv = create_polygon(fx1,fy1,fx2,fy2,fx3,fy3,fx4,fy4, fill = "url(#door)")
+
+	
+	# Append polygon to svg panel	
 	APANEL <= frameDiv
-	APANEL <= doorDiv
+
 	
 # Draws a wall on a wall with the given wall coordinates.
 # Fills in the polygon green for image puzzles and blue for music puzzles.
