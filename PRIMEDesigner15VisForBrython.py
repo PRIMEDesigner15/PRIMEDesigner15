@@ -1350,7 +1350,7 @@ def ambientAudioTrigger(room, ambientDiv):
 		
 		def stopPlaying():
 			ambientDiv.fill = "url(#ambientAudio)"
-			stopAmbientMusic()
+			stopAmbientAudio()
 			
 		hold = 10
 		timer.set_timeout(stopPlaying,hold*1000)
