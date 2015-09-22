@@ -717,45 +717,45 @@ def create_music_puzzle(state, sendBack):
 	
 	url = window.prompt("Enter a complete URL for a json music file. Say 'cancel' to cancel.", "music/twinkleTwinkle.txt")
 	
-	if(url_is_valid(url)):
-		
-		# Double nested to allow use of name parameter
-		def requestSuccess(name):
-			# When the request is recieved
-			def requestSuccess2(req):
-				if(req.status == 200 or req.status == 0):
-					newState = copy_state(state)
-					# Assign name to song using data from JSON object
-					song = json.loads(req.responseText)
-					newPuzzle = MusicPuzzle(song["notes"])
-					newState["Music_Puzzles"][name] = newPuzzle
-					newState["Selected_Music"] = name
-					
-					# Hide loading visualization
-					hide_loading()
-					
-					sendBack(newState)
-				else:
-					print("request failure")
-			return requestSuccess2
-		
-		# Show loading visualization
-		show_loading()
-		
-		# Get name, make sure there are no copies
-		name = getName(url)
-		name = check_puzzle_name(state,name)
-		
-		request = ajax.ajax()
-		request.open('GET',url,True)
-		request.bind("complete",requestSuccess(name))
-		request.send()
+	if(url is not None):
+		if(url_is_valid(url)):
+			
+			# Double nested to allow use of name parameter
+			def requestSuccess(name):
+				# When the request is recieved
+				def requestSuccess2(req):
+					if(req.status == 200 or req.status == 0):
+						newState = copy_state(state)
+						# Assign name to song using data from JSON object
+						song = json.loads(req.responseText)
+						newPuzzle = MusicPuzzle(song["notes"])
+						newState["Music_Puzzles"][name] = newPuzzle
+						newState["Selected_Music"] = name
+						
+						# Hide loading visualization
+						hide_loading()
+						
+						sendBack(newState)
+					else:
+						print("request failure")
+				return requestSuccess2
+			
+			# Show loading visualization
+			show_loading()
+			
+			# Get name, make sure there are no copies
+			name = getName(url)
+			name = check_puzzle_name(state,name)
+			
+			request = ajax.ajax()
+			request.open('GET',url,True)
+			request.bind("complete",requestSuccess(name))
+			request.send()
 	
-	elif(url != "cancel"):
-		alert("URL was not valid. Try again.")
-		create_music_puzzle(state, sendBack)
-	else:
-		sendBack()
+		else:
+			alert("URL was not valid. Try again.")
+			create_music_puzzle(state, sendBack)
+	
 
 def rename_music_puzzle(state, sendBack): 
 	newName = window.prompt("Enter the new unique name for your puzzle: " + state["Selected_Image"], "")
