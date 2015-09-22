@@ -72,7 +72,7 @@ def url_is_valid(url):
 def set_up_gui(opselectdiv, reset_and_backtrack_div):
 	global gui
 	gui = html.DIV(Id = "thegui")
-	render_state()
+	initial_render()
 	gui <= opselectdiv
 	gui <= reset_and_backtrack_div
 	document <= gui
@@ -970,8 +970,8 @@ def hide_loading():
 	loadingDiv.style.display = "none"
 
 
-# renders the state
-def render_state():
+# first render, setting up objects.
+def initial_render():
 	boarddiv = html.DIV(Id = "boarddivid", style = {"backgroundColor":"rgb(180,198,211)"})
 	
 	# Create canvas
@@ -1049,7 +1049,7 @@ def setCanvasManager():
 	canMan.setImg()
 		
 # draws the game
-def render_state_svg_graphics(state):
+def render_state(state):
 	global roleCanvas, ctx, APANEL, selected_image, musicDisplay, ruleDisplay
 	# Clear svg panel
 	while APANEL.lastChild is not None:
@@ -1341,12 +1341,13 @@ def ambientAudioTrigger(room, ambientDiv):
 			ambientDiv.fill = "url(#ambientAudio)"
 			stopAmbientAudio()
 			
-		hold = 10
-		timer.set_timeout(stopPlaying,hold*1000)
 		
 		if(ambientDiv.fill == "url(#ambientAudioPlaying)"):
 			stopPlaying()
 		else:	
+			hold = 10
+			timer.set_timeout(stopPlaying,hold*1000)
+			
 			ambientDiv.fill = "url(#ambientAudioPlaying)"
 			show_loading()
 			playAmbientAudio(room.aAudio,hold,hide_loading)

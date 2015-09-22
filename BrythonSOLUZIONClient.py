@@ -6,7 +6,7 @@ from browser import doc, alert, html, console
 
 #import PRIMEDesigner15VisForBrython
 from PRIMEDesigner15VisForBrython import set_up_gui as set_up_user_interface
-from PRIMEDesigner15VisForBrython import render_state_svg_graphics as render_state
+from PRIMEDesigner15VisForBrython import render_state
 from PRIMEDesigner15VisForBrython import set_up_loading_div, set_up_black_overlay, show_loading, hide_loading
 from PRIMEDesigner15 import INITIAL_STATE, set_operators
 from templateRoot.PRIMEDesigner15Operator import Operator as Operator
