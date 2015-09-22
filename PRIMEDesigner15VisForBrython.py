@@ -876,11 +876,14 @@ def edit_rule_menu(state, sendBack):
 	editTitle = html.P(id="editRuleTitle", style = {"margin-top" : '0'})
 	editTitle.innerHTML = "What would you like to do?"
 	
-	
-	def processButton(input):
+	def processButton(input, enable = False):
+		if enable:
+			enableOpSelect()
+			
 		def processButton2():
 			sendBack(input)
 			destroy_menu("editRuleMenu",False)
+			
 		return processButton2
 	
 	addAction = html.BUTTON("Add action to rule", style = {'display' : 'block', 'margin' : '10px'})
@@ -896,7 +899,7 @@ def edit_rule_menu(state, sendBack):
 	deleteCondition.onclick = processButton("deleteCondition")
 	
 	deleteRule = html.BUTTON("Delete rule", style = {'display' : 'block', 'margin' : '20px', 'font-weight' : 'bold'})
-	deleteRule.onclick = processButton("deleteRule")
+	deleteRule.onclick = processButton("deleteRule", True)
 	
 	cancel = html.BUTTON("Cancel", style = {'display' : 'block', 'margin' : '10px'})
 	cancel.onclick = processButton("cancel")
