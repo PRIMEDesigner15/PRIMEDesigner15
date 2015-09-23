@@ -75,7 +75,7 @@ def recieveNewState(state = None):
 
 def replaceCurrentState(new_state):
 	global current_state
-	
+
 	current_state = new_state
 	render_state(current_state)
 	finalize_state(current_state)
@@ -154,7 +154,7 @@ def set_up_reset_and_backtrack_div():
 	BACKTRACK_BUTTON.disabled = True
 	BACKTRACK_BUTTON.bind('click',handlebacktrackbuttonclick)
 	reset_and_backtrack_div <= BACKTRACK_BUTTON
-
+	
 	return reset_and_backtrack_div
 
 def initialize():
